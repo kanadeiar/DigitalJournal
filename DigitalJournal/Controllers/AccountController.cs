@@ -95,6 +95,17 @@ public class AccountController : Controller
         return View();
     }
 
+    #region WebAPI
+
+    [AllowAnonymous]
+    public async Task<IActionResult> IsNameFree(string UserName)
+    {
+        var user = await _userManager.FindByNameAsync(UserName);
+        return Json(user is null ? "true" : "Такой логин уже занят другим пользователем");
+    }
+
+    #endregion
+
     /// <summary> Вебмодель сведения о пользователе </summary>
     public class IndexWebModel
     {
@@ -113,7 +124,7 @@ public class AccountController : Controller
 
         [Required(ErrorMessage = "Имя обязательно для пользователя")]
         [StringLength(200, MinimumLength = 3, ErrorMessage = "Имя должно быть длинной от 3 до 200 символов")]
-        [Display(Name = "Имя пользователя")]
+        [Display(Name = "Имя пользователя")]        
         public string FirstName { get; set; }
 
         [Required(ErrorMessage = "Отчество обязательно для пользователя")]
@@ -132,6 +143,7 @@ public class AccountController : Controller
 
         [Required(ErrorMessage = "Нужно обязательно ввести логин пользователя")]
         [Display(Name = "Логин пользователя")]
+        [Remote("IsNameFree", "Account")]
         public string UserName { get; set; }
 
         [Required(ErrorMessage = "Нужно обязательно придумать и ввести какой-либо пароль")]
