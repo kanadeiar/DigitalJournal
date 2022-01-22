@@ -1,0 +1,60 @@
+﻿@model DigitalJournal.Controllers.AccountController.EditWebModel
+@{
+    ViewBag.Title = "Редактирование своего профиля";
+}
+
+<div class="row">
+    <div class="col-md-4 col-lg-3 mb-1">
+        <partial name="Partial/_AccountLeftSidebarPartial" />
+    </div>
+    <div class="col-md-8 col-lg-9 mb-1">
+        <div class="border-1 bg-light shadow rounded-1 p-2">
+            <h1>@ViewBag.Title</h1>
+
+            <div class="col-lg-6">
+                <form asp-controller="Account" asp-action="Edit" asp-antiforgery="true">
+                    <div asp-validation-summary="ModelOnly" class="text-danger alert-danger"></div>
+
+                    <div class="my-1">
+                        <label asp-for="SurName" class="form-label"></label>
+                        <input asp-for="SurName" class="form-control" placeholder="Введите фамилию пользователя" />
+                        <span asp-validation-for="SurName" class="text-danger"></span>
+                    </div>
+
+                    <div class="my-1">
+                        <label asp-for="FirstName" class="form-label"></label>
+                        <input asp-for="FirstName" class="form-control" placeholder="Введите имя пользователя" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+
+                    <div class="my-1">
+                        <label asp-for="Patronymic" class="form-label"></label>
+                        <input asp-for="Patronymic" class="form-control" placeholder="Введите отчество пользователя" />
+                        <span asp-validation-for="Patronymic" class="text-danger"></span>
+                    </div>
+
+                    <div class="my-1">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" placeholder="Введите действительный адрес своей электронной почты" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="my-1">
+                        <label asp-for="Birthday" class="form-label"></label>
+                        <input asp-for="Birthday" type="date" class="form-control" placeholder="Введите день рождения пользователя" />
+                        <span asp-validation-for="Birthday" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary my-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Подтверждение изменение своего профиля пользователя в системе">
+                        Сохранить профиль
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <partial name="Partial/_ValidationScriptsPartial" />
+}
