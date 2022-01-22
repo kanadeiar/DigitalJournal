@@ -1,0 +1,27 @@
+﻿@inherits LayoutComponentBase
+
+<header class="sticky-top">
+    <nav class="navbar navbar-expand-md navbar-toggleable-md navbar-dark bg-success border-bottom mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <img src="favicon.png" alt="Бренд" width="30" height="30" class="d-inline-block align-text-top">
+                Цифровой журнал
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <_MainMenuPartial/>
+
+                <div class="d-flex">
+                    <a class="btn btn-outline-dark text-white me-1" href="/">
+                        <i class="fa fa-arrow-left"></i>
+                        Назад
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>

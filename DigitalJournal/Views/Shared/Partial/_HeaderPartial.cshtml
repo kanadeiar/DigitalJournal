@@ -1,0 +1,25 @@
+﻿<header class="sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-toggleable-lg navbar-dark bg-success mb-4">
+        <div class="container">
+            <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                <img src="~/favicon.png" alt="Бренд приложения" width="30" height="30" class="d-inline-block align-text-top">
+                Цифровой журнал
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <partial name="Partial/_MainMenuPartial" />
+
+                <div class="d-flex">
+                    <a class="btn btn-outline-dark text-white me-1" href="/online" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ввод новых данных в электронные журналы">
+                        <i class="fa fa-mouse-pointer"></i>
+                        Онлайн
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
