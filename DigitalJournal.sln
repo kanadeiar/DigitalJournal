@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitalJournal", "DigitalJournal\DigitalJournal.csproj", "{C25EEB2D-D5D0-409E-86A0-A1D2855F8C29}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalJournal.Domain", "DigitalJournal.Domain\DigitalJournal.Domain.csproj", "{A561FF24-DA9E-474A-8D34-EA494CA5AAD6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{C25EEB2D-D5D0-409E-86A0-A1D2855F8C29}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C25EEB2D-D5D0-409E-86A0-A1D2855F8C29}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C25EEB2D-D5D0-409E-86A0-A1D2855F8C29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A561FF24-DA9E-474A-8D34-EA494CA5AAD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A561FF24-DA9E-474A-8D34-EA494CA5AAD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A561FF24-DA9E-474A-8D34-EA494CA5AAD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A561FF24-DA9E-474A-8D34-EA494CA5AAD6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
