@@ -4,3 +4,5 @@
 
 Цифровой журнал - прототип приложения
 
+[Приложение в облаке](https://digitaljournal.azurewebsites.net)
+
