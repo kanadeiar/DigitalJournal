@@ -4,10 +4,10 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-md-3 mb-1">
+        <div class="col-md-4 col-lg-3 mb-1">
             <partial name="Partial/_LeftSidebarPartial" />
         </div>
-        <div class="col-md-9 mb-1">
+        <div class="col-md-8 col-lg-9 mb-1">
             <div class="border-1 bg-light shadow rounded-1 p-2">
                 <h1>@ViewBag.Title</h1>
 
@@ -19,6 +19,8 @@
                     <i class="fab fa-git"></i>
                     Мой github
                 </a>
+
+                @*<component type="typeof(CounterPartial)" render-mode="ServerPrerendered"/>*@
             </div>
         </div>
     </div>

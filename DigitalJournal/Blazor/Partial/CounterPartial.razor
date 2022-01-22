@@ -1,0 +1,15 @@
+﻿<div class="my-2 py-2 border">
+    <button class="btn btn-success" @onclick="@( () => Counter-- )">
+        <i class="fa fa-minus"></i>
+        Уменьшить
+    </button>
+    <span class="p-2"> Значение счетчика: @Counter </span>
+    <button class="btn btn-success" @onclick="@( () => Counter++ )">
+        <i class="fa fa-plus"></i>
+        Увеличить
+    </button>
+</div>
+
+@code {
+    public int Counter { get; set; }
+}

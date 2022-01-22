@@ -3,7 +3,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.ConfigureServices(services =>
 {
     services.AddControllersWithViews().AddRazorRuntimeCompilation();
+    services.AddRazorPages().AddRazorRuntimeCompilation();
 });
+builder.Services.AddServerSideBlazor();
 
 var app = builder.Build();
 
@@ -26,5 +28,8 @@ app.UseRouting();
 app.UseStatusCodePagesWithRedirects("~/home/error/{0}");
 
 app.MapDefaultControllerRoute();
+app.MapRazorPages();
+app.MapBlazorHub();
+app.MapFallbackToPage("online/{param?}", "/Shared/_Host");
 
 app.Run();
