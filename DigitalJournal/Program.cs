@@ -19,11 +19,11 @@ else
 
 app.UseHttpsRedirection();
 
-app.UseStatusCodePagesWithRedirects("~/home/error/{0}");
-
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseStatusCodePagesWithRedirects("~/home/error/{0}");
 
 app.MapDefaultControllerRoute();
 
