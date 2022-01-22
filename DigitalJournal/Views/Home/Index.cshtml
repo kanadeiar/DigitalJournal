@@ -2,20 +2,18 @@
     ViewBag.Title = "Главная";
 }
 
-<div class="container">
+<partial name="Partial/_HomeSliderPartial" />
 
-    <partial name="Partial/_HomeSliderPartial" />
+<div class="row">
+    <div class="col-md-4 col-lg-3 mb-1">
+        <partial name="Partial/_LeftSidebarPartial" />
+    </div>
+    <div class="col-md-8 col-lg-9 mb-1">
+        <div class="border-1 bg-light shadow rounded-1 p-2">
+            <h1>@ViewBag.Title</h1>
 
-    <div class="row">
-        <div class="col-md-4 col-lg-3 mb-1">
-            <partial name="Partial/_LeftSidebarPartial" />
-        </div>
-        <div class="col-md-8 col-lg-9 mb-1">
-            <div class="border-1 bg-light shadow rounded-1 p-2">
-                <h1>@ViewBag.Title</h1>
-
-                <p>Главная страница приложения Цифровой журнал.</p>
-            </div>
+            <p>Главная страница приложения Цифровой журнал.</p>
         </div>
     </div>
 </div>
+

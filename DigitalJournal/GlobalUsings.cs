@@ -8,6 +8,7 @@ global using Microsoft.AspNetCore.Mvc;
 global using System.ComponentModel.DataAnnotations;
 global using Blazored.Toast;
 global using Microsoft.AspNetCore.Authentication.Cookies;
+global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Identity;
 global using Microsoft.EntityFrameworkCore;
 global using DigitalJournal.Dal.Data;

@@ -4,5 +4,12 @@
 @{
     Layout = "_BlazorLayout";
 }
+@model HostModel
 
 <component type="typeof(App)" render-mode="ServerPrerendered" />
+
+@functions {
+    [Authorize]
+    public class HostModel : PageModel
+    { }
+}

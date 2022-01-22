@@ -1,0 +1,71 @@
+﻿@model DigitalJournal.Controllers.AccountController.IndexWebModel
+@{
+    ViewBag.Title = "Информация по профилю пользователя";
+}
+
+<div class="row">
+    <div class="col-md-4 col-lg-3 mb-1">
+        <partial name="Partial/_AccountLeftSidebarPartial" />
+    </div>
+    <div class="col-md-8 col-lg-9 mb-1">
+        <div class="border-1 bg-light shadow rounded-1 p-2">
+            <h1>@ViewBag.Title</h1>
+
+            <div class="table">
+                <table class="table my-2 table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Параметр</th>
+                            <th>Значение</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.User is null)
+                        {
+                            <tr>
+                                <th class="text-center">Нет сведений об идентификации пользователя</th>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <th>Логин пользователя:</th>
+                                <td class="text-break">@Model.User.UserName</td>
+                            </tr>
+                            <tr>
+                                <th>Почта пользователя:</th>
+                                <td class="text-break">@Model.User.Email</td>
+                            </tr>
+                            <tr>
+                                <th>Фамилия:</th>
+                                <td class="text-break">@Model.User.SurName</td>
+                            </tr>
+                            <tr>
+                                <th>Имя:</th>
+                                <td class="text-break">@Model.User.FirstName</td>
+                            </tr>
+                            <tr>
+                                <th>Отчество:</th>
+                                <td class="text-break">@Model.User.Patronymic</td>
+                            </tr>
+                            <tr>
+                                <th>Дата рождения:</th>
+                                <td class="text-break">@Model.User.Birthday.ToString("dd.MM.yyyy")</td>
+                            </tr>
+                            <tr>
+                                <th>Роли пользователя:</th>
+                                <td class="text-break">
+                                    @foreach (var role in Model.UserRoleNames)
+                                    {
+                                        <p>@role</p>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
