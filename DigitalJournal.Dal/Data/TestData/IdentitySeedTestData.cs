@@ -7,7 +7,7 @@ public static class IdentitySeedTestData
     /// <param name="configuration">Корфигурация</param>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
-    public static async void SeedTestData(IServiceProvider provider, IConfiguration configuration)
+    public static async Task SeedTestData(IServiceProvider provider, IConfiguration configuration)
     {
         provider = provider.CreateScope().ServiceProvider;
         var logger = provider.GetRequiredService<ILogger<IdentityContext>>();

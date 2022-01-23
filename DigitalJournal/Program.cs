@@ -4,6 +4,8 @@ builder.Host.ConfigureServices(services =>
 {
     services.AddDbContext<IdentityContext>(options => options
         .UseSqlite(builder.Configuration.GetConnectionString("IdentityConnection")));
+    services.AddDbContext<DigitalJournalContext>(options => options
+        .UseSqlite(builder.Configuration.GetConnectionString("DigitalJournalConnection")));
     services.AddIdentity<User, Role>().AddEntityFrameworkStores<IdentityContext>();
     services.Configure<CookieAuthenticationOptions>(IdentityConstants.ApplicationScheme, options =>
     {
@@ -31,7 +33,8 @@ builder.Services.Configure<IdentityOptions>(options =>
 
 var app = builder.Build();
 
-IdentitySeedTestData.SeedTestData(app.Services, builder.Configuration);
+await IdentitySeedTestData.SeedTestData(app.Services, builder.Configuration);
+await DigitalJournalSeedTestData.SeedTestData(app.Services, builder.Configuration);
 
 if (app.Environment.IsDevelopment())
 {
