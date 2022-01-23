@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DigitalJournal.Dal.Migrations.DigitalJournal
 {
     [DbContext(typeof(DigitalJournalContext))]
-    [Migration("20220123070047_init")]
+    [Migration("20220123084124_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -304,20 +304,20 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                     b.Property<int>("Place1ProductTypeId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("Place1ProductsValue")
-                        .HasColumnType("REAL");
+                    b.Property<int>("Place1ProductsCount")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Place2ProductTypeId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("Place2ProductsValue")
-                        .HasColumnType("REAL");
+                    b.Property<int>("Place2ProductsCount")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Place3ProductTypeId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("Place3ProductsValue")
-                        .HasColumnType("REAL");
+                    b.Property<int>("Place3ProductsCount")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("Time")
                         .HasColumnType("TEXT");

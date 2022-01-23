@@ -36,6 +36,7 @@ public static class DigitalJournalSeedTestData
         var pt4 = new Factory1ProductType { Name = "Кирпич полнотелый 250x120x88", Number = 4, Units = 300 };
         context.Factory1ProductTypes.AddRange(pt1, pt2, pt3, pt4);
         await context.SaveChangesAsync();
+        var products = await context.Factory1ProductTypes.ToDictionaryAsync(s => s.Id, s => s);
 
         var shA = new Factory1Shift { Name = "Смена А" };
         var shB = new Factory1Shift { Name = "Смена Б" };
@@ -45,6 +46,8 @@ public static class DigitalJournalSeedTestData
         await context.SaveChangesAsync();
         var shifts = await context.Factory1Shifts.ToDictionaryAsync(s => s.Id, s => s);
 
+        var userIds = (await userManager.FindByNameAsync(TestData.User.Username)).Id;
+
         var w1sds = Enumerable.Range(1, 120).Select(i => new Factory1Warehouse1ShiftData
         {
             Time = DateTime.Today.AddDays(-60).AddHours(8).AddHours(12 * i),
@@ -52,12 +55,63 @@ public static class DigitalJournalSeedTestData
             Tank2LooseRawValue = _rnd.NextDouble() * 10.0 + 200.0,
             Tank3LooseRawValue = _rnd.NextDouble() * 10.0 + 300.0,
             Factory1Shift = shifts[i % 4 + 1],
-            UserId = (userManager.FindByNameAsync(TestData.User.Username).Result).Id,
+            UserId = userIds,
         });
         context.Factory1Warehouse1ShiftData.AddRange(w1sds);
-        await context.SaveChangesAsync();            
+        await context.SaveChangesAsync();
 
+        var p1sds = Enumerable.Range(1, 120).Select(i => new Factory1Press1ShiftData
+        {
+            Time = DateTime.Today.AddDays(-60).AddHours(8).AddHours(12 * i),
+            Factory1ProductType = products[i % 4 + 1],
+            ProductCount = _rnd.Next(80, 120),
+            Loose1RawValue = _rnd.NextDouble() * 10.0,
+            Loose2RawValue = _rnd.NextDouble() * 10.0,
+            Loose3RawValue = _rnd.NextDouble() * 10.0,
+            Factory1Shift = shifts[i % 4 + 1],
+            UserId = userIds,
+        });
+        context.Factory1Press1ShiftData.AddRange(p1sds);
+        await context.SaveChangesAsync();
 
+        var a1sds = Enumerable.Range(1, 120).Select(i => new Factory1Autoclave1ShiftData
+        {
+            Time = DateTime.Today.AddDays(-60).AddHours(8).AddHours(12 * i),
+            AutoclaveNumber = _rnd.Next(1, 5),
+            TimeStart = DateTime.Today.AddDays(-60).AddHours(8).AddHours(12 * i - 2),
+            AutoclavedTime = new TimeSpan(1, _rnd.Next(59), 0),
+            Factory1ProductType = products[i % 4 + 1],
+            Factory1Shift = shifts[i % 4 + 1],
+            UserId = userIds,
+        });
+        context.Factory1Autoclave1ShiftDatas.AddRange(a1sds);
+        await context.SaveChangesAsync();
+
+        var pk1sds = Enumerable.Range(1, 120).Select(i => new Factory1Pack1ShiftData
+        {
+            Time = DateTime.Today.AddDays(-60).AddHours(8).AddHours(12 * i),
+            Factory1ProductType = products[i % 4 + 1],
+            ProductCount = _rnd.Next(80, 120),
+            Factory1Shift = shifts[i % 4 + 1],
+            UserId = userIds,
+        });
+        context.Factory1Pack1ShiftDatas.AddRange(pk1sds);
+        await context.SaveChangesAsync();
+
+        var w2sds = Enumerable.Range(1, 120).Select(i => new Factory1Warehouse2ShiftData
+        {
+            Time = DateTime.Today.AddDays(-60).AddHours(8).AddHours(12 * i),
+            Place1ProductType = products[1],
+            Place1ProductsCount = _rnd.Next(80, 120),
+            Place2ProductType = products[2],
+            Place2ProductsCount = _rnd.Next(80, 120),
+            Place3ProductType = products[3],
+            Place3ProductsCount = _rnd.Next(80, 120),
+            Factory1Shift = shifts[i % 4 + 1],
+            UserId = userIds,
+        });
+        context.Factory1Warehouse2ShiftData.AddRange(w2sds);
+        await context.SaveChangesAsync();
 
         logger.LogInformation("Complete writing test data to database Factory1 ...");
     }

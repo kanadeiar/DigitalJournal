@@ -19,8 +19,8 @@ namespace DigitalJournal.Domain.Entities.Factory1
         /// <summary> Вид товара на месте хранений 1 </summary>
         [ForeignKey(nameof(Place1ProductTypeId))]
         public Factory1ProductType Place1ProductType { get; set; }
-        /// <summary> Объем товара на месте хранения 1 </summary>
-        public double Place1ProductsValue { get; set; }
+        /// <summary> Количество товара на месте хранения 1 </summary>
+        public int Place1ProductsCount { get; set; }
 
         /// <summary> Вид товара на месте хранения 2 </summary>
         [Required]
@@ -29,8 +29,8 @@ namespace DigitalJournal.Domain.Entities.Factory1
         /// <summary> Вид товара на месте хранений 2 </summary>
         [ForeignKey(nameof(Place2ProductTypeId))]
         public Factory1ProductType Place2ProductType { get; set; }
-        /// <summary> Объем товара на месте хранения 2 </summary>
-        public double Place2ProductsValue { get; set; }
+        /// <summary> Количество товара на месте хранения 2 </summary>
+        public int Place2ProductsCount { get; set; }
 
         /// <summary> Вид товара на месте хранения 3 </summary>
         [Required]
@@ -39,8 +39,8 @@ namespace DigitalJournal.Domain.Entities.Factory1
         /// <summary> Вид товара на месте хранений 3 </summary>
         [ForeignKey(nameof(Place3ProductTypeId))]
         public Factory1ProductType Place3ProductType { get; set; }
-        /// <summary> Объем товара на месте хранения 3 </summary>
-        public double Place3ProductsValue { get; set; }
+        /// <summary> Количество товара на месте хранения 3 </summary>
+        public int Place3ProductsCount { get; set; }
 
         /// <summary> Смена </summary>
         [Required]

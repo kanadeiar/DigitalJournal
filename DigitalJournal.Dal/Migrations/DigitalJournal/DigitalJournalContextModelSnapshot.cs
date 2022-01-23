@@ -302,20 +302,20 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                     b.Property<int>("Place1ProductTypeId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("Place1ProductsValue")
-                        .HasColumnType("REAL");
+                    b.Property<int>("Place1ProductsCount")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Place2ProductTypeId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("Place2ProductsValue")
-                        .HasColumnType("REAL");
+                    b.Property<int>("Place2ProductsCount")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Place3ProductTypeId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("Place3ProductsValue")
-                        .HasColumnType("REAL");
+                    b.Property<int>("Place3ProductsCount")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("Time")
                         .HasColumnType("TEXT");
