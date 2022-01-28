@@ -58,9 +58,9 @@ public static class DigitalJournalSeedTestData
         var userUser = await userManager.FindByNameAsync(TestData.User.Username);
         var userProfile = new Profile
         {
-            SurName = "Пользователев",
+            SurName = "Пользов",
             FirstName = "Пользователь",
-            Patronymic = "Пользователевич",
+            Patronymic = "Пользович",
             Birthday = DateTime.Today.AddYears(-18),
             UserId = userUser.Id
         };

@@ -1,0 +1,54 @@
+﻿@model DigitalJournal.Controllers.RoleController.RoleEditWebModel;
+@{
+    ViewBag.Title = (Model?.Id is null) ? "Создание роли" : "Редактирование роли";
+}
+
+<div class="row">
+    <div class="col-md-4 col-lg-3 mb-1">
+        <partial name="Partial/_AccountLeftSidebarPartial" />
+    </div>
+    <div class="col-md-8 col-lg-9 mb-1">
+        <div class="border-1 shadow rounded bg-light p-2">
+            <h1>@ViewBag.Title</h1>
+
+            <div class="col-lg-6">
+                <form asp-controller="Role" asp-action="Edit" asp-antiforgery="true">
+                    <div asp-validation-summary="ModelOnly" class="text-danger alert-danger"></div>
+
+                    <input type="hidden" asp-for="Id" />
+
+                    <div>
+                        <label asp-for="Name" class="form-label"></label>
+                        @if (Model?.Id is null)
+                        {
+                            <input asp-for="Name" class="form-control" />
+                        }
+                        else
+                        {
+                            <input asp-for="Name" class="form-control" disabled />
+                        }
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Description" class="form-label"></label>
+                        <input asp-for="Description" class="form-control" />
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group my-2">
+                        <button type="submit" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Сохранить изменения в данных роли пользователей">
+                            Сохранить
+                        </button>
+                        <a asp-controller="Role" asp-action="Index" class="btn btn-secondary">Назад</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+<partial name="Partial/_ValidationScriptsPartial" />
+}
