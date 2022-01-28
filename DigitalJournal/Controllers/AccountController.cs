@@ -1,4 +1,6 @@
-﻿namespace DigitalJournal.Controllers;
+﻿using DigitalJournal.Domain.Entities;
+
+namespace DigitalJournal.Controllers;
 
 [Authorize]
 public class AccountController : Controller
@@ -7,12 +9,14 @@ public class AccountController : Controller
     private readonly RoleManager<Role> _roleManager;
     private readonly SignInManager<User> _signInManager;
     private readonly IdentityContext _context;
-    public AccountController(UserManager<User> userManager, RoleManager<Role> roleManager, SignInManager<User> signInManager, IdentityContext context)
+    private readonly DigitalJournalContext _journalContext;
+    public AccountController(UserManager<User> userManager, RoleManager<Role> roleManager, SignInManager<User> signInManager, IdentityContext context, DigitalJournalContext journalContext)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _signInManager = signInManager;
         _context = context;
+        _journalContext = journalContext;
     }
 
     [AllowAnonymous]
@@ -22,6 +26,7 @@ public class AccountController : Controller
         if (User.Identity.IsAuthenticated)
         {
             model.User = await _userManager.FindByNameAsync(User.Identity.Name);
+            model.Profile = await _journalContext.Profiles.SingleOrDefaultAsync(p => p.Id == model.User.ProfileId);
             var roles = await _userManager.GetRolesAsync(model.User);
             model.UserRoleNames = _roleManager.Roles.Where(r => roles.Contains(r.Name)).Select(r => r.Description);
         }
@@ -42,18 +47,25 @@ public class AccountController : Controller
         }
         var user = new User
         {
-            SurName = model.SurName,
-            FirstName = model.FirstName,
-            Patronymic = model.Patronymic,
             UserName = model.UserName,
             Email = model.Email,
-            Birthday = model.Birthday,
         };
         var result = await _userManager.CreateAsync(user, model.Password);
         if (result.Succeeded)
         {
             await _userManager.AddToRoleAsync(user, "users");
             await _signInManager.SignInAsync(user, false);
+            var profile = new Profile
+            {
+                SurName = model.SurName,
+                FirstName = model.FirstName,
+                Patronymic = model.Patronymic,
+                Birthday = model.Birthday,
+                UserId = user.Id,
+            };
+            _journalContext.Profiles.Add(profile);
+            await _journalContext.SaveChangesAsync();
+            user.ProfileId = profile.Id;
             return RedirectToAction("Index", "Home");
         }
         var errors = result.Errors.Select(e => IdentityErrorCodes.GetDescription(e.Code)).ToArray();
@@ -88,13 +100,14 @@ public class AccountController : Controller
         var username = User.Identity!.Name;
         if (await _userManager.FindByNameAsync(username) is User user)
         {
+            var profile = await _journalContext.Profiles.SingleOrDefaultAsync(p => p.Id == user.ProfileId);
             var model = new EditWebModel
             {
-                SurName = user.SurName,
-                FirstName = user.FirstName,
-                Patronymic = user.Patronymic,
+                SurName = profile.SurName,
+                FirstName = profile.FirstName,
+                Patronymic = profile.Patronymic,
                 Email = user.Email,
-                Birthday = user.Birthday,
+                Birthday = profile.Birthday,
             };
             return View(model);
         }
@@ -110,14 +123,17 @@ public class AccountController : Controller
         var username = User.Identity!.Name;
         if (await _userManager.FindByNameAsync(username) is User user)
         {
-            user.SurName = model.SurName;
-            user.FirstName = model.FirstName;
-            user.Patronymic = model.Patronymic;
             user.Email = model.Email;
-            user.Birthday = model.Birthday;
             var result = await _userManager.UpdateAsync(user);
             if (result.Succeeded)
             {
+                var profile = await _journalContext.Profiles.SingleOrDefaultAsync(p => p.Id == user.ProfileId);
+                profile.SurName = model.SurName;
+                profile.FirstName = model.FirstName;
+                profile.Patronymic = model.Patronymic;
+                profile.Birthday = model.Birthday;
+                _journalContext.Profiles.Update(profile);
+                await _journalContext.SaveChangesAsync();
                 return RedirectToAction("Index", "Account");
             }
             var errors = result.Errors.Select(e => IdentityErrorCodes.GetDescription(e.Code)).ToArray();
@@ -187,6 +203,8 @@ public class AccountController : Controller
     /// <summary> Вебмодель сведения о пользователе </summary>
     public class IndexWebModel
     {
+        /// <summary> Сведения о профиле пользователя </summary>
+        public Profile? Profile { get; set; }
         /// <summary> Сведения о пользовате </summary>
         public User User { get; set; }
         /// <summary> Роли пользователя </summary>

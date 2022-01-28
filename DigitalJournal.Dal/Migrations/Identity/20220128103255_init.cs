@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace DigitalJournal.Dal.Migrations
+namespace DigitalJournal.Dal.Migrations.Identity
 {
     public partial class init : Migration
     {
@@ -29,11 +29,8 @@ namespace DigitalJournal.Dal.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "TEXT", nullable: false),
-                    SurName = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
-                    FirstName = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
-                    Patronymic = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
-                    Birthday = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    IsInactive = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsDelete = table.Column<bool>(type: "INTEGER", nullable: false),
+                    ProfileId = table.Column<int>(type: "INTEGER", nullable: true),
                     UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),

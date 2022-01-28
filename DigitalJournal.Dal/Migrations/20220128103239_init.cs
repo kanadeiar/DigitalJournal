@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace DigitalJournal.Dal.Migrations.DigitalJournal
+namespace DigitalJournal.Dal.Migrations
 {
     public partial class init : Migration
     {
@@ -42,6 +42,24 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                 });
 
             migrationBuilder.CreateTable(
+                name: "Profiles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    SurName = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    FirstName = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    Patronymic = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    Birthday = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    Timestamp = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Profiles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Factory1Autoclave1ShiftDatas",
                 columns: table => new
                 {
@@ -54,7 +72,7 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                     Factory1ProductTypeId = table.Column<int>(type: "INTEGER", nullable: false),
                     AutoclavedCount = table.Column<int>(type: "INTEGER", nullable: false),
                     Factory1ShiftId = table.Column<int>(type: "INTEGER", nullable: false),
-                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    ProfileId = table.Column<int>(type: "INTEGER", nullable: false),
                     Timestamp = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true)
                 },
                 constraints: table =>
@@ -70,6 +88,12 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                         name: "FK_Factory1Autoclave1ShiftDatas_Factory1Shifts_Factory1ShiftId",
                         column: x => x.Factory1ShiftId,
                         principalTable: "Factory1Shifts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Factory1Autoclave1ShiftDatas_Profiles_ProfileId",
+                        column: x => x.ProfileId,
+                        principalTable: "Profiles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -90,7 +114,7 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                     Factory1PackProductTypeId = table.Column<int>(type: "INTEGER", nullable: false),
                     PackProductCount = table.Column<int>(type: "INTEGER", nullable: false),
                     Factory1ShiftId = table.Column<int>(type: "INTEGER", nullable: false),
-                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    ProfileId = table.Column<int>(type: "INTEGER", nullable: false),
                     Timestamp = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true)
                 },
                 constraints: table =>
@@ -114,6 +138,12 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                         principalTable: "Factory1Shifts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Factory1GeneralShiftData_Profiles_ProfileId",
+                        column: x => x.ProfileId,
+                        principalTable: "Profiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -126,7 +156,7 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                     Factory1ProductTypeId = table.Column<int>(type: "INTEGER", nullable: false),
                     ProductCount = table.Column<int>(type: "INTEGER", nullable: false),
                     Factory1ShiftId = table.Column<int>(type: "INTEGER", nullable: false),
-                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    ProfileId = table.Column<int>(type: "INTEGER", nullable: false),
                     Timestamp = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true)
                 },
                 constraints: table =>
@@ -144,6 +174,12 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                         principalTable: "Factory1Shifts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Factory1Pack1ShiftDatas_Profiles_ProfileId",
+                        column: x => x.ProfileId,
+                        principalTable: "Profiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -159,7 +195,7 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                     Loose2RawValue = table.Column<double>(type: "REAL", nullable: false),
                     Loose3RawValue = table.Column<double>(type: "REAL", nullable: false),
                     Factory1ShiftId = table.Column<int>(type: "INTEGER", nullable: false),
-                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    ProfileId = table.Column<int>(type: "INTEGER", nullable: false),
                     Timestamp = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true)
                 },
                 constraints: table =>
@@ -177,6 +213,12 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                         principalTable: "Factory1Shifts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Factory1Press1ShiftData_Profiles_ProfileId",
+                        column: x => x.ProfileId,
+                        principalTable: "Profiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -190,7 +232,7 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                     Tank2LooseRawValue = table.Column<double>(type: "REAL", nullable: false),
                     Tank3LooseRawValue = table.Column<double>(type: "REAL", nullable: false),
                     Factory1ShiftId = table.Column<int>(type: "INTEGER", nullable: false),
-                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    ProfileId = table.Column<int>(type: "INTEGER", nullable: false),
                     Timestamp = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true)
                 },
                 constraints: table =>
@@ -200,6 +242,12 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                         name: "FK_Factory1Warehouse1ShiftData_Factory1Shifts_Factory1ShiftId",
                         column: x => x.Factory1ShiftId,
                         principalTable: "Factory1Shifts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Factory1Warehouse1ShiftData_Profiles_ProfileId",
+                        column: x => x.ProfileId,
+                        principalTable: "Profiles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -218,7 +266,7 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                     Place3ProductTypeId = table.Column<int>(type: "INTEGER", nullable: false),
                     Place3ProductsCount = table.Column<int>(type: "INTEGER", nullable: false),
                     Factory1ShiftId = table.Column<int>(type: "INTEGER", nullable: false),
-                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    ProfileId = table.Column<int>(type: "INTEGER", nullable: false),
                     Timestamp = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true)
                 },
                 constraints: table =>
@@ -248,6 +296,12 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                         principalTable: "Factory1Shifts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Factory1Warehouse2ShiftData_Profiles_ProfileId",
+                        column: x => x.ProfileId,
+                        principalTable: "Profiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -259,6 +313,11 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                 name: "IX_Factory1Autoclave1ShiftDatas_Factory1ShiftId",
                 table: "Factory1Autoclave1ShiftDatas",
                 column: "Factory1ShiftId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Factory1Autoclave1ShiftDatas_ProfileId",
+                table: "Factory1Autoclave1ShiftDatas",
+                column: "ProfileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Factory1GeneralShiftData_Factory1PackProductTypeId",
@@ -276,6 +335,11 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                 column: "Factory1ShiftId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Factory1GeneralShiftData_ProfileId",
+                table: "Factory1GeneralShiftData",
+                column: "ProfileId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Factory1Pack1ShiftDatas_Factory1ProductTypeId",
                 table: "Factory1Pack1ShiftDatas",
                 column: "Factory1ProductTypeId");
@@ -284,6 +348,11 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                 name: "IX_Factory1Pack1ShiftDatas_Factory1ShiftId",
                 table: "Factory1Pack1ShiftDatas",
                 column: "Factory1ShiftId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Factory1Pack1ShiftDatas_ProfileId",
+                table: "Factory1Pack1ShiftDatas",
+                column: "ProfileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Factory1Press1ShiftData_Factory1ProductTypeId",
@@ -296,9 +365,19 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                 column: "Factory1ShiftId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Factory1Press1ShiftData_ProfileId",
+                table: "Factory1Press1ShiftData",
+                column: "ProfileId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Factory1Warehouse1ShiftData_Factory1ShiftId",
                 table: "Factory1Warehouse1ShiftData",
                 column: "Factory1ShiftId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Factory1Warehouse1ShiftData_ProfileId",
+                table: "Factory1Warehouse1ShiftData",
+                column: "ProfileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Factory1Warehouse2ShiftData_Factory1ShiftId",
@@ -319,6 +398,11 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                 name: "IX_Factory1Warehouse2ShiftData_Place3ProductTypeId",
                 table: "Factory1Warehouse2ShiftData",
                 column: "Place3ProductTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Factory1Warehouse2ShiftData_ProfileId",
+                table: "Factory1Warehouse2ShiftData",
+                column: "ProfileId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -346,6 +430,9 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
 
             migrationBuilder.DropTable(
                 name: "Factory1Shifts");
+
+            migrationBuilder.DropTable(
+                name: "Profiles");
         }
     }
 }

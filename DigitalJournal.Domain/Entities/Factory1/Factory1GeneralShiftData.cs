@@ -14,8 +14,7 @@ namespace DigitalJournal.Domain.Entities.Factory1
         public DateTime Time { get; set; } = DateTime.Today;
 
         /// <summary> Вид товара </summary>
-        [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "Должен быть выбран вид товара")]
+        [Required, Range(1, int.MaxValue, ErrorMessage = "Должен быть выбран вид товара")]
         public int Factory1ProductTypeId { get; set; }
         /// <summary> Вид товара </summary>
         [ForeignKey(nameof(Factory1ProductTypeId))]
@@ -41,8 +40,7 @@ namespace DigitalJournal.Domain.Entities.Factory1
         public int AutoclaveNumber { get; set; }
 
         /// <summary> Вид товара упакованный </summary>
-        [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "Должен быть выбран вид товара упакованный")]
+        [Required, Range(1, int.MaxValue, ErrorMessage = "Должен быть выбран вид товара упакованный")]
         public int Factory1PackProductTypeId { get; set; }
         /// <summary> Вид товара упакованный </summary>
         [ForeignKey(nameof(Factory1PackProductTypeId))]
@@ -52,15 +50,17 @@ namespace DigitalJournal.Domain.Entities.Factory1
         public int PackProductCount { get; set; }
 
         /// <summary> Смена </summary>
-        [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "Должна быть выбрана смена")]
+        [Required, Range(1, int.MaxValue, ErrorMessage = "Должна быть выбрана смена")]
         public int Factory1ShiftId { get; set; }
         /// <summary> Cмена </summary>
         [ForeignKey(nameof(Factory1ShiftId))]
         public Factory1Shift Factory1Shift { get; set; }
 
         /// <summary> Мастер смены </summary>
-        [Required(ErrorMessage = "Должен быть выбран мастер смены")]
-        public string UserId { get; set; }
+        [Required, Range(1, int.MaxValue, ErrorMessage = "Должен быть выбран мастер смены")]
+        public int ProfileId { get; set; }
+        /// <summary> Мастер смены </summary>
+        [ForeignKey(nameof(ProfileId))]
+        public Profile Profile { get; set; }
     }
 }

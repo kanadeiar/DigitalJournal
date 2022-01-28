@@ -38,19 +38,19 @@
                             </tr>
                             <tr>
                                 <th>Фамилия:</th>
-                                <td class="text-break">@Model.User.SurName</td>
+                                <td class="text-break">@Model.Profile?.SurName</td>
                             </tr>
                             <tr>
                                 <th>Имя:</th>
-                                <td class="text-break">@Model.User.FirstName</td>
+                                <td class="text-break">@Model.Profile?.FirstName</td>
                             </tr>
                             <tr>
                                 <th>Отчество:</th>
-                                <td class="text-break">@Model.User.Patronymic</td>
+                                <td class="text-break">@Model.Profile?.Patronymic</td>
                             </tr>
                             <tr>
                                 <th>Дата рождения:</th>
-                                <td class="text-break">@Model.User.Birthday.ToString("dd.MM.yyyy")</td>
+                                <td class="text-break">@Model.Profile?.Birthday.ToString("dd.MM.yyyy")</td>
                             </tr>
                             <tr>
                                 <th>Роли пользователя:</th>

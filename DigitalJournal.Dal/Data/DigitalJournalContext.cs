@@ -4,6 +4,8 @@ namespace DigitalJournal.Dal.Data;
 
 public class DigitalJournalContext : DbContext
 {
+    public DbSet<Profile> Profiles { get; set; }
+
     public DbSet<Factory1Shift> Factory1Shifts { get; set; }
     public DbSet<Factory1ProductType> Factory1ProductTypes { get; set; }
 

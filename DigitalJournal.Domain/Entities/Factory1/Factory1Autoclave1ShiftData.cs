@@ -24,8 +24,7 @@ namespace DigitalJournal.Domain.Entities.Factory1
         public TimeSpan AutoclavedTime { get; set; }
 
         /// <summary> Вид товара </summary>
-        [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "Должен быть выбран вид товара")]
+        [Required, Range(1, int.MaxValue, ErrorMessage = "Должен быть выбран вид товара")]
         public int Factory1ProductTypeId { get; set; }
         /// <summary> Вид товара </summary>
         [ForeignKey(nameof(Factory1ProductTypeId))]
@@ -35,15 +34,17 @@ namespace DigitalJournal.Domain.Entities.Factory1
         public int AutoclavedCount { get; set; }
 
         /// <summary> Смена </summary>
-        [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "Должна быть выбрана смена")]
+        [Required, Range(1, int.MaxValue, ErrorMessage = "Должна быть выбрана смена")]
         public int Factory1ShiftId { get; set; }
         /// <summary> Cмена </summary>
         [ForeignKey(nameof(Factory1ShiftId))]
         public Factory1Shift Factory1Shift { get; set; }
 
-        /// <summary> Пресовщик </summary>
-        [Required(ErrorMessage = "Должен быть выбран пресовщик")]
-        public string UserId { get; set; }
+        /// <summary> Автоклавщик </summary>
+        [Required, Range(1, int.MaxValue, ErrorMessage = "Должен быть выбран автоклавщик")]
+        public int ProfileId { get; set; }
+        /// <summary> Автоклавщик </summary>
+        [ForeignKey(nameof(ProfileId))]
+        public Profile Profile { get; set; }
     }
 }

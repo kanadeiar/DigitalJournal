@@ -11,3 +11,4 @@ global using Microsoft.AspNetCore.Identity;
 global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 global using DigitalJournal.Domain.Identity;
 global using DigitalJournal.Domain.Entities.Factory1;
+global using DigitalJournal.Domain.Entities;

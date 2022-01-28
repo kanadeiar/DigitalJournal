@@ -46,7 +46,30 @@ public static class DigitalJournalSeedTestData
         await context.SaveChangesAsync();
         var shifts = await context.Factory1Shifts.ToDictionaryAsync(s => s.Id, s => s);
 
-        var userIds = (await userManager.FindByNameAsync(TestData.User.Username)).Id;
+        var adminUser = await userManager.FindByNameAsync(TestData.Admin.Username);
+        var adminProfile = new Profile
+        {
+            SurName = "Админов",
+            FirstName = "Админ",
+            Patronymic = "Админович",
+            Birthday = DateTime.Today.AddYears(-20),
+            UserId = adminUser.Id
+        };
+        var userUser = await userManager.FindByNameAsync(TestData.User.Username);
+        var userProfile = new Profile
+        {
+            SurName = "Пользователев",
+            FirstName = "Пользователь",
+            Patronymic = "Пользователевич",
+            Birthday = DateTime.Today.AddYears(-18),
+            UserId = userUser.Id
+        };
+        context.Profiles.AddRange(adminProfile, userProfile);
+        await context.SaveChangesAsync();
+        adminUser.ProfileId = adminProfile.Id;
+        await userManager.UpdateAsync(adminUser);
+        userUser.ProfileId = userProfile.Id;
+        await userManager.UpdateAsync(userUser);
 
         var w1sds = Enumerable.Range(1, 120).Select(i => new Factory1Warehouse1ShiftData
         {
@@ -55,7 +78,7 @@ public static class DigitalJournalSeedTestData
             Tank2LooseRawValue = _rnd.NextDouble() * 10.0 + 200.0,
             Tank3LooseRawValue = _rnd.NextDouble() * 10.0 + 300.0,
             Factory1Shift = shifts[i % 4 + 1],
-            UserId = userIds,
+            Profile = userProfile,
         });
         context.Factory1Warehouse1ShiftData.AddRange(w1sds);
         await context.SaveChangesAsync();
@@ -69,7 +92,7 @@ public static class DigitalJournalSeedTestData
             Loose2RawValue = _rnd.NextDouble() * 10.0,
             Loose3RawValue = _rnd.NextDouble() * 10.0,
             Factory1Shift = shifts[i % 4 + 1],
-            UserId = userIds,
+            Profile = userProfile,
         });
         context.Factory1Press1ShiftData.AddRange(p1sds);
         await context.SaveChangesAsync();
@@ -82,7 +105,7 @@ public static class DigitalJournalSeedTestData
             AutoclavedTime = new TimeSpan(1, _rnd.Next(59), 0),
             Factory1ProductType = products[i % 4 + 1],
             Factory1Shift = shifts[i % 4 + 1],
-            UserId = userIds,
+            Profile = userProfile,
         });
         context.Factory1Autoclave1ShiftDatas.AddRange(a1sds);
         await context.SaveChangesAsync();
@@ -93,7 +116,7 @@ public static class DigitalJournalSeedTestData
             Factory1ProductType = products[i % 4 + 1],
             ProductCount = _rnd.Next(80, 120),
             Factory1Shift = shifts[i % 4 + 1],
-            UserId = userIds,
+            Profile = userProfile,
         });
         context.Factory1Pack1ShiftDatas.AddRange(pk1sds);
         await context.SaveChangesAsync();
@@ -108,7 +131,7 @@ public static class DigitalJournalSeedTestData
             Place3ProductType = products[3],
             Place3ProductsCount = _rnd.Next(80, 120),
             Factory1Shift = shifts[i % 4 + 1],
-            UserId = userIds,
+            Profile = userProfile,
         });
         context.Factory1Warehouse2ShiftData.AddRange(w2sds);
         await context.SaveChangesAsync();

@@ -3,16 +3,18 @@ using System;
 using DigitalJournal.Dal.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace DigitalJournal.Dal.Migrations.DigitalJournal
+namespace DigitalJournal.Dal.Migrations
 {
     [DbContext(typeof(DigitalJournalContext))]
-    partial class DigitalJournalContextModelSnapshot : ModelSnapshot
+    [Migration("20220128103239_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.1");
@@ -38,6 +40,9 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                     b.Property<int>("Factory1ShiftId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("ProfileId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("Time")
                         .HasColumnType("TEXT");
 
@@ -49,15 +54,13 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("BLOB");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
 
                     b.HasIndex("Factory1ProductTypeId");
 
                     b.HasIndex("Factory1ShiftId");
+
+                    b.HasIndex("ProfileId");
 
                     b.ToTable("Factory1Autoclave1ShiftDatas");
                 });
@@ -95,6 +98,9 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                     b.Property<int>("ProductCount")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("ProfileId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("Time")
                         .HasColumnType("TEXT");
 
@@ -103,10 +109,6 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("BLOB");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
 
                     b.HasIndex("Factory1PackProductTypeId");
@@ -114,6 +116,8 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                     b.HasIndex("Factory1ProductTypeId");
 
                     b.HasIndex("Factory1ShiftId");
+
+                    b.HasIndex("ProfileId");
 
                     b.ToTable("Factory1GeneralShiftData");
                 });
@@ -133,6 +137,9 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                     b.Property<int>("ProductCount")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("ProfileId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("Time")
                         .HasColumnType("TEXT");
 
@@ -141,15 +148,13 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("BLOB");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
 
                     b.HasIndex("Factory1ProductTypeId");
 
                     b.HasIndex("Factory1ShiftId");
+
+                    b.HasIndex("ProfileId");
 
                     b.ToTable("Factory1Pack1ShiftDatas");
                 });
@@ -178,6 +183,9 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                     b.Property<int>("ProductCount")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("ProfileId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("Time")
                         .HasColumnType("TEXT");
 
@@ -186,15 +194,13 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("BLOB");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
 
                     b.HasIndex("Factory1ProductTypeId");
 
                     b.HasIndex("Factory1ShiftId");
+
+                    b.HasIndex("ProfileId");
 
                     b.ToTable("Factory1Press1ShiftData");
                 });
@@ -262,6 +268,9 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                     b.Property<int>("Factory1ShiftId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("ProfileId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<double>("Tank1LooseRawValue")
                         .HasColumnType("REAL");
 
@@ -279,13 +288,11 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("BLOB");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
 
                     b.HasIndex("Factory1ShiftId");
+
+                    b.HasIndex("ProfileId");
 
                     b.ToTable("Factory1Warehouse1ShiftData");
                 });
@@ -317,7 +324,54 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                     b.Property<int>("Place3ProductsCount")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("ProfileId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("Time")
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("Timestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Factory1ShiftId");
+
+                    b.HasIndex("Place1ProductTypeId");
+
+                    b.HasIndex("Place2ProductTypeId");
+
+                    b.HasIndex("Place3ProductTypeId");
+
+                    b.HasIndex("ProfileId");
+
+                    b.ToTable("Factory1Warehouse2ShiftData");
+                });
+
+            modelBuilder.Entity("DigitalJournal.Domain.Entities.Profile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("Birthday")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Patronymic")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SurName")
+                        .IsRequired()
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<byte[]>("Timestamp")
@@ -331,15 +385,7 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Factory1ShiftId");
-
-                    b.HasIndex("Place1ProductTypeId");
-
-                    b.HasIndex("Place2ProductTypeId");
-
-                    b.HasIndex("Place3ProductTypeId");
-
-                    b.ToTable("Factory1Warehouse2ShiftData");
+                    b.ToTable("Profiles");
                 });
 
             modelBuilder.Entity("DigitalJournal.Domain.Entities.Factory1.Factory1Autoclave1ShiftData", b =>
@@ -356,9 +402,17 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("DigitalJournal.Domain.Entities.Profile", "Profile")
+                        .WithMany()
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Factory1ProductType");
 
                     b.Navigation("Factory1Shift");
+
+                    b.Navigation("Profile");
                 });
 
             modelBuilder.Entity("DigitalJournal.Domain.Entities.Factory1.Factory1GeneralShiftData", b =>
@@ -381,11 +435,19 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("DigitalJournal.Domain.Entities.Profile", "Profile")
+                        .WithMany()
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Factory1PackProductType");
 
                     b.Navigation("Factory1ProductType");
 
                     b.Navigation("Factory1Shift");
+
+                    b.Navigation("Profile");
                 });
 
             modelBuilder.Entity("DigitalJournal.Domain.Entities.Factory1.Factory1Pack1ShiftData", b =>
@@ -402,9 +464,17 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("DigitalJournal.Domain.Entities.Profile", "Profile")
+                        .WithMany()
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Factory1ProductType");
 
                     b.Navigation("Factory1Shift");
+
+                    b.Navigation("Profile");
                 });
 
             modelBuilder.Entity("DigitalJournal.Domain.Entities.Factory1.Factory1Press1ShiftData", b =>
@@ -421,9 +491,17 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("DigitalJournal.Domain.Entities.Profile", "Profile")
+                        .WithMany()
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Factory1ProductType");
 
                     b.Navigation("Factory1Shift");
+
+                    b.Navigation("Profile");
                 });
 
             modelBuilder.Entity("DigitalJournal.Domain.Entities.Factory1.Factory1Warehouse1ShiftData", b =>
@@ -434,7 +512,15 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("DigitalJournal.Domain.Entities.Profile", "Profile")
+                        .WithMany()
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Factory1Shift");
+
+                    b.Navigation("Profile");
                 });
 
             modelBuilder.Entity("DigitalJournal.Domain.Entities.Factory1.Factory1Warehouse2ShiftData", b =>
@@ -463,6 +549,12 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("DigitalJournal.Domain.Entities.Profile", "Profile")
+                        .WithMany()
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Factory1Shift");
 
                     b.Navigation("Place1ProductType");
@@ -470,6 +562,8 @@ namespace DigitalJournal.Dal.Migrations.DigitalJournal
                     b.Navigation("Place2ProductType");
 
                     b.Navigation("Place3ProductType");
+
+                    b.Navigation("Profile");
                 });
 #pragma warning restore 612, 618
         }
