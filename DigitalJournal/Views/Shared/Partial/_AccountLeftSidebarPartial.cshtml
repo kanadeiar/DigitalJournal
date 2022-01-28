@@ -17,6 +17,19 @@
                     Смена пароля
                 </a>
             </li>
+            @if (User.IsInRole("admins"))
+            {
+                <li class="nav-item bg-light">
+                    <a asp-controller="Role" asp-action="Index" class="nav-link text-dark">
+                        Роли пользователей
+                    </a>
+                </li>
+                <li class="nav-item bg-light">
+                    <a asp-controller="User" asp-action="Index" class="nav-link text-dark">
+                        Пользователи
+                    </a>
+                </li>
+            }
         </ul>
     </div>
 </div>

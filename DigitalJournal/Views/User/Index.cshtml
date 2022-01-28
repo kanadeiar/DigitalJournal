@@ -1,0 +1,88 @@
+﻿@model IEnumerable<DigitalJournal.Controllers.UserController.UserWebModel>
+@{
+    ViewBag.Title = "Список пользователей";
+}
+
+<div class="row">
+    <div class="col-md-4 col-lg-3 mb-1">
+        <partial name="Partial/_AccountLeftSidebarPartial" />
+    </div>
+    <div class="col-md-8 col-lg-9 mb-1">
+        <div class="border-1 bg-light shadow rounded-1 p-2">
+            <h1>@ViewBag.Title</h1>
+            <div class="table-responsive">
+                <div class="my-2">
+                    <a asp-controller="User" asp-action="Create" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Создать нового пользователя">
+                        Создать
+                    </a>
+                    <a asp-controller="User" asp-action="Trashes" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Показать корзину удаленных пользователей">
+                        <i class="fas fa-trash"></i>
+                        Корзина
+                    </a>
+                </div>
+                <table class="table my-2 table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Фамилия</th>
+                            <th>Имя</th>
+                            <th>Отчество</th>
+                            <th>Логин</th>
+                            <th>Почта</th>
+                            <th>День рождения</th>
+                            <th>Лет</th>
+                            <th>Роли</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model is null || Model.Count() == 0)
+                        {
+                            <tr>
+                                <td colspan="9" class="text-center">Нет пользователей в системе</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var user in Model)
+                            {
+                                <tr>
+                                    <td>@user.SurName</td>
+                                    <td>@user.FirstName</td>
+                                    <td>@user.Patronymic</td>
+                                    <td>@user.UserName</td>
+                                    <td>@user.Email</td>
+                                    <td>@user.BirthDay.ToString("dd.MM.yyyy")</td>
+                                    <td>@user.Age</td>
+                                    <td>
+                                        @if (!user.RolesNames.Any())
+                                        {
+                                            <span>[отсутствуют]</span>
+                                        }
+                                        else
+                                        {
+                                            foreach (var r in user.RolesNames)
+                                            {
+                                                <span>@r </span>
+                                            }
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        @if (User.IsInRole("admins"))
+                                        {
+                                            <a asp-controller="User" asp-action="Edit" asp-route-id="@user.Id" data-bs-toggle="tooltip" data-bs-placement="top" title="Редактировать пользователя" class="btn btn-sm btn-info mb-1">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                            <a asp-controller="User" asp-action="Totrash" asp-route-id="@user.Id" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Поместить пользователя в корзину" class="btn btn-sm btn-warning mb-1">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -23,8 +23,7 @@ namespace DigitalJournal.Domain.Entities.Factory1
         public int Place1ProductsCount { get; set; }
 
         /// <summary> Вид товара на месте хранения 2 </summary>
-        [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "Должен быть выбран вид товара на месте хранения 2")]
+        [Required, Range(1, int.MaxValue, ErrorMessage = "Должен быть выбран вид товара на месте хранения 2")]
         public int Place2ProductTypeId { get; set; }
         /// <summary> Вид товара на месте хранений 2 </summary>
         [ForeignKey(nameof(Place2ProductTypeId))]
@@ -33,8 +32,7 @@ namespace DigitalJournal.Domain.Entities.Factory1
         public int Place2ProductsCount { get; set; }
 
         /// <summary> Вид товара на месте хранения 3 </summary>
-        [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "Должен быть выбран вид товара на месте хранения 3")]
+        [Required, Range(1, int.MaxValue, ErrorMessage = "Должен быть выбран вид товара на месте хранения 3")]
         public int Place3ProductTypeId { get; set; }
         /// <summary> Вид товара на месте хранений 3 </summary>
         [ForeignKey(nameof(Place3ProductTypeId))]
@@ -43,15 +41,17 @@ namespace DigitalJournal.Domain.Entities.Factory1
         public int Place3ProductsCount { get; set; }
 
         /// <summary> Смена </summary>
-        [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "Должна быть выбрана смена")]
+        [Required, Range(1, int.MaxValue, ErrorMessage = "Должна быть выбрана смена")]
         public int Factory1ShiftId { get; set; }
         /// <summary> Cмена </summary>
         [ForeignKey(nameof(Factory1ShiftId))]
         public Factory1Shift Factory1Shift { get; set; }
 
         /// <summary> Кладовщик </summary>
-        [Required(ErrorMessage = "Должен быть выбран кладовщик")]
-        public string UserId { get; set; }
+        [Required, Range(1, int.MaxValue, ErrorMessage = "Должен быть выбран кладовщик")]
+        public int ProfileId { get; set; }
+        /// <summary> Кладовщик </summary>
+        [ForeignKey(nameof(ProfileId))]
+        public Profile Profile { get; set; }
     }
 }

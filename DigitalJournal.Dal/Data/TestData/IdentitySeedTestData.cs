@@ -48,10 +48,6 @@ public static class IdentitySeedTestData
         {
             var adminUser = new User
             {
-                SurName = "Админов",
-                FirstName = "Админ",
-                Patronymic = "Админович",
-                Birthday = DateTime.Today.AddYears(-22),
                 UserName = TestData.Admin.Username,
                 Email = TestData.Admin.Email,
             };
@@ -72,10 +68,6 @@ public static class IdentitySeedTestData
         {
             var user = new User
             {
-                SurName = "Пользователев",
-                FirstName = "Пользователь",
-                Patronymic = "Пользователевич",
-                Birthday = DateTime.Today.AddYears(-18),
                 UserName = TestData.User.Username,
                 Email = TestData.User.Email,
             };
