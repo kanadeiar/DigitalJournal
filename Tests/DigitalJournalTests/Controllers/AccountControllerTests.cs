@@ -903,54 +903,56 @@ public class AccountControllerTests
     }
 
     #endregion
-}
 
-#region Вспомогательное
+    #region Вспомогательное
 
-public class UserManagerMock : UserManager<User>
-{
-    /// <summary> Мок подменяющий сервис управления пользователями </summary>
-    public UserManagerMock()
-        : base(new Mock<IUserStore<User>>().Object,
-            new Mock<IOptions<IdentityOptions>>().Object,
-            new Mock<IPasswordHasher<User>>().Object,
-            new IUserValidator<User>[0],
-            new IPasswordValidator<User>[0],
-            new Mock<ILookupNormalizer>().Object,
-            new Mock<IdentityErrorDescriber>().Object,
-            new Mock<IServiceProvider>().Object,
-            new Mock<ILogger<UserManager<User>>>().Object)
+    public class UserManagerMock : UserManager<User>
     {
+        /// <summary> Мок подменяющий сервис управления пользователями </summary>
+        public UserManagerMock()
+            : base(new Mock<IUserStore<User>>().Object,
+                new Mock<IOptions<IdentityOptions>>().Object,
+                new Mock<IPasswordHasher<User>>().Object,
+                new IUserValidator<User>[0],
+                new IPasswordValidator<User>[0],
+                new Mock<ILookupNormalizer>().Object,
+                new Mock<IdentityErrorDescriber>().Object,
+                new Mock<IServiceProvider>().Object,
+                new Mock<ILogger<UserManager<User>>>().Object)
+        {
+        }
     }
-}
 
-public class RoleManagerMock : RoleManager<Role>
-{
-    /// <summary> Мок подменяющий сервис управления ролями </summary>
-    public RoleManagerMock()
-        : base(new Mock<IRoleStore<Role>>().Object,
-            new IRoleValidator<Role>[0],
-            new Mock<ILookupNormalizer>().Object,
-            new Mock<IdentityErrorDescriber>().Object,
-            new Mock<ILogger<RoleManager<Role>>>().Object)
+    public class RoleManagerMock : RoleManager<Role>
     {
+        /// <summary> Мок подменяющий сервис управления ролями </summary>
+        public RoleManagerMock()
+            : base(new Mock<IRoleStore<Role>>().Object,
+                new IRoleValidator<Role>[0],
+                new Mock<ILookupNormalizer>().Object,
+                new Mock<IdentityErrorDescriber>().Object,
+                new Mock<ILogger<RoleManager<Role>>>().Object)
+        {
+        }
     }
-}
 
-public class SignInManagerMock : SignInManager<User>
-{
-    /// <summary> Мок подменяющий вход/выход пользователей </summary>
-    public SignInManagerMock()
-        : base(new Mock<UserManagerMock>().Object,
-            new HttpContextAccessor(),
-            new Mock<IUserClaimsPrincipalFactory<User>>().Object,
-            new Mock<IOptions<IdentityOptions>>().Object,
-            new Mock<ILogger<SignInManager<User>>>().Object,
-            new Mock<IAuthenticationSchemeProvider>().Object,
-            new Mock<IUserConfirmation<User>>().Object)
+    public class SignInManagerMock : SignInManager<User>
     {
+        /// <summary> Мок подменяющий вход/выход пользователей </summary>
+        public SignInManagerMock()
+            : base(new Mock<UserManagerMock>().Object,
+                new HttpContextAccessor(),
+                new Mock<IUserClaimsPrincipalFactory<User>>().Object,
+                new Mock<IOptions<IdentityOptions>>().Object,
+                new Mock<ILogger<SignInManager<User>>>().Object,
+                new Mock<IAuthenticationSchemeProvider>().Object,
+                new Mock<IUserConfirmation<User>>().Object)
+        {
+        }
     }
+
+    #endregion
 }
 
-#endregion
+
 

@@ -7,13 +7,11 @@ public class UserController : Controller
 {
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<Role> _roleManager;
-    private readonly SignInManager<User> _signInManager;
     private readonly DigitalJournalContext _context;
-    public UserController(UserManager<User> userManager, RoleManager<Role> roleManager, SignInManager<User> signInManager, DigitalJournalContext context)
+    public UserController(UserManager<User> userManager, RoleManager<Role> roleManager, DigitalJournalContext context)
     {
         _userManager = userManager;
         _roleManager = roleManager;
-        _signInManager = signInManager;
         _context = context;
     }
 
