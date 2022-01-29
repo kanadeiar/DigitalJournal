@@ -8,14 +8,12 @@ public class AccountController : Controller
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<Role> _roleManager;
     private readonly SignInManager<User> _signInManager;
-    private readonly IdentityContext _context;
     private readonly DigitalJournalContext _journalContext;
-    public AccountController(UserManager<User> userManager, RoleManager<Role> roleManager, SignInManager<User> signInManager, IdentityContext context, DigitalJournalContext journalContext)
+    public AccountController(UserManager<User> userManager, RoleManager<Role> roleManager, SignInManager<User> signInManager, DigitalJournalContext journalContext)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _signInManager = signInManager;
-        _context = context;
         _journalContext = journalContext;
     }
 
@@ -28,7 +26,7 @@ public class AccountController : Controller
             model.User = await _userManager.FindByNameAsync(User.Identity.Name);
             model.Profile = await _journalContext.Profiles.SingleOrDefaultAsync(p => p.Id == model.User.ProfileId);
             var roles = await _userManager.GetRolesAsync(model.User);
-            model.UserRoleNames = _roleManager.Roles.Where(r => roles.Contains(r.Name)).Select(r => r.Description);
+            model.UserRoleNames = _roleManager.Roles.Where(r => roles.Contains(r.Name)).Select(r => r.Description).ToArray();
         }
         return View(model);
     }
