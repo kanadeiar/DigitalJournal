@@ -90,7 +90,7 @@ public class AccountController : Controller
             return LocalRedirect(model.ReturnUrl ?? "/");
         }
         ModelState.AddModelError("", "Ошибка в имени пользователя, либо в пароле при входе в систему");
-        return View();
+        return View(new LoginWebModel { UserName = model.UserName, ReturnUrl = model.ReturnUrl });
     }
 
     public async Task<IActionResult> Edit()
@@ -140,7 +140,7 @@ public class AccountController : Controller
                 ModelState.AddModelError("", error);
             }
         }
-        return View();
+        return View(model);
     }
 
     public IActionResult Password()
@@ -198,6 +198,8 @@ public class AccountController : Controller
 
     #endregion
 
+    #region Вебмодели
+
     /// <summary> Вебмодель сведения о пользователе </summary>
     public class IndexWebModel
     {
@@ -218,7 +220,7 @@ public class AccountController : Controller
 
         [Required(ErrorMessage = "Имя обязательно для пользователя")]
         [StringLength(200, MinimumLength = 3, ErrorMessage = "Имя должно быть длинной от 3 до 200 символов")]
-        [Display(Name = "Имя пользователя")]        
+        [Display(Name = "Имя пользователя")]
         public string FirstName { get; set; }
 
         [Required(ErrorMessage = "Отчество обязательно для пользователя")]
@@ -315,5 +317,7 @@ public class AccountController : Controller
         [Compare(nameof(Password), ErrorMessage = "Пароли не совпадают")]
         public string PasswordConfirm { get; set; }
     }
+
+    #endregion
 }
 
