@@ -17,6 +17,9 @@ builder.Host.ConfigureServices(services =>
     services.AddRazorPages().AddRazorRuntimeCompilation();
 
     services.AddBlazoredToast();
+
+    services.AddScoped<IAccountService, AccountService>();
+
 });
 builder.Services.AddServerSideBlazor();
 

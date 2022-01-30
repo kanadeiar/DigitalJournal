@@ -21,8 +21,4 @@
 	  <ProjectReference Include="..\..\DigitalJournal\DigitalJournal.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Services\" />
-	</ItemGroup>
-
 </Project>

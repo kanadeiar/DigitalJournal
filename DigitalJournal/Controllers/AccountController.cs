@@ -1,4 +1,4 @@
-﻿using DigitalJournal.Domain.Entities;
+﻿using DigitalJournal.Services.Interfaces;
 
 namespace DigitalJournal.Controllers;
 
@@ -9,24 +9,32 @@ public class AccountController : Controller
     private readonly RoleManager<Role> _roleManager;
     private readonly SignInManager<User> _signInManager;
     private readonly DigitalJournalContext _journalContext;
-    public AccountController(UserManager<User> userManager, RoleManager<Role> roleManager, SignInManager<User> signInManager, DigitalJournalContext journalContext)
+    private readonly IAccountService _accountService;
+
+    //public AccountController(UserManager<User> userManager, RoleManager<Role> roleManager, SignInManager<User> signInManager, DigitalJournalContext journalContext)
+    //{
+    //    _userManager = userManager;
+    //    _roleManager = roleManager;
+    //    _signInManager = signInManager;
+    //    _journalContext = journalContext;
+    //}
+
+    public AccountController(UserManager<User> userManager, RoleManager<Role> roleManager, SignInManager<User> signInManager, DigitalJournalContext journalContext, IAccountService accountService)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _signInManager = signInManager;
         _journalContext = journalContext;
+        _accountService = accountService;
     }
 
     [AllowAnonymous]
     public async Task<IActionResult> Index()
     {
-        var model = new IndexWebModel();
+        var model = new Services.Interfaces.IndexWebModel();
         if (User.Identity.IsAuthenticated)
         {
-            model.User = await _userManager.FindByNameAsync(User.Identity.Name);
-            model.Profile = await _journalContext.Profiles.SingleOrDefaultAsync(p => p.Id == model.User.ProfileId);
-            var roles = await _userManager.GetRolesAsync(model.User);
-            model.UserRoleNames = _roleManager.Roles.Where(r => roles.Contains(r.Name)).Select(r => r.Description).ToArray();
+            model = await _accountService.GetIndexWebModel(User.Identity.Name);
         }
         return View(model);
     }

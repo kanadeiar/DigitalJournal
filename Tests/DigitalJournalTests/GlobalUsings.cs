@@ -16,6 +16,7 @@ global using Microsoft.AspNetCore.Authentication;
 global using Microsoft.AspNetCore.Http;
 global using Microsoft.EntityFrameworkCore;
 
+global using DigitalJournal.Services.Interfaces;
 global using DigitalJournal.Controllers;
 global using DigitalJournal.Domain.Identity;
 global using DigitalJournal.Dal.Data;
