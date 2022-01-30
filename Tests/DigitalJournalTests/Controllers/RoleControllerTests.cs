@@ -626,7 +626,7 @@ public class RoleControllerTests
         using var journalContext = new DigitalJournalContext(journalContextOptions);
         var controller = new RoleController(userManagerStub, roleManagerMock.Object, journalContext);
 
-        var result = controller.IsNameFree(expectedName, "").Result;
+        var result = controller.IsNameFree(expectedName, string.Empty).Result;
 
         Assert
             .IsInstanceOfType(result, typeof(JsonResult));
