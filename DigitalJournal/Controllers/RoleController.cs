@@ -68,8 +68,6 @@ public class RoleController : Controller
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(RoleEditWebModel model)
     {
-        if (model is null)
-            return BadRequest();
         if (!ModelState.IsValid)
             return View(model);
         var role = await _roleManager.FindByIdAsync(model.Id);

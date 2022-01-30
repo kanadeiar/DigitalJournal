@@ -877,8 +877,6 @@ public class AccountControllerTests
     public void IsNameFree_SendRequest_ShouldCorrectJson()
     {
         var expectedName = "TestName";
-        var loggerStub = Mock
-            .Of<ILogger<AccountController>>();
         var userManagerMock = new Mock<UserManagerMock>();
         userManagerMock
             .Setup(_ => _.FindByNameAsync(It.IsAny<string>()));
