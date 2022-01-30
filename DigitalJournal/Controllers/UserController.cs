@@ -7,13 +7,11 @@ public class UserController : Controller
 {
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<Role> _roleManager;
-    private readonly SignInManager<User> _signInManager;
     private readonly DigitalJournalContext _context;
-    public UserController(UserManager<User> userManager, RoleManager<Role> roleManager, SignInManager<User> signInManager, DigitalJournalContext context)
+    public UserController(UserManager<User> userManager, RoleManager<Role> roleManager, DigitalJournalContext context)
     {
         _userManager = userManager;
         _roleManager = roleManager;
-        _signInManager = signInManager;
         _context = context;
     }
 
@@ -41,7 +39,7 @@ public class UserController : Controller
         }
         foreach (var m in models)
         {
-            m.RolesNames = m.RolesNames.Select(r => _roleManager.Roles.First(rr => rr.Name == r).Description);
+            m.RolesNames = m.RolesNames.Select(r => _roleManager.Roles.First(rr => rr.Name == r).Description).ToArray();
         }
         return View(models);
     }
@@ -114,8 +112,6 @@ public class UserController : Controller
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(UserEditWebModel model, List<string> roles)
     {
-        if (model is null)
-            return BadRequest();
         if (!ModelState.IsValid)
             return View(model);
         var user = await _userManager.FindByIdAsync(model.Id);
@@ -147,8 +143,8 @@ public class UserController : Controller
                 await _context.SaveChangesAsync();
                 newUser.ProfileId = profile.Id;
                 await _userManager.UpdateAsync(newUser);
+                await _userManager.AddToRolesAsync(newUser, roles);
             }
-            await _userManager.AddToRolesAsync(newUser, roles);
         }
         else
         {
@@ -164,17 +160,17 @@ public class UserController : Controller
                 profile.Birthday = model.Birthday;
                 _context.Profiles.Update(profile);
                 await _context.SaveChangesAsync();
+                var userRoles = await _userManager.GetRolesAsync(user);
+                var addedRoles = roles.Except(userRoles);
+                var removedRoles = userRoles.Except(roles);
+                await _userManager.AddToRolesAsync(user, addedRoles);
+                await _userManager.RemoveFromRolesAsync(user, removedRoles);
             }
             if (result.Succeeded && !string.IsNullOrEmpty(model.Password))
             {
                 await _userManager.RemovePasswordAsync(user);
-                result = await _userManager.AddPasswordAsync(user, model.Password);
+                await _userManager.AddPasswordAsync(user, model.Password);
             }
-            var userRoles = await _userManager.GetRolesAsync(user);
-            var addedRoles = roles.Except(userRoles);
-            var removedRoles = userRoles.Except(roles);
-            await _userManager.AddToRolesAsync(user, addedRoles);
-            await _userManager.RemoveFromRolesAsync(user, removedRoles);
         }
         if (result.Succeeded)
             return RedirectToAction("Index", "User");
@@ -243,7 +239,7 @@ public class UserController : Controller
         if (user.UserName == "admin")
             return BadRequest();
         await _userManager.DeleteAsync(user);
-        return RedirectToAction("Index", "User");
+        return RedirectToAction("Trashes", "User");
     }
 
     #region WebAPI

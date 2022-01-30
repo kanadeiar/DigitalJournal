@@ -13,21 +13,24 @@ public class RoleController : Controller
         _context = context;
     }
 
+    /// <summary> Обзор всех ролей </summary>
+    /// <returns>Роли пользователей</returns>
     public async Task<IActionResult> Index()
     {
         var roles = _roleManager.Roles;
-        var models = await roles.Select(r => new RoleWebModel
+        var models = roles.Select(r => new RoleWebModel
         {
             Id = r.Id,
             Name = r.Name,
             Description = r.Description,
-        }).ToListAsync();
+        }).ToArray();
         foreach (var item in models)
         {
-            var users = (await _userManager.GetUsersInRoleAsync(item.Name)).Select(u => _context.Profiles.Single(p => p.Id == u.ProfileId));
-            string result = !users.Any()
+            var users = await _userManager.GetUsersInRoleAsync(item.Name);
+            var profiles = users.Select(u => _context.Profiles.Single(p => p.Id == u.ProfileId));
+            string result = !profiles.Any()
                 ? "Нет пользователей"
-                : string.Join(", ", users.Take(3).Select(u => $"{u.SurName} {u.FirstName[0]}. {u.Patronymic[0]}.").ToArray());
+                : string.Join(", ", profiles.Take(3).Select(u => $"{u.SurName} {u.FirstName[0]}. {u.Patronymic[0]}.").ToArray());
             item.UsersNames = users.Count() > 5 ? $"{result}, и др." : result;
             item.UsersCount = users.Count();
         };
@@ -65,8 +68,6 @@ public class RoleController : Controller
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(RoleEditWebModel model)
     {
-        if (model is null)
-            return BadRequest();
         if (!ModelState.IsValid)
             return View(model);
         var role = await _roleManager.FindByIdAsync(model.Id);
