@@ -36,13 +36,21 @@ public static class IdentitySeedTestData
         UserManager<User> userManager = provider.GetRequiredService<UserManager<User>>();
         RoleManager<Role> roleManager = provider.GetRequiredService<RoleManager<Role>>();
 
-        if (await roleManager.FindByNameAsync(TestData.Admin.Rolename) is null)
+        if (await roleManager.FindByNameAsync(TestData.AdminRole.Name) is null)
         {
             await roleManager.CreateAsync(new Role { Name = TestData.AdminRole.Name, Description = TestData.AdminRole.Description });
         }
-        if (await roleManager.FindByNameAsync(TestData.User.Rolename) is null)
+        if (await roleManager.FindByNameAsync(TestData.UserRole.Name) is null)
         {
             await roleManager.CreateAsync(new Role { Name = TestData.UserRole.Name, Description = TestData.UserRole.Description });
+        }
+        if (await roleManager.FindByNameAsync(TestData.MasterRole.Name) is null)
+        {
+            await roleManager.CreateAsync(new Role { Name = TestData.MasterRole.Name, Description = TestData.MasterRole.Description });
+        }
+        if (await roleManager.FindByNameAsync(TestData.OperatorRole.Name) is null)
+        {
+            await roleManager.CreateAsync(new Role { Name = TestData.OperatorRole.Name, Description = TestData.OperatorRole.Description });
         }
         if (await userManager.FindByNameAsync(TestData.Admin.Username) is null)
         {
@@ -56,6 +64,8 @@ public static class IdentitySeedTestData
             {
                 await userManager.AddToRoleAsync(adminUser, TestData.Admin.Rolename);
                 await userManager.AddToRoleAsync(adminUser, TestData.User.Rolename);
+                await userManager.AddToRoleAsync(adminUser, TestData.Master.Rolename);
+                await userManager.AddToRoleAsync(adminUser, TestData.Operator.Rolename);
             }
             else
             {
@@ -75,6 +85,45 @@ public static class IdentitySeedTestData
             if (result.Succeeded)
             {
                 await userManager.AddToRoleAsync(user, TestData.User.Rolename);
+            }
+            else
+            {
+                var errors = result.Errors.Select(e => e.Description).ToArray();
+                logger.LogError("Учётная запись пользователя {0} не создана по причине: {1}", user.UserName, string.Join(",", errors));
+                throw new InvalidOperationException($"Ошибка при создании пользователя {user.UserName}, список ошибок: {string.Join(",", errors)}");
+            }
+        }
+        if (await userManager.FindByNameAsync(TestData.Master.Username) is null)
+        {
+            var user = new User
+            {
+                UserName = TestData.Master.Username,
+                Email = TestData.Master.Email,
+            };
+            var result = await userManager.CreateAsync(user, TestData.Master.Password);
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(user, TestData.Master.Rolename);
+                await userManager.AddToRoleAsync(user, TestData.Operator.Rolename);
+            }
+            else
+            {
+                var errors = result.Errors.Select(e => e.Description).ToArray();
+                logger.LogError("Учётная запись пользователя {0} не создана по причине: {1}", user.UserName, string.Join(",", errors));
+                throw new InvalidOperationException($"Ошибка при создании пользователя {user.UserName}, список ошибок: {string.Join(",", errors)}");
+            }
+        }
+        if (await userManager.FindByNameAsync(TestData.Operator.Username) is null)
+        {
+            var user = new User
+            {
+                UserName = TestData.Operator.Username,
+                Email = TestData.Operator.Email,
+            };
+            var result = await userManager.CreateAsync(user, TestData.Operator.Password);
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(user, TestData.Operator.Rolename);
             }
             else
             {

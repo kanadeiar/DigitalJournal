@@ -64,12 +64,34 @@ public static class DigitalJournalSeedTestData
             Birthday = DateTime.Today.AddYears(-18),
             UserId = userUser.Id
         };
-        context.Profiles.AddRange(adminProfile, userProfile);
+        var masterUser = await userManager.FindByNameAsync(TestData.Master.Username);
+        var masterProfile = new Profile
+        {
+            SurName = "Мастеров",
+            FirstName = "Мастер",
+            Patronymic = "Мастерович",
+            Birthday = DateTime.Today.AddYears(-18),
+            UserId = masterUser.Id
+        };
+        var operatorUser = await userManager.FindByNameAsync(TestData.Operator.Username);
+        var operatorProfile = new Profile
+        {
+            SurName = "Операторов",
+            FirstName = "Оператор",
+            Patronymic = "Операторович",
+            Birthday = DateTime.Today.AddYears(-18),
+            UserId = masterUser.Id
+        };
+        context.Profiles.AddRange(adminProfile, userProfile, masterProfile, operatorProfile);
         await context.SaveChangesAsync();
         adminUser.ProfileId = adminProfile.Id;
         await userManager.UpdateAsync(adminUser);
         userUser.ProfileId = userProfile.Id;
         await userManager.UpdateAsync(userUser);
+        masterUser.ProfileId = masterProfile.Id;
+        await userManager.UpdateAsync(masterUser);
+        operatorUser.ProfileId = operatorProfile.Id;
+        await userManager.UpdateAsync(operatorUser);
 
         var w1sds = Enumerable.Range(1, 120).Select(i => new Factory1Warehouse1ShiftData
         {
