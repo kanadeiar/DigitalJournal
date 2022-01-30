@@ -5,6 +5,7 @@ global using System.Text;
 global using System.Threading.Tasks;
 global using System.Security.Claims;
 global using Moq;
+global using Bunit;
 
 global using Microsoft.VisualStudio.TestTools.UnitTesting;
 global using Microsoft.AspNetCore.Mvc;
@@ -19,5 +20,5 @@ global using DigitalJournal.Controllers;
 global using DigitalJournal.Domain.Identity;
 global using DigitalJournal.Dal.Data;
 global using DigitalJournal.Domain.Entities;
-
+global using DigitalJournal.Domain.Entities.Factory1;
 

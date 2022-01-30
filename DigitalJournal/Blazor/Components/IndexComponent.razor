@@ -1,0 +1,32 @@
+﻿<p>Обзор последней информации из журнала склада номер1:</p>
+
+<ul class="list-group">
+    @if (Datas is null)
+    {
+        <li class="list-group-item">Данные Отсутствуют</li>
+    }
+    else
+    {
+        var i = 1;
+        foreach(var e in Datas)
+        {
+            <li class="list-group-item">
+                <span>@(i++) Дата и время: <strong>@e.Time.ToString("dd.MM.yyyy HH:mm")</strong></span>
+                <span>Объем в баке 1: <strong>@e.Tank1LooseRawValue.ToString("F2")</strong></span>
+                <span>Объем в баке 2: <strong>@e.Tank2LooseRawValue.ToString("F2")</strong></span>
+                <span>Объем в баке 3: <strong>@e.Tank3LooseRawValue.ToString("F2")</strong></span>
+                <span>Кладовщик: <strong>@e.Profile.SurName @e.Profile.FirstName.FirstOrDefault().@e.Profile.Patronymic.FirstOrDefault().</strong></span>
+            </li>
+        }
+    }
+</ul>
+
+<div class="my-1">
+    <Tooltip Text="Обновить эти сведения">
+        <button class="btn btn-success mb-1" @onclick="UpdateData">
+            <i class="fa fa-wifi"></i>
+            Обновить
+        </button>
+    </Tooltip>
+</div>
+
