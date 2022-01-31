@@ -50,10 +50,17 @@ public class AccountService : IAccountService
             _journalContext.Profiles.Add(profile);
             await _journalContext.SaveChangesAsync();
             user.ProfileId = profile.Id;
+            await _userManager.UpdateAsync(user);
             return (true, Array.Empty<string>());
         }
         var errors = result.Errors.Select(e => IdentityErrorCodes.GetDescription(e.Code)).ToArray();
         return (false, errors);      
+    }
+
+    public async Task<bool> PasswordSignInAsync(LoginWebModel model)
+    {
+        var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
+        return result.Succeeded;
     }
 }
 

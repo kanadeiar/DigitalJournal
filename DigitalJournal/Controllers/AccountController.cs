@@ -11,14 +11,6 @@ public class AccountController : Controller
     private readonly DigitalJournalContext _journalContext;
     private readonly IAccountService _accountService;
 
-    //public AccountController(UserManager<User> userManager, RoleManager<Role> roleManager, SignInManager<User> signInManager, DigitalJournalContext journalContext)
-    //{
-    //    _userManager = userManager;
-    //    _roleManager = roleManager;
-    //    _signInManager = signInManager;
-    //    _journalContext = journalContext;
-    //}
-
     public AccountController(UserManager<User> userManager, RoleManager<Role> roleManager, SignInManager<User> signInManager, DigitalJournalContext journalContext, IAccountService accountService)
     {
         _userManager = userManager;
@@ -48,9 +40,7 @@ public class AccountController : Controller
     public async Task<IActionResult> Register(Services.Interfaces.RegisterWebModel model)
     {
         if (!ModelState.IsValid)
-        {
             return View(model);
-        }
         var (result, errors) = await _accountService.RequestRegisterUser(model);
         if (result)
         {
@@ -60,57 +50,26 @@ public class AccountController : Controller
         {
             ModelState.AddModelError("", error);
         }
-        //var user = new User
-        //{
-        //    UserName = model.UserName,
-        //    Email = model.Email,
-        //};
-        //var result = await _userManager.CreateAsync(user, model.Password);
-        //if (result.Succeeded)
-        //{
-        //    await _userManager.AddToRoleAsync(user, "users");
-        //    await _signInManager.SignInAsync(user, false);
-        //    var profile = new Profile
-        //    {
-        //        SurName = model.SurName,
-        //        FirstName = model.FirstName,
-        //        Patronymic = model.Patronymic,
-        //        Birthday = model.Birthday,
-        //        UserId = user.Id,
-        //    };
-        //    _journalContext.Profiles.Add(profile);
-        //    await _journalContext.SaveChangesAsync();
-        //    user.ProfileId = profile.Id;
-
-        //    return RedirectToAction("Index", "Home");
-        //}
-
-        //var errors = result.Errors.Select(e => IdentityErrorCodes.GetDescription(e.Code)).ToArray();
-        //foreach (var error in errors)
-        //{
-        //    ModelState.AddModelError("", error);
-        //}
-
         return View(model);
     }
 
     [AllowAnonymous]
     public IActionResult Login(string returnUrl)
     {
-        return View(new LoginWebModel { ReturnUrl = returnUrl });
+        return View(new Services.Interfaces.LoginWebModel { ReturnUrl = returnUrl });
     }
     [HttpPost, ValidateAntiForgeryToken, AllowAnonymous]
-    public async Task<IActionResult> Login(LoginWebModel model)
+    public async Task<IActionResult> Login(Services.Interfaces.LoginWebModel model)
     {
         if (!ModelState.IsValid)
             return View(model);
-        var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
-        if (result.Succeeded)
+        var result = await _accountService.PasswordSignInAsync(model);
+        if (result)
         {
             return LocalRedirect(model.ReturnUrl ?? "/");
         }
         ModelState.AddModelError("", "Ошибка в имени пользователя, либо в пароле при входе в систему");
-        return View(new LoginWebModel { UserName = model.UserName, ReturnUrl = model.ReturnUrl });
+        return View(new Services.Interfaces.LoginWebModel { UserName = model.UserName, ReturnUrl = model.ReturnUrl });
     }
 
     public async Task<IActionResult> Edit()

@@ -9,6 +9,10 @@ public interface IAccountService
     /// <param name="model">Заполненная модель регистрации</param>
     /// <returns>Успешность регистрации, ошибки</returns>
     public Task<(bool success, string[] errors)> RequestRegisterUser(RegisterWebModel model);
+    /// <summary> Вход в систему пользователя </summary>
+    /// <param name="model">Модель входа</param>
+    /// <returns>Успешность</returns>
+    public Task<bool> PasswordSignInAsync(LoginWebModel model);
 }
 
 /// <summary> Вебмодель сведения о пользователе </summary>
@@ -64,3 +68,23 @@ public class RegisterWebModel
     [Compare(nameof(Password), ErrorMessage = "Пароли не совпадают")]
     public string PasswordConfirm { get; set; }
 }
+/// <summary> Веб модель входа в систему </summary>
+public class LoginWebModel
+{
+    [Required(ErrorMessage = "Нужно обязательно ввести логин пользователя")]
+    [Display(Name = "Логин пользователя")]
+    public string UserName { get; set; }
+
+    [Required(ErrorMessage = "Нужно обязательно ввести свой пароль")]
+    [Display(Name = "Пароль")]
+    [DataType(DataType.Password)]
+    public string Password { get; set; }
+
+    [Display(Name = "Запомнить меня")]
+    public bool RememberMe { get; set; }
+
+    [HiddenInput(DisplayValue = false)]
+    public string? ReturnUrl { get; set; }
+}
+
+

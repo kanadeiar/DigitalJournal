@@ -89,7 +89,6 @@ public class AccountServiceTests
         var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
             .UseInMemoryDatabase(random.Next(int.MaxValue).ToString()).Options;
         using var journalContext = new DigitalJournalContext(journalContextOptions);
-
         IAccountService service = new AccountService(userManagerFake.Object, roleManagerFake, signInManagerFake.Object, journalContext);
 
         var (result, errors) = service.RequestRegisterUser(expectedModel).Result;
@@ -133,7 +132,6 @@ public class AccountServiceTests
         var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
             .UseInMemoryDatabase(random.Next(int.MaxValue).ToString()).Options;
         using var journalContext = new DigitalJournalContext(journalContextOptions);
-
         IAccountService service = new AccountService(userManagerFake.Object, roleManagerFake, signInManagerFake, journalContext);
 
         var (result, errors) = service.RequestRegisterUser(expectedModel).Result;
@@ -144,6 +142,62 @@ public class AccountServiceTests
             .AreEqual(1, errors.Count());
         Assert
             .AreEqual(expectedErrorCode, errors.FirstOrDefault());
+    }
+
+    [TestMethod]
+    public void PasswordSignInAsync_LoginCorrect_ShouldCorrectResult()
+    {
+        var expectedModel = new LoginWebModel 
+        { 
+            UserName = "Test", 
+            Password = "123", 
+            ReturnUrl = "Index" 
+        };
+        var userManagerFake = Mock.Of<UserManagerMock>();
+        var roleManagerFake = Mock.Of<RoleManagerMock>();
+        var signInManagerFake = new Mock<SignInManagerMock>();
+        string callbackUsername = null;
+        signInManagerFake
+            .Setup(_ => _.PasswordSignInAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), false))
+            .Returns(Task.FromResult(Microsoft.AspNetCore.Identity.SignInResult.Success))
+            .Callback((string u, string p, bool b, bool b2) => { callbackUsername = u; });
+        var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
+            .UseInMemoryDatabase(random.Next(int.MaxValue).ToString()).Options;
+        using var journalContext = new DigitalJournalContext(journalContextOptions);
+        IAccountService service = new AccountService(userManagerFake, roleManagerFake, signInManagerFake.Object, journalContext);
+
+        var result = service.PasswordSignInAsync(expectedModel).Result;
+
+        Assert
+            .IsTrue(result);
+        Assert
+            .AreEqual(expectedModel.UserName, callbackUsername);
+    }
+
+    [TestMethod]
+    public void PasswordSignInAsync_LoginIncorrect_ShouldFalseResult()
+    {
+        var expectedModel = new LoginWebModel
+        {
+            UserName = "Test",
+            Password = "123",
+            ReturnUrl = "Index"
+        };
+        var userManagerFake = Mock.Of<UserManagerMock>();
+        var roleManagerFake = Mock.Of<RoleManagerMock>();
+        var signInManagerFake = new Mock<SignInManagerMock>();
+        signInManagerFake
+            .Setup(_ => _.PasswordSignInAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), false))
+            .Returns(Task.FromResult(Microsoft.AspNetCore.Identity.SignInResult.Failed));
+        var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
+            .UseInMemoryDatabase(random.Next(int.MaxValue).ToString()).Options;
+        using var journalContext = new DigitalJournalContext(journalContextOptions);
+        IAccountService service = new AccountService(userManagerFake, roleManagerFake, signInManagerFake.Object, journalContext);
+
+        var result = service.PasswordSignInAsync(expectedModel).Result;
+
+        Assert
+            .IsFalse(result);
     }
 }
 
