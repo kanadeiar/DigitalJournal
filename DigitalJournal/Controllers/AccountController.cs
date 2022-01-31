@@ -42,43 +42,55 @@ public class AccountController : Controller
     [AllowAnonymous]
     public IActionResult Register()
     {
-        return View(new RegisterWebModel());
+        return View(new Services.Interfaces.RegisterWebModel());
     }
     [HttpPost, ValidateAntiForgeryToken, AllowAnonymous]
-    public async Task<IActionResult> Register(RegisterWebModel model)
+    public async Task<IActionResult> Register(Services.Interfaces.RegisterWebModel model)
     {
         if (!ModelState.IsValid)
         {
             return View(model);
         }
-        var user = new User
+        var (result, errors) = await _accountService.RequestRegisterUser(model);
+        if (result)
         {
-            UserName = model.UserName,
-            Email = model.Email,
-        };
-        var result = await _userManager.CreateAsync(user, model.Password);
-        if (result.Succeeded)
-        {
-            await _userManager.AddToRoleAsync(user, "users");
-            await _signInManager.SignInAsync(user, false);
-            var profile = new Profile
-            {
-                SurName = model.SurName,
-                FirstName = model.FirstName,
-                Patronymic = model.Patronymic,
-                Birthday = model.Birthday,
-                UserId = user.Id,
-            };
-            _journalContext.Profiles.Add(profile);
-            await _journalContext.SaveChangesAsync();
-            user.ProfileId = profile.Id;
             return RedirectToAction("Index", "Home");
         }
-        var errors = result.Errors.Select(e => IdentityErrorCodes.GetDescription(e.Code)).ToArray();
         foreach (var error in errors)
         {
             ModelState.AddModelError("", error);
         }
+        //var user = new User
+        //{
+        //    UserName = model.UserName,
+        //    Email = model.Email,
+        //};
+        //var result = await _userManager.CreateAsync(user, model.Password);
+        //if (result.Succeeded)
+        //{
+        //    await _userManager.AddToRoleAsync(user, "users");
+        //    await _signInManager.SignInAsync(user, false);
+        //    var profile = new Profile
+        //    {
+        //        SurName = model.SurName,
+        //        FirstName = model.FirstName,
+        //        Patronymic = model.Patronymic,
+        //        Birthday = model.Birthday,
+        //        UserId = user.Id,
+        //    };
+        //    _journalContext.Profiles.Add(profile);
+        //    await _journalContext.SaveChangesAsync();
+        //    user.ProfileId = profile.Id;
+
+        //    return RedirectToAction("Index", "Home");
+        //}
+
+        //var errors = result.Errors.Select(e => IdentityErrorCodes.GetDescription(e.Code)).ToArray();
+        //foreach (var error in errors)
+        //{
+        //    ModelState.AddModelError("", error);
+        //}
+
         return View(model);
     }
 

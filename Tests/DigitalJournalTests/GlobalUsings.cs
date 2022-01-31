@@ -22,4 +22,6 @@ global using DigitalJournal.Domain.Identity;
 global using DigitalJournal.Dal.Data;
 global using DigitalJournal.Domain.Entities;
 global using DigitalJournal.Domain.Entities.Factory1;
+global using DigitalJournal.Services;
+global using DigitalJournalTests.Common;
 

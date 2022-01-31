@@ -101,12 +101,15 @@ public class AccountControllerTests
     [TestMethod]
     public void Register_SendCorrectRequest_ShouldCorrectView()
     {
+        #region Удалить
         var userManagerStub = Mock.Of<UserManagerMock>();
         var roleManagerStub = Mock.Of<RoleManagerMock>();
         var signInManagerStub = Mock.Of<SignInManagerMock>();
         var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
             .UseInMemoryDatabase(nameof(Register_SendCorrectRequest_ShouldCorrectView)).Options;
         using var journalContext = new DigitalJournalContext(journalContextOptions);
+        #endregion
+
         var serviceFake = Mock.Of<IAccountService>();
         var controller = new AccountController(userManagerStub, roleManagerStub, signInManagerStub, journalContext, serviceFake);
 
@@ -116,12 +119,13 @@ public class AccountControllerTests
             .IsInstanceOfType(result, typeof(ViewResult));
         var view = result as ViewResult;
         Assert
-            .IsInstanceOfType(view.Model, typeof(AccountController.RegisterWebModel));
+            .IsInstanceOfType(view.Model, typeof(RegisterWebModel));
     }
 
     [TestMethod]
     public void Register_SendPostInvalidModel_ShouldCorrectView()
     {
+        #region del
         var expectedName = "TestName";
         var expectedPassword = "123";
         var userManagerStub = Mock.Of<UserManagerMock>();
@@ -130,28 +134,31 @@ public class AccountControllerTests
         var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
             .UseInMemoryDatabase(nameof(Register_SendPostInvalidModel_ShouldCorrectView)).Options;
         using var journalContext = new DigitalJournalContext(journalContextOptions);
-        var model = new AccountController.RegisterWebModel
+        #endregion
+
+        var expectedModel = new RegisterWebModel
         {
-            UserName = expectedName,
-            Password = expectedPassword,
-            PasswordConfirm = expectedPassword,
+            UserName = "TestName",
+            Password = "123",
+            PasswordConfirm = "123",
         };
         var serviceFake = Mock.Of<IAccountService>();
         var controller = new AccountController(userManagerStub, roleManagerStub, signInManagerStub, journalContext, serviceFake);
         controller.ModelState.AddModelError("error", "InvalidError");
 
-        var result = controller.Register(model).Result;
+        var result = controller.Register(expectedModel).Result;
 
         Assert
             .IsInstanceOfType(result, typeof(ViewResult));
         var viewResult = (ViewResult)result;
         Assert
-            .IsInstanceOfType(viewResult.Model, typeof(AccountController.RegisterWebModel));
+            .IsInstanceOfType(viewResult.Model, typeof(RegisterWebModel));
     }
 
     [TestMethod]
     public void Register_SendPostSuccessRequest_ShouldCorrectRedirect()
     {
+        #region del
         var expectedName = "TestName";
         var expectedSurName = "TestSurName";
         var expectedPassword = "123";
@@ -173,21 +180,23 @@ public class AccountControllerTests
         var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
             .UseInMemoryDatabase(nameof(Register_SendPostSuccessRequest_ShouldCorrectRedirect)).Options;
         using var journalContext = new DigitalJournalContext(journalContextOptions);
-        var model = new AccountController.RegisterWebModel
+        #endregion del
+
+        var expectedModel = new RegisterWebModel
         {
-            SurName = expectedSurName,
+            SurName = "TestSurName",
             FirstName = "test",
             Patronymic = "test",
             Email = "test@example.com",
             Birthday = new DateTime(2021, 1, 1),
-            UserName = expectedName,
-            Password = expectedPassword,
-            PasswordConfirm = expectedPassword,
+            UserName = "TestName",
+            Password = "123",
+            PasswordConfirm = "123",
         };
         var serviceFake = Mock.Of<IAccountService>();
         var controller = new AccountController(userManagerMock.Object, roleManagerStub, signInManagerMock.Object, journalContext, serviceFake);
 
-        var result = controller.Register(model).Result;
+        var result = controller.Register(expectedModel).Result;
 
         Assert
             .IsInstanceOfType(result, typeof(RedirectToActionResult));
@@ -243,7 +252,7 @@ public class AccountControllerTests
         var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
             .UseInMemoryDatabase(nameof(Register_SendPostWithErrorRequest_ShouldCorrectView)).Options;
         using var journalContext = new DigitalJournalContext(journalContextOptions);
-        var model = new AccountController.RegisterWebModel
+        var model = new RegisterWebModel
         {
             UserName = expectedName,
             Password = expectedPassword,
