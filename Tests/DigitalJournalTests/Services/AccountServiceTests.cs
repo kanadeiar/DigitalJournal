@@ -5,6 +5,30 @@ public class AccountServiceTests
 {
     readonly Random random = new Random();
 
+    #region Получение данных
+
+    [TestMethod]
+    public void GetIndexWebModel_GetEmptyUserName_ShouldModel()
+    {
+        var userManagerFake = Mock.Of<UserManagerMock>();
+        var roleManagerFake = Mock.Of<RoleManagerMock>();
+        var signInManagerFake = Mock.Of<SignInManagerMock>();
+        var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
+            .UseInMemoryDatabase(random.Next(int.MaxValue).ToString()).Options;
+        using var journalContext = new DigitalJournalContext(journalContextOptions);
+        IAccountService service = new AccountService(userManagerFake, roleManagerFake, signInManagerFake, journalContext);
+
+        var webModel = service.GetIndexWebModel(string.Empty).Result;
+
+        Assert
+            .IsInstanceOfType(webModel, typeof(IndexWebModel));
+        var model = (IndexWebModel)webModel;
+        Assert
+            .AreEqual(null, model.User.UserName);
+        Assert
+            .AreEqual(string.Empty, model.Profile.SurName);
+    }
+
     [TestMethod]
     public void GetIndexWebModel_GetCorrect_ShouldModel()
     {
@@ -62,10 +86,14 @@ public class AccountServiceTests
             .AreEqual(expectedRoleDescription, model.UserRoleNames.First());
     }
 
+    #endregion
+
+    #region Регистрация
+
     [TestMethod]
     public void RequestRegisterUser_CreateSuccess_ShouldSuccess()
     {
-        var expectedModel = new RegisterWebModel
+        var expectedModel = new UserRegisterWebModel
         {
             SurName = "testSurName",
             FirstName = "test",
@@ -106,7 +134,7 @@ public class AccountServiceTests
     [TestMethod]
     public void RequestRegisterUser_CreateFail_ShouldErrors()
     {
-        var expectedModel = new RegisterWebModel
+        var expectedModel = new UserRegisterWebModel
         {
             SurName = "testSurName",
             FirstName = "test",
@@ -144,10 +172,14 @@ public class AccountServiceTests
             .AreEqual(expectedErrorCode, errors.FirstOrDefault());
     }
 
+    #endregion
+
+    #region Вход
+
     [TestMethod]
-    public void PasswordSignInAsync_LoginCorrect_ShouldCorrectResult()
+    public void LoginPasswordSignInAsync_LoginCorrect_ShouldCorrectResult()
     {
-        var expectedModel = new LoginWebModel 
+        var expectedModel = new UserLoginWebModel 
         { 
             UserName = "Test", 
             Password = "123", 
@@ -166,7 +198,7 @@ public class AccountServiceTests
         using var journalContext = new DigitalJournalContext(journalContextOptions);
         IAccountService service = new AccountService(userManagerFake, roleManagerFake, signInManagerFake.Object, journalContext);
 
-        var result = service.PasswordSignInAsync(expectedModel).Result;
+        var result = service.LoginPasswordSignIn(expectedModel).Result;
 
         Assert
             .IsTrue(result);
@@ -175,9 +207,9 @@ public class AccountServiceTests
     }
 
     [TestMethod]
-    public void PasswordSignInAsync_LoginIncorrect_ShouldFalseResult()
+    public void LoginPasswordSignInAsync_LoginIncorrect_ShouldFalseResult()
     {
-        var expectedModel = new LoginWebModel
+        var expectedModel = new UserLoginWebModel
         {
             UserName = "Test",
             Password = "123",
@@ -194,10 +226,193 @@ public class AccountServiceTests
         using var journalContext = new DigitalJournalContext(journalContextOptions);
         IAccountService service = new AccountService(userManagerFake, roleManagerFake, signInManagerFake.Object, journalContext);
 
-        var result = service.PasswordSignInAsync(expectedModel).Result;
+        var result = service.LoginPasswordSignIn(expectedModel).Result;
 
         Assert
             .IsFalse(result);
     }
+
+    #endregion
+
+    #region Редактирование профиля
+
+    [TestMethod]
+    public void GetEditModelByName_NullName_ShouldFalse()
+    {
+        var userManagerFake = Mock.Of<UserManagerMock>();
+        var roleManagerFake = Mock.Of<RoleManagerMock>();
+        var signInManagerFake = Mock.Of<SignInManagerMock>();
+        var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
+            .UseInMemoryDatabase(random.Next(int.MaxValue).ToString()).Options;
+        using var journalContext = new DigitalJournalContext(journalContextOptions);
+        IAccountService service = new AccountService(userManagerFake, roleManagerFake, signInManagerFake, journalContext);
+
+        var (result, model) = service.GetEditModelByName(null).Result;
+
+        Assert
+            .IsFalse(result);
+        Assert
+            .IsNull(model);
+    }
+
+    [TestMethod]
+    public void GetEditModelByName_NoneUser_ShouldFalse()
+    {
+        var userManagerFake = new Mock<UserManagerMock>();
+        userManagerFake
+            .Setup(_ => _.FindByNameAsync(It.IsAny<string>()));
+        var roleManagerFake = Mock.Of<RoleManagerMock>();
+        var signInManagerFake = Mock.Of<SignInManagerMock>();
+        var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
+            .UseInMemoryDatabase(random.Next(int.MaxValue).ToString()).Options;
+        using var journalContext = new DigitalJournalContext(journalContextOptions);
+        IAccountService service = new AccountService(userManagerFake.Object, roleManagerFake, signInManagerFake, journalContext);
+
+        var (result, model) = service.GetEditModelByName("noneuser").Result;
+
+        Assert
+            .IsFalse(result);
+        Assert
+            .IsNull(model);
+    }
+
+    [TestMethod]
+    public void GetEditModelByName_NoneProfile_ShouldFalse()
+    {
+        var expectedUser = new User
+        {
+            UserName = "testName",
+        };
+        var userManagerFake = new Mock<UserManagerMock>();
+        userManagerFake
+            .Setup(_ => _.FindByNameAsync(It.IsAny<string>()))
+            .Returns(Task.FromResult(expectedUser));
+        var roleManagerFake = Mock.Of<RoleManagerMock>();
+        var signInManagerFake = Mock.Of<SignInManagerMock>();
+        var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
+            .UseInMemoryDatabase(random.Next(int.MaxValue).ToString()).Options;
+        using var journalContext = new DigitalJournalContext(journalContextOptions);
+        IAccountService service = new AccountService(userManagerFake.Object, roleManagerFake, signInManagerFake, journalContext);
+
+        var (result, model) = service.GetEditModelByName("noneprofile").Result;
+
+        Assert
+            .IsFalse(result);
+        Assert
+            .IsNull(model);
+    }
+
+    [TestMethod]
+    public void GetEditMoselByName_CorrectRequest_ShouldCorrect()
+    {
+        var expectedUser = new User
+        {
+            UserName = "testName",
+            Email = "test@example.com",
+        };
+        var userManagerFake = new Mock<UserManagerMock>();
+        userManagerFake
+            .Setup(_ => _.FindByNameAsync(expectedUser.UserName))
+            .Returns(Task.FromResult(expectedUser));
+        var roleManagerFake = Mock.Of<RoleManagerMock>();
+        var signInManagerFake = Mock.Of<SignInManagerMock>();
+        var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
+            .UseInMemoryDatabase(random.Next(int.MaxValue).ToString()).Options;
+        using var journalContext = new DigitalJournalContext(journalContextOptions);
+        var expectedProfile = new Profile
+        {
+            SurName = "surname",
+            FirstName = "test",
+            Patronymic = "test",
+            UserId = expectedUser.Id,
+        };
+        journalContext.Profiles.Add(expectedProfile);
+        journalContext.SaveChanges();
+        expectedUser.ProfileId = expectedProfile.Id;
+        IAccountService service = new AccountService(userManagerFake.Object, roleManagerFake, signInManagerFake, journalContext);
+
+        var (result, model) = service.GetEditModelByName(expectedUser.UserName).Result;
+
+        Assert
+            .IsTrue(result);
+        Assert
+            .IsInstanceOfType(model, typeof(UserEditWebModel));
+        Assert
+            .AreEqual(expectedProfile.SurName, model.SurName);
+        Assert
+            .AreEqual(expectedUser.Email, model.Email);
+    }
+
+    [TestMethod]
+    public void RequestUpdateUserProfile_NullName_ShouldFalse()
+    {
+        var userManagerFake = Mock.Of<UserManagerMock>();
+        var roleManagerFake = Mock.Of<RoleManagerMock>();
+        var signInManagerFake = Mock.Of<SignInManagerMock>();
+        var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
+            .UseInMemoryDatabase(random.Next(int.MaxValue).ToString()).Options;
+        using var journalContext = new DigitalJournalContext(journalContextOptions);
+        IAccountService service = new AccountService(userManagerFake, roleManagerFake, signInManagerFake, journalContext);
+
+        var (result, errors) = service.RequestUpdateUserProfile(null, new UserEditWebModel()).Result;
+
+        Assert
+            .IsFalse(result);
+        Assert
+            .AreEqual(1, errors.Count());
+    }
+
+    [TestMethod]
+    public void RequestUpdateUserProfile_NoneUser_ShouldFalse()
+    {
+        var userManagerFake = Mock.Of<UserManagerMock>();
+        var roleManagerFake = Mock.Of<RoleManagerMock>();
+        var signInManagerFake = Mock.Of<SignInManagerMock>();
+        var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
+            .UseInMemoryDatabase(random.Next(int.MaxValue).ToString()).Options;
+        using var journalContext = new DigitalJournalContext(journalContextOptions);
+        IAccountService service = new AccountService(userManagerFake, roleManagerFake, signInManagerFake, journalContext);
+
+        var (result, errors) = service.RequestUpdateUserProfile("noneuser", new UserEditWebModel()).Result;
+
+        Assert
+            .IsFalse(result);
+        Assert
+            .AreEqual(1, errors.Count());
+    }
+
+    [TestMethod]
+    public void RequestUpdateUserProfile_NoneProfile_ShouldFalse()
+    {
+        var expectedUser = new User
+        {
+            UserName = "testName",
+        };
+        var userManagerFake = new Mock<UserManagerMock>();
+        userManagerFake
+            .Setup(_ => _.FindByNameAsync(It.IsAny<string>()))
+            .Returns(Task.FromResult(expectedUser));
+        var roleManagerFake = Mock.Of<RoleManagerMock>();
+        var signInManagerFake = Mock.Of<SignInManagerMock>();
+        var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
+            .UseInMemoryDatabase(random.Next(int.MaxValue).ToString()).Options;
+        using var journalContext = new DigitalJournalContext(journalContextOptions);
+        IAccountService service = new AccountService(userManagerFake.Object, roleManagerFake, signInManagerFake, journalContext);
+
+        var (result, model) = service.RequestUpdateUserProfile("noneprofile", new UserEditWebModel()).Result;
+
+        Assert
+            .IsFalse(result);
+        Assert
+            .IsNull(model);
+    }
+
+    [TestMethod]
+    public void RequestUpdateUserProfile_CorrectRequest_ShouldCorrect()
+    {
+
+    }
+
+    #endregion
 }
 

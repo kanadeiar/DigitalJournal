@@ -119,7 +119,7 @@ public class AccountControllerTests
             .IsInstanceOfType(result, typeof(ViewResult));
         var view = result as ViewResult;
         Assert
-            .IsInstanceOfType(view.Model, typeof(RegisterWebModel));
+            .IsInstanceOfType(view.Model, typeof(UserRegisterWebModel));
     }
 
     [TestMethod]
@@ -136,7 +136,7 @@ public class AccountControllerTests
         using var journalContext = new DigitalJournalContext(journalContextOptions);
         #endregion
 
-        var expectedModel = new RegisterWebModel
+        var expectedModel = new UserRegisterWebModel
         {
             UserName = "TestName",
             Password = "123",
@@ -152,7 +152,7 @@ public class AccountControllerTests
             .IsInstanceOfType(result, typeof(ViewResult));
         var viewResult = (ViewResult)result;
         Assert
-            .IsInstanceOfType(viewResult.Model, typeof(RegisterWebModel));
+            .IsInstanceOfType(viewResult.Model, typeof(UserRegisterWebModel));
     }
 
     [TestMethod]
@@ -182,7 +182,7 @@ public class AccountControllerTests
         using var journalContext = new DigitalJournalContext(journalContextOptions);
         #endregion del
 
-        var expectedModel = new RegisterWebModel
+        var expectedModel = new UserRegisterWebModel
         {
             SurName = "TestSurName",
             FirstName = "test",
@@ -194,11 +194,11 @@ public class AccountControllerTests
             PasswordConfirm = "123",
         };
         var serviceFake = new Mock<IAccountService>();
-        RegisterWebModel callbackModel = null;
+        UserRegisterWebModel callbackModel = null;
         serviceFake
-            .Setup(_ => _.RequestRegisterUser(It.IsAny<RegisterWebModel>()))
+            .Setup(_ => _.RequestRegisterUser(It.IsAny<UserRegisterWebModel>()))
             .Returns(Task.FromResult((true, Array.Empty<string>())))
-            .Callback((RegisterWebModel m) => { callbackModel = m; });
+            .Callback((UserRegisterWebModel m) => { callbackModel = m; });
         var controller = new AccountController(userManagerMock.Object, roleManagerStub, signInManagerMock.Object, journalContext, serviceFake.Object);
 
         var result = controller.Register(expectedModel).Result;
@@ -211,7 +211,7 @@ public class AccountControllerTests
         Assert
             .AreEqual("Index", redirectResult.ActionName);
         serviceFake
-            .Verify(_ => _.RequestRegisterUser(It.IsAny<RegisterWebModel>()), Times.Once);
+            .Verify(_ => _.RequestRegisterUser(It.IsAny<UserRegisterWebModel>()), Times.Once);
         Assert
             .AreEqual(expectedModel.SurName, callbackModel.SurName);
     }
@@ -240,7 +240,7 @@ public class AccountControllerTests
         #endregion del
 
         var expectedErrorCode = "Произошла неизвестная ошибка";
-        var expectedModel = new RegisterWebModel
+        var expectedModel = new UserRegisterWebModel
         {
             UserName = "TestName",
             Password = "123",
@@ -252,7 +252,7 @@ public class AccountControllerTests
         };
         var serviceFake = new Mock<IAccountService>();
         serviceFake
-            .Setup(_ => _.RequestRegisterUser(It.IsAny<RegisterWebModel>()))
+            .Setup(_ => _.RequestRegisterUser(It.IsAny<UserRegisterWebModel>()))
             .Returns(Task.FromResult((false, expectedErrors)));
         var controller = new AccountController(userManagerMock.Object, roleManagerStub, signInManagerStub, journalContext, serviceFake.Object);
 
@@ -265,7 +265,7 @@ public class AccountControllerTests
         Assert
             .AreEqual(expectedErrorCode, returnErrors.FirstOrDefault().ErrorMessage);
         serviceFake
-            .Verify(_ => _.RequestRegisterUser(It.IsAny<RegisterWebModel>()), Times.Once);
+            .Verify(_ => _.RequestRegisterUser(It.IsAny<UserRegisterWebModel>()), Times.Once);
     }
 
     #endregion
@@ -295,8 +295,8 @@ public class AccountControllerTests
             .IsInstanceOfType(result, typeof(ViewResult));
         var viewResult = (ViewResult)result;
         Assert
-            .IsInstanceOfType(viewResult.Model, typeof(LoginWebModel));
-        var loginModel = viewResult.Model as LoginWebModel;
+            .IsInstanceOfType(viewResult.Model, typeof(UserLoginWebModel));
+        var loginModel = viewResult.Model as UserLoginWebModel;
         Assert.AreEqual(expectedReturnUrl, loginModel.ReturnUrl);
     }
 
@@ -310,7 +310,7 @@ public class AccountControllerTests
         var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
             .UseInMemoryDatabase(nameof(Login_SendPostInvalidModel_ShouldCorrectView)).Options;
         using var journalContext = new DigitalJournalContext(journalContextOptions);
-        var model = new LoginWebModel();
+        var model = new UserLoginWebModel();
         #endregion
 
         var expectedErrorCode = "Test";
@@ -325,7 +325,7 @@ public class AccountControllerTests
             .IsInstanceOfType(result, typeof(ViewResult));
         var viewResult = (ViewResult)result;
         Assert
-            .IsInstanceOfType(viewResult.Model, typeof(LoginWebModel));
+            .IsInstanceOfType(viewResult.Model, typeof(UserLoginWebModel));
     }
 
     [TestMethod]
@@ -346,7 +346,7 @@ public class AccountControllerTests
         #endregion
 
         var expectedReturnUrl = "testUrl";
-        var expectedModel = new LoginWebModel
+        var expectedModel = new UserLoginWebModel
         {
             UserName = "username",
             Password = "123",
@@ -354,7 +354,7 @@ public class AccountControllerTests
         };
         var serviceFake = new Mock<IAccountService>();
         serviceFake
-            .Setup(_ => _.PasswordSignInAsync(It.IsAny<LoginWebModel>()))
+            .Setup(_ => _.LoginPasswordSignIn(It.IsAny<UserLoginWebModel>()))
             .Returns(Task.FromResult(true));
         var controller = new AccountController(userManagerStub, roleManagerStub, signInManagerMock.Object, journalContext, serviceFake.Object);
 
@@ -386,7 +386,7 @@ public class AccountControllerTests
 
         var expectedErrorCode = "Ошибка в имени пользователя, либо в пароле при входе в систему";
         var expectedReturnUrl = "testUrl";
-        var expectedModel = new LoginWebModel
+        var expectedModel = new UserLoginWebModel
         {
             UserName = "username",
             Password = "123",
@@ -394,7 +394,7 @@ public class AccountControllerTests
         };
         var serviceFake = new Mock<IAccountService>();
         serviceFake
-            .Setup(_ => _.PasswordSignInAsync(It.IsAny<LoginWebModel>()))
+            .Setup(_ => _.LoginPasswordSignIn(It.IsAny<UserLoginWebModel>()))
             .Returns(Task.FromResult(false));
         var controller = new AccountController(userManagerStub, roleManagerStub, signInManagerMock.Object, journalContext, serviceFake.Object);
 
@@ -404,8 +404,8 @@ public class AccountControllerTests
             .IsInstanceOfType(result, typeof(ViewResult));
         var viewResult = (ViewResult)result;
         Assert
-            .IsInstanceOfType(viewResult.Model, typeof(LoginWebModel));
-        var loginModel = (LoginWebModel)viewResult.Model;
+            .IsInstanceOfType(viewResult.Model, typeof(UserLoginWebModel));
+        var loginModel = (UserLoginWebModel)viewResult.Model;
         Assert
             .AreEqual(expectedReturnUrl, loginModel.ReturnUrl);
         Assert
@@ -422,8 +422,11 @@ public class AccountControllerTests
     [TestMethod]
     public void Edit_SendCorrectRequest_ShouldCorrectView()
     {
-        var profileId = 1;
         var expectedName = "TestName";
+        #region del
+
+        var profileId = 1;
+
         var expectedSurName = "TestSurName";
         var expectedPassword = "123";
         var userManagerMock = new Mock<UserManagerMock>();
@@ -449,12 +452,22 @@ public class AccountControllerTests
         journalContext.Profiles.Add(profile);
         journalContext.SaveChanges();
         user.ProfileId = profile.Id;
+        #endregion del
+
+        var expectedModel = new UserEditWebModel
+        {
+            SurName = "testSurName",
+        };
+        var serviceFake = new Mock<IAccountService>();
+        (bool, UserEditWebModel ?) returnValues = (true, expectedModel);
+        serviceFake
+            .Setup(_ => _.GetEditModelByName(It.IsAny<string>()))
+            .Returns(Task.FromResult(returnValues));
         var identity = new ClaimsIdentity(new List<Claim>
         {
             new Claim(ClaimTypes.Name, expectedName, ClaimValueTypes.String),
         }, "Custom");
-        var serviceFake = Mock.Of<IAccountService>();
-        var controller = new AccountController(userManagerMock.Object, roleManagerStub, signInManagerStub, journalContext, serviceFake)
+        var controller = new AccountController(userManagerMock.Object, roleManagerStub, signInManagerStub, journalContext, serviceFake.Object)
         {
             ControllerContext = new ControllerContext
             {
@@ -471,19 +484,16 @@ public class AccountControllerTests
             .IsInstanceOfType(result, typeof(ViewResult));
         var view = result as ViewResult;
         Assert
-            .IsInstanceOfType(view.Model, typeof(AccountController.EditWebModel));
-        var model = view.Model as AccountController.EditWebModel;
+            .IsInstanceOfType(view.Model, typeof(UserEditWebModel));
+        var model = view.Model as UserEditWebModel;
         Assert
-            .AreEqual(expectedSurName, model.SurName);
-        userManagerMock
-            .Verify(_ => _.FindByNameAsync(It.IsAny<string>()));
-        userManagerMock
-            .Verify();
+            .AreEqual(expectedModel.SurName, model.SurName);
     }
 
     [TestMethod]
     public void Edit_SendNotFoundRequest_ShouldNotFound()
     {
+        #region del
         var expectedName = "TestName";
         var userManagerMock = new Mock<UserManagerMock>();
         var roleManagerStub = Mock.Of<RoleManagerMock>();
@@ -491,12 +501,18 @@ public class AccountControllerTests
         var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
             .UseInMemoryDatabase(nameof(Edit_SendNotFoundRequest_ShouldNotFound)).Options;
         using var journalContext = new DigitalJournalContext(journalContextOptions);
+        #endregion
+
+        var serviceFake = new Mock<IAccountService>();
+        (bool, UserEditWebModel?) returnValues = (false, null);
+        serviceFake
+            .Setup(_ => _.GetEditModelByName(It.IsAny<string>()))
+            .Returns(Task.FromResult(returnValues));
         var identity = new ClaimsIdentity(new List<Claim>
         {
             new Claim(ClaimTypes.Name, expectedName, ClaimValueTypes.String),
         }, "Custom");
-        var serviceFake = Mock.Of<IAccountService>();
-        var controller = new AccountController(userManagerMock.Object, roleManagerStub, signInManagerStub, journalContext, serviceFake)
+        var controller = new AccountController(userManagerMock.Object, roleManagerStub, signInManagerStub, journalContext, serviceFake.Object)
         {
             ControllerContext = new ControllerContext
             {
@@ -511,10 +527,6 @@ public class AccountControllerTests
 
         Assert
             .IsInstanceOfType(result, typeof(NotFoundResult));
-        userManagerMock
-            .Verify(_ => _.FindByNameAsync(It.IsAny<string>()));
-        userManagerMock
-            .Verify();
     }
 
     [TestMethod]
@@ -591,6 +603,8 @@ public class AccountControllerTests
             Email = "test@email.com",
             Birthday = new DateTime(2021,1,1),
         };
+
+
         var serviceFake = Mock.Of<IAccountService>();
         var controller = new AccountController(userManagerMock.Object, roleManagerStub, signInManagerStub, journalContext, serviceFake)
         {

@@ -14,8 +14,15 @@ public class AccountService : IAccountService
         _journalContext = journalContext;
     }
 
-    public async Task<IndexWebModel> GetIndexWebModel(string userName)
+    public async Task<IndexWebModel> GetIndexWebModel(string? userName)
     {
+        if (string.IsNullOrEmpty(userName))
+            return new IndexWebModel
+            {
+                User = new User(),
+                Profile = new Profile(),
+                UserRoleNames = Array.Empty<string>(),
+            };
         var user = await _userManager.FindByNameAsync(userName);
         var roles = await _userManager.GetRolesAsync(user);
         var model = new IndexWebModel
@@ -27,7 +34,7 @@ public class AccountService : IAccountService
         return model;
     }
 
-    public async Task<(bool success, string[] errors)> RequestRegisterUser(RegisterWebModel model)
+    public async Task<(bool success, string[] errors)> RequestRegisterUser(UserRegisterWebModel model)
     {
         var user = new User
         {
@@ -57,10 +64,60 @@ public class AccountService : IAccountService
         return (false, errors);      
     }
 
-    public async Task<bool> PasswordSignInAsync(LoginWebModel model)
+    public async Task<bool> LoginPasswordSignIn(UserLoginWebModel model)
     {
         var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
         return result.Succeeded;
     }
+
+    public async Task<(bool founded, UserEditWebModel? model)> GetEditModelByName(string? username)
+    {
+        if (username is null)
+            return (false, null);
+        if (await _userManager.FindByNameAsync(username) is User user)
+        {
+            if (await _journalContext.Profiles.SingleOrDefaultAsync(p => p.Id == user.ProfileId) is Profile profile)
+            {
+                var model = new UserEditWebModel
+                {
+                    SurName = profile.SurName,
+                    FirstName = profile.FirstName,
+                    Patronymic = profile.Patronymic,
+                    Email = user.Email,
+                    Birthday = profile.Birthday,
+                };
+                return (true, model);
+            }
+        }
+        return (false, null);
+    }
+
+    public async Task<(bool success, string[] errors)> RequestUpdateUserProfile(string? username, UserEditWebModel model)
+    {
+        if (username is null)
+            return (false, new string[] { "Должно быть указано имя пользователя" });
+        if (await _userManager.FindByNameAsync(username) is User user)
+        {
+            if (await _journalContext.Profiles.SingleOrDefaultAsync(p => p.Id == user.ProfileId) is Profile profile)
+            {
+                profile.SurName = model.SurName;
+                profile.FirstName = model.FirstName;
+                profile.Patronymic = model.Patronymic;
+                user.Email = model.Email;
+                profile.Birthday = model.Birthday;
+                var result = await _userManager.UpdateAsync(user);
+                if (result.Succeeded)
+                {
+                    _journalContext.Profiles.Update(profile);
+                    await _journalContext.SaveChangesAsync();
+                    return (true, Array.Empty<string>());
+                }
+                var errors = result.Errors.Select(e => IdentityErrorCodes.GetDescription(e.Code)).ToArray();
+                return (false, errors);
+            }
+        }
+        return (false, new string[] { "Не удалось найти сущность в базе данных" });
+    }
+
 }
 

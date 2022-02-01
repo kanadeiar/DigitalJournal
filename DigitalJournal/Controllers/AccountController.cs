@@ -24,7 +24,7 @@ public class AccountController : Controller
     public async Task<IActionResult> Index()
     {
         var model = new Services.Interfaces.IndexWebModel();
-        if (User.Identity.IsAuthenticated)
+        if (User.Identity!.IsAuthenticated)
         {
             model = await _accountService.GetIndexWebModel(User.Identity.Name);
         }
@@ -34,10 +34,10 @@ public class AccountController : Controller
     [AllowAnonymous]
     public IActionResult Register()
     {
-        return View(new Services.Interfaces.RegisterWebModel());
+        return View(new Services.Interfaces.UserRegisterWebModel());
     }
     [HttpPost, ValidateAntiForgeryToken, AllowAnonymous]
-    public async Task<IActionResult> Register(Services.Interfaces.RegisterWebModel model)
+    public async Task<IActionResult> Register(Services.Interfaces.UserRegisterWebModel model)
     {
         if (!ModelState.IsValid)
             return View(model);
@@ -47,45 +47,34 @@ public class AccountController : Controller
             return RedirectToAction("Index", "Home");
         }
         foreach (var error in errors)
-        {
             ModelState.AddModelError("", error);
-        }
         return View(model);
     }
 
     [AllowAnonymous]
     public IActionResult Login(string returnUrl)
     {
-        return View(new Services.Interfaces.LoginWebModel { ReturnUrl = returnUrl });
+        return View(new Services.Interfaces.UserLoginWebModel { ReturnUrl = returnUrl });
     }
     [HttpPost, ValidateAntiForgeryToken, AllowAnonymous]
-    public async Task<IActionResult> Login(Services.Interfaces.LoginWebModel model)
+    public async Task<IActionResult> Login(Services.Interfaces.UserLoginWebModel model)
     {
         if (!ModelState.IsValid)
             return View(model);
-        var result = await _accountService.PasswordSignInAsync(model);
-        if (result)
+        if (await _accountService.LoginPasswordSignIn(model))
         {
             return LocalRedirect(model.ReturnUrl ?? "/");
         }
         ModelState.AddModelError("", "Ошибка в имени пользователя, либо в пароле при входе в систему");
-        return View(new Services.Interfaces.LoginWebModel { UserName = model.UserName, ReturnUrl = model.ReturnUrl });
+        return View(new Services.Interfaces.UserLoginWebModel { UserName = model.UserName, ReturnUrl = model.ReturnUrl });
     }
 
     public async Task<IActionResult> Edit()
     {
         var username = User.Identity!.Name;
-        if (await _userManager.FindByNameAsync(username) is User user)
+        var (result, model) = await _accountService.GetEditModelByName(username);
+        if (result)
         {
-            var profile = await _journalContext.Profiles.SingleOrDefaultAsync(p => p.Id == user.ProfileId);
-            var model = new EditWebModel
-            {
-                SurName = profile.SurName,
-                FirstName = profile.FirstName,
-                Patronymic = profile.Patronymic,
-                Email = user.Email,
-                Birthday = profile.Birthday,
-            };
             return View(model);
         }
         return NotFound();
@@ -94,9 +83,7 @@ public class AccountController : Controller
     public async Task<IActionResult> Edit(EditWebModel model)
     {
         if (!ModelState.IsValid)
-        {
             return View(model);
-        }
         var username = User.Identity!.Name;
         if (await _userManager.FindByNameAsync(username) is User user)
         {
@@ -115,9 +102,7 @@ public class AccountController : Controller
             }
             var errors = result.Errors.Select(e => IdentityErrorCodes.GetDescription(e.Code)).ToArray();
             foreach (var error in errors)
-            {
                 ModelState.AddModelError("", error);
-            }
         }
         return View(model);
     }
