@@ -4,7 +4,7 @@ public interface IAccountService
 {
     /// <summary> Получить данные по аккаунту </summary>
     /// <returns>Данные аккаунта</returns>
-    public Task<IndexWebModel> GetIndexWebModel(string? userName);
+    public Task<UserIndexWebModel> GetIndexWebModel(string? userName);
     /// <summary> Команда на регистрацию нового пользователя </summary>
     /// <param name="model">Заполненная модель регистрации</param>
     /// <returns>Успешность регистрации, ошибки</returns>
@@ -21,10 +21,17 @@ public interface IAccountService
     /// <param name="model">Имя пользователя, Обновленные данные</param>
     /// <returns>Успешность, ошибки</returns>
     public Task<(bool success, string[] errors)> RequestUpdateUserProfile(string? username, UserEditWebModel model);
+    /// <summary> Команда на изменение пароля </summary>
+    /// <param name="username">Имя пользователя</param>
+    /// <param name="model">Модель смены пароля</param>
+    /// <returns>Успешность, ошибки</returns>
+    public Task<(bool success, string[] errors)> CheckAndChangePassword(string? username, UserPasswordWebModel model);
 }
 
+#region Вебмодели
+
 /// <summary> Вебмодель сведения о пользователе </summary>
-public class IndexWebModel
+public class UserIndexWebModel
 {
     /// <summary> Сведения о профиле пользователя </summary>
     public Profile? Profile { get; set; }
@@ -122,3 +129,24 @@ public class UserEditWebModel
     public DateTime Birthday { get; set; } = DateTime.Today.AddYears(-18);
 }
 
+/// <summary> Веб модель смены пароля </summary>
+public class UserPasswordWebModel
+{
+    [Required(ErrorMessage = "Нужно обязательно ввести свой текущий пароль")]
+    [Display(Name = "Текущий пароль")]
+    [DataType(DataType.Password)]
+    public string OldPassword { get; set; }
+
+    [Required(ErrorMessage = "Нужно обязательно придумать и ввести какой-либо новый пароль")]
+    [Display(Name = "Новый пароль")]
+    [DataType(DataType.Password)]
+    public string Password { get; set; }
+
+    [Required(ErrorMessage = "Нужно обязательно ввести подтверждение нового пароля")]
+    [Display(Name = "Подтверждение нового пароля")]
+    [DataType(DataType.Password)]
+    [Compare(nameof(Password), ErrorMessage = "Пароли не совпадают")]
+    public string PasswordConfirm { get; set; }
+}
+
+#endregion

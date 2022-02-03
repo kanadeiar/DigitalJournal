@@ -23,7 +23,7 @@ public class AccountController : Controller
     [AllowAnonymous]
     public async Task<IActionResult> Index()
     {
-        var model = new Services.Interfaces.IndexWebModel();
+        var model = new Services.Interfaces.UserIndexWebModel();
         if (User.Identity!.IsAuthenticated)
         {
             model = await _accountService.GetIndexWebModel(User.Identity.Name);
@@ -80,62 +80,40 @@ public class AccountController : Controller
         return NotFound();
     }
     [HttpPost, ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(EditWebModel model)
+    public async Task<IActionResult> Edit(UserEditWebModel model)
     {
         if (!ModelState.IsValid)
             return View(model);
         var username = User.Identity!.Name;
-        if (await _userManager.FindByNameAsync(username) is User user)
+        var (result, errors) = await _accountService.RequestUpdateUserProfile(username, model);
+        if (result)
         {
-            user.Email = model.Email;
-            var result = await _userManager.UpdateAsync(user);
-            if (result.Succeeded)
-            {
-                var profile = await _journalContext.Profiles.SingleOrDefaultAsync(p => p.Id == user.ProfileId);
-                profile.SurName = model.SurName;
-                profile.FirstName = model.FirstName;
-                profile.Patronymic = model.Patronymic;
-                profile.Birthday = model.Birthday;
-                _journalContext.Profiles.Update(profile);
-                await _journalContext.SaveChangesAsync();
-                return RedirectToAction("Index", "Account");
-            }
-            var errors = result.Errors.Select(e => IdentityErrorCodes.GetDescription(e.Code)).ToArray();
-            foreach (var error in errors)
-                ModelState.AddModelError("", error);
+            return RedirectToAction("Index", "Account");
         }
+        foreach (var error in errors)
+            ModelState.AddModelError("", error);
         return View(model);
     }
 
     public IActionResult Password()
     {
-        return View(new PasswordWebModel());        
+        return View(new UserPasswordWebModel());
     }
     [HttpPost, ValidateAntiForgeryToken]
-    public async Task<IActionResult> Password(PasswordWebModel model)
+    public async Task<IActionResult> Password(UserPasswordWebModel model)
     {
         if (!ModelState.IsValid)
         {
             return View(model);
         }
         var username = User.Identity!.Name;
-        var user = await _userManager.FindByNameAsync(username); 
-        var result = await _signInManager.CheckPasswordSignInAsync(user, model.OldPassword, false);
-        if (result.Succeeded)
+        var (result, errors) = await _accountService.CheckAndChangePassword(username, model);
+        if (result)
         {
-            await _userManager.RemovePasswordAsync(user);
-            var result2 = await _userManager.AddPasswordAsync(user, model.Password);
-            if (result2.Succeeded)
-            {
-                return RedirectToAction("Index", "Account");
-            }
-            var errors = result2.Errors.Select(e => IdentityErrorCodes.GetDescription(e.Code)).ToArray();
-            foreach (var error in errors)
-            {
-                ModelState.AddModelError("", error);
-            }
+            return RedirectToAction("Index", "Account");
         }
-        ModelState.AddModelError("", "Неправильный старый пароль");
+        foreach (var error in errors)
+            ModelState.AddModelError("", error);
         return View(model);
     }
 

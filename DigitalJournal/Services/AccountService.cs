@@ -14,10 +14,10 @@ public class AccountService : IAccountService
         _journalContext = journalContext;
     }
 
-    public async Task<IndexWebModel> GetIndexWebModel(string? userName)
+    public async Task<UserIndexWebModel> GetIndexWebModel(string? userName)
     {
         if (string.IsNullOrEmpty(userName))
-            return new IndexWebModel
+            return new UserIndexWebModel
             {
                 User = new User(),
                 Profile = new Profile(),
@@ -25,7 +25,7 @@ public class AccountService : IAccountService
             };
         var user = await _userManager.FindByNameAsync(userName);
         var roles = await _userManager.GetRolesAsync(user);
-        var model = new IndexWebModel
+        var model = new UserIndexWebModel
         {
             User = user,
             Profile = await _journalContext.Profiles.SingleOrDefaultAsync(p => p.Id == user.ProfileId),
@@ -119,5 +119,36 @@ public class AccountService : IAccountService
         return (false, new string[] { "Не удалось найти сущность в базе данных" });
     }
 
+    public async Task<(bool success, string[] errors)> CheckAndChangePassword(string? username, UserPasswordWebModel model)
+    {
+        if (username is null)
+            return (false, new string[] { "Должно быть указано имя пользователя" });
+        var errors = new List<string>();
+        if (await _userManager.FindByNameAsync(username) is User user)
+        {
+            var result = await _signInManager.CheckPasswordSignInAsync(user, model.OldPassword, false);
+            if (result.Succeeded)
+            {
+                var resultRemove = await _userManager.RemovePasswordAsync(user);
+                if (resultRemove.Succeeded)
+                {
+                    var resultAdd = await _userManager.AddPasswordAsync(user, model.Password);
+                    if (resultAdd.Succeeded)
+                    {
+                        return (true, Array.Empty<string>());
+                    }
+                    foreach (var item in resultAdd.Errors)
+                        errors.Add(IdentityErrorCodes.GetDescription(item.Code));
+                };
+                foreach (var item in resultRemove.Errors)
+                    errors.Add(IdentityErrorCodes.GetDescription(item.Code));
+            }
+            else
+                errors.Add("Неправильный старый пароль");
+        }
+        else
+            errors.Add("Не удалось найти сущность в базе данных");
+        return (false, errors.ToArray());
+    }
 }
 

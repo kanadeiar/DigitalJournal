@@ -37,7 +37,7 @@ public class AccountControllerTests
             .IsInstanceOfType(result, typeof(ViewResult));
         var view = (ViewResult)result;
         Assert
-            .IsInstanceOfType(view.Model, typeof(IndexWebModel));
+            .IsInstanceOfType(view.Model, typeof(UserIndexWebModel));
     }
 
     [TestMethod]
@@ -52,7 +52,7 @@ public class AccountControllerTests
         var signInManagerMock = new Mock<SignInManagerMock>();
         #endregion
 
-        var expectedModel = new IndexWebModel
+        var expectedModel = new UserIndexWebModel
         {
             User = new User
             {
@@ -84,8 +84,8 @@ public class AccountControllerTests
             .IsInstanceOfType(result, typeof(ViewResult));
         var view = result as ViewResult;
         Assert
-            .IsInstanceOfType(view.Model, typeof(IndexWebModel));
-        var model = view.Model as IndexWebModel;
+            .IsInstanceOfType(view.Model, typeof(UserIndexWebModel));
+        var model = view.Model as UserIndexWebModel;
         Assert
             .AreEqual(expectedModel.User.UserName, model.User.UserName);
         serviceFake
@@ -533,13 +533,16 @@ public class AccountControllerTests
     public void Edit_SendPostInvalidModel_ShouldCorrectView()
     {
         var expectedSurName = "TestSurName";
+        #region del
         var userManagerStub = Mock.Of<UserManagerMock>();
         var roleManagerStub = Mock.Of<RoleManagerMock>();
         var signInManagerStub = Mock.Of<SignInManagerMock>();
         var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
             .UseInMemoryDatabase(nameof(Edit_SendPostInvalidModel_ShouldCorrectView)).Options;
         using var journalContext = new DigitalJournalContext(journalContextOptions);
-        var editModel = new AccountController.EditWebModel
+        #endregion
+
+        var editModel = new UserEditWebModel
         {
             SurName = expectedSurName,
         };
@@ -551,10 +554,12 @@ public class AccountControllerTests
 
         Assert
             .IsInstanceOfType(result, typeof(ViewResult));
+        Assert
+            .IsFalse(controller.ModelState.IsValid);
         var view = result as ViewResult;
         Assert
-            .IsInstanceOfType(view.Model, typeof(AccountController.EditWebModel));
-        var model = view.Model as AccountController.EditWebModel;
+            .IsInstanceOfType(view.Model, typeof(UserEditWebModel));
+        var model = view.Model as UserEditWebModel;
         Assert
             .AreEqual(expectedSurName, model.SurName);
     }
@@ -563,6 +568,8 @@ public class AccountControllerTests
     public void Edit_SendPostCorrectModel_ShouldCorrectRedirect()
     {
         var expectedName = "TestName";
+        #region del
+
         var expectedSurName = "TestSurName";
         var updatedExpectedSurName = "UpdatedSurName";
         var userManagerMock = new Mock<UserManagerMock>();
@@ -591,22 +598,27 @@ public class AccountControllerTests
         journalContext.Profiles.Add(profile);
         journalContext.SaveChanges();
         user.ProfileId = profile.Id;
+
+
+        #endregion
+
+        var expectedModel = new UserEditWebModel
+        {
+            SurName = "updatedTestSurname",
+            FirstName = "updated",
+            Patronymic = "updated",
+            Email = "test@email.com",
+            Birthday = new DateTime(2021, 1, 1),
+        };
+        var serviceFake = new Mock<IAccountService>();
+        serviceFake
+            .Setup(_ => _.RequestUpdateUserProfile(It.IsAny<string>(), It.IsAny<UserEditWebModel>()))
+            .Returns(Task.FromResult((true, Array.Empty<string>())));
         var identity = new ClaimsIdentity(new List<Claim>
         {
             new Claim(ClaimTypes.Name, expectedName, ClaimValueTypes.String),
         }, "Custom");
-        var editModel = new AccountController.EditWebModel
-        {
-            SurName = updatedExpectedSurName,
-            FirstName = "updated",
-            Patronymic = "updated",
-            Email = "test@email.com",
-            Birthday = new DateTime(2021,1,1),
-        };
-
-
-        var serviceFake = Mock.Of<IAccountService>();
-        var controller = new AccountController(userManagerMock.Object, roleManagerStub, signInManagerStub, journalContext, serviceFake)
+        var controller = new AccountController(userManagerMock.Object, roleManagerStub, signInManagerStub, journalContext, serviceFake.Object)
         {
             ControllerContext = new ControllerContext
             {
@@ -617,7 +629,7 @@ public class AccountControllerTests
             }
         };
 
-        var result = controller.Edit(editModel).Result;
+        var result = controller.Edit(expectedModel).Result;
 
         Assert
             .IsInstanceOfType(result, typeof(RedirectToActionResult));
@@ -626,17 +638,9 @@ public class AccountControllerTests
             .AreEqual("Account", redirect.ControllerName);
         Assert
             .AreEqual("Index", redirect.ActionName);
-        Assert
-            .AreEqual(updatedExpectedSurName, profile.SurName);        
-        Assert
-            .AreEqual("test@email.com", user.Email);
-        Assert
-            .AreEqual(new DateTime(2021, 1, 1), profile.Birthday);
-        userManagerMock
-            .Verify(_ => _.FindByNameAsync(It.IsAny<string>()));
-        userManagerMock
-            .Verify(_ => _.UpdateAsync(It.IsAny<User>()));
-        userManagerMock
+        serviceFake
+            .Verify(_ => _.RequestUpdateUserProfile(expectedName, It.IsAny<UserEditWebModel>()), Times.Once);
+        serviceFake
             .Verify();
     }
 
@@ -644,10 +648,12 @@ public class AccountControllerTests
     public void Edit_SendPostErrorUpdate_ShouldCorrectView()
     {
         var expectedName = "TestName";
+        var expectedErrorCode = "Произошла неизвестная ошибка";
+        #region del
+        var expectedErrorDescription = "TestDescription";
         var expectedSurName = "TestSurName";
         var updatedExpectedSurName = "UpdatedSurName";
-        var expectedErrorCode = "Произошла неизвестная ошибка";
-        var expectedErrorDescription = "TestDescription";
+
         var userManagerMock = new Mock<UserManagerMock>();
         var user = new User
         {
@@ -680,13 +686,20 @@ public class AccountControllerTests
         journalContext.Profiles.Add(profile);
         journalContext.SaveChanges();
         user.ProfileId = profile.Id;
+        #endregion
+        var expectedErrors = new[]
+        {
+            expectedErrorCode,
+        };
         var identity = new ClaimsIdentity(new List<Claim>
         {
             new Claim(ClaimTypes.Name, expectedName, ClaimValueTypes.String),
         }, "Custom");
-        var editModel = new AccountController.EditWebModel();
-        var serviceFake = Mock.Of<IAccountService>();
-        var controller = new AccountController(userManagerMock.Object, roleManagerStub, signInManagerStub, journalContext, serviceFake)
+        var serviceFake = new Mock<IAccountService>();
+        serviceFake
+            .Setup(_ => _.RequestUpdateUserProfile(It.IsAny<string>(), It.IsAny<UserEditWebModel>()))
+            .Returns(Task.FromResult((false, expectedErrors)));
+        var controller = new AccountController(userManagerMock.Object, roleManagerStub, signInManagerStub, journalContext, serviceFake.Object)
         {
             ControllerContext = new ControllerContext
             {
@@ -697,23 +710,17 @@ public class AccountControllerTests
             }
         };
 
-        var result = controller.Edit(editModel).Result;
+        var result = controller.Edit(new UserEditWebModel()).Result;
 
         Assert.IsInstanceOfType(result, typeof(ViewResult));
         Assert
             .IsFalse(controller.ModelState.IsValid);
         var view = result as ViewResult;
         Assert
-            .IsInstanceOfType(view.Model, typeof(AccountController.EditWebModel));
+            .IsInstanceOfType(view.Model, typeof(UserEditWebModel));
         var returnErrors = controller.ModelState[string.Empty].Errors;
         Assert
             .AreEqual(expectedErrorCode, returnErrors.FirstOrDefault().ErrorMessage);
-        userManagerMock
-            .Verify(_ => _.FindByNameAsync(It.IsAny<string>()));
-        userManagerMock
-            .Verify(_ => _.UpdateAsync(It.IsAny<User>()));
-        userManagerMock
-            .Verify();
     }
 
     #endregion
@@ -723,12 +730,15 @@ public class AccountControllerTests
     [TestMethod]
     public void Password_SendCorrectRequest_ShouldCorrectView()
     {
+        #region del
         var userManagerStub = Mock.Of<UserManagerMock>();
         var roleManagerStub = Mock.Of<RoleManagerMock>();
         var signInManagerStub = Mock.Of<SignInManagerMock>();
         var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
             .UseInMemoryDatabase(nameof(Password_SendCorrectRequest_ShouldCorrectView)).Options;
         using var journalContext = new DigitalJournalContext(journalContextOptions);
+        #endregion
+
         var serviceFake = Mock.Of<IAccountService>();
         var controller = new AccountController(userManagerStub, roleManagerStub, signInManagerStub, journalContext, serviceFake);
 
@@ -738,36 +748,90 @@ public class AccountControllerTests
             .IsInstanceOfType(result, typeof(ViewResult));
         var view = result as ViewResult;
         Assert
-            .IsInstanceOfType(view.Model, typeof(AccountController.PasswordWebModel));
+            .IsInstanceOfType(view.Model, typeof(UserPasswordWebModel));
     }
 
     [TestMethod]
     public void Password_SendPostInvalidModel_ShouldCorrectView()
     {
+        #region del
         var userManagerStub = Mock.Of<UserManagerMock>();
         var roleManagerStub = Mock.Of<RoleManagerMock>();
         var signInManagerStub = Mock.Of<SignInManagerMock>();
         var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
             .UseInMemoryDatabase(nameof(Password_SendPostInvalidModel_ShouldCorrectView)).Options;
         using var journalContext = new DigitalJournalContext(journalContextOptions);
-        var editModel = new AccountController.PasswordWebModel();
+        var editModel = new UserPasswordWebModel();
+        #endregion
+
+
         var serviceFake = Mock.Of<IAccountService>();
         var controller = new AccountController(userManagerStub, roleManagerStub, signInManagerStub, journalContext, serviceFake);
         controller.ModelState.AddModelError("error", "InvalidError");
 
-        var result = controller.Password(editModel).Result;
+        var result = controller.Password(new UserPasswordWebModel()).Result;
 
         Assert
             .IsInstanceOfType(result, typeof(ViewResult));
         var view = result as ViewResult;
         Assert
-            .IsInstanceOfType(view.Model, typeof(AccountController.PasswordWebModel));
-        var model = view.Model as AccountController.PasswordWebModel;
+            .IsInstanceOfType(view.Model, typeof(UserPasswordWebModel));
+    }
+
+    [TestMethod]
+    public void Password_SendPostErrorUpdatePassword_ShouldCorrectErrorView()
+    {
+        #region del
+        var userManagerStub = Mock.Of<UserManagerMock>();
+        var roleManagerStub = Mock.Of<RoleManagerMock>();
+        var signInManagerStub = Mock.Of<SignInManagerMock>();
+        var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
+            .UseInMemoryDatabase(nameof(Password_SendPostInvalidModel_ShouldCorrectView)).Options;
+        using var journalContext = new DigitalJournalContext(journalContextOptions);
+        var editModel = new UserPasswordWebModel();
+        #endregion
+
+        var expectedUserName = "Testname";
+        var expectedErrors = new string[] { "TestError" };
+        var serviceFake = new Mock<IAccountService>();
+        serviceFake
+            .Setup(_ => _.CheckAndChangePassword(It.IsAny<string>(), It.IsAny<UserPasswordWebModel>()))
+            .Returns(Task.FromResult((false, expectedErrors )));
+        var identity = new ClaimsIdentity(new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, expectedUserName, ClaimValueTypes.String),
+        }, "Custom");
+        var controller = new AccountController(userManagerStub, roleManagerStub, signInManagerStub, journalContext, serviceFake.Object)
+        {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(identity),
+                }
+            }
+        };
+
+        var result = controller.Password(new UserPasswordWebModel()).Result;
+
+        Assert
+            .IsInstanceOfType(result, typeof(ViewResult));
+        var view = result as ViewResult;
+        Assert
+            .IsInstanceOfType(view.Model, typeof(UserPasswordWebModel));
+        Assert
+            .IsFalse(controller.ModelState.IsValid);
+        var returnErrors = controller.ModelState[string.Empty].Errors;
+        Assert
+            .AreEqual(expectedErrors.First(), returnErrors.FirstOrDefault().ErrorMessage);
+        serviceFake
+            .Verify(_ => _.CheckAndChangePassword(expectedUserName, It.IsAny<UserPasswordWebModel>()));
     }
 
     [TestMethod]
     public void Password_SendPostCorrectModel_ShouldCorrectView()
     {
+        #region del
         var oldPassword = "old";
         var newPassword = "new";
         var expectedName = "TestName";
@@ -792,18 +856,24 @@ public class AccountControllerTests
         var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
             .UseInMemoryDatabase(nameof(Password_SendPostCorrectModel_ShouldCorrectView)).Options;
         using var journalContext = new DigitalJournalContext(journalContextOptions);
-        var identity = new ClaimsIdentity(new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, expectedName, ClaimValueTypes.String),
-        }, "Custom");
-        var editModel = new AccountController.PasswordWebModel
+        #endregion
+
+        var expectedUserName = "Testname";
+        var expectedEditModel = new UserPasswordWebModel
         {
             OldPassword = oldPassword,
             Password = newPassword,
             PasswordConfirm = newPassword,
         };
-        var serviceFake = Mock.Of<IAccountService>();
-        var controller = new AccountController(userManagerMock.Object, roleManagerStub, signInManagerMock.Object, journalContext, serviceFake)
+        var serviceFake = new Mock<IAccountService>();
+        serviceFake
+            .Setup(_ => _.CheckAndChangePassword(It.IsAny<string>(), It.IsAny<UserPasswordWebModel>()))
+            .Returns(Task.FromResult((true, Array.Empty<string>())));
+        var identity = new ClaimsIdentity(new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, expectedUserName, ClaimValueTypes.String),
+        }, "Custom");
+        var controller = new AccountController(userManagerMock.Object, roleManagerStub, signInManagerMock.Object, journalContext, serviceFake.Object)
         {
             ControllerContext = new ControllerContext
             {
@@ -814,7 +884,7 @@ public class AccountControllerTests
             }
         };
 
-        var result = controller.Password(editModel).Result;
+        var result = controller.Password(expectedEditModel).Result;
 
         Assert
             .IsInstanceOfType(result, typeof(RedirectToActionResult));
@@ -823,18 +893,8 @@ public class AccountControllerTests
             .AreEqual("Account", redirect.ControllerName);
         Assert
             .AreEqual("Index", redirect.ActionName);
-        userManagerMock
-            .Verify(_ => _.FindByNameAsync(It.IsAny<string>()));
-        userManagerMock
-            .Verify(_ => _.RemovePasswordAsync(It.IsAny<User>()));
-        userManagerMock
-            .Verify(_ => _.AddPasswordAsync(It.IsAny<User>(), It.IsAny<string>()));
-        userManagerMock
-            .Verify();
-        signInManagerMock
-            .Verify(_ => _.CheckPasswordSignInAsync(It.IsAny<User>(), It.IsAny<string>(), It.IsAny<bool>()));
-        signInManagerMock
-            .Verify();
+        serviceFake
+            .Verify(_ => _.CheckAndChangePassword(expectedUserName, It.IsAny<UserPasswordWebModel>()));
     }
 
     #endregion

@@ -21,8 +21,8 @@ public class AccountServiceTests
         var webModel = service.GetIndexWebModel(string.Empty).Result;
 
         Assert
-            .IsInstanceOfType(webModel, typeof(IndexWebModel));
-        var model = (IndexWebModel)webModel;
+            .IsInstanceOfType(webModel, typeof(UserIndexWebModel));
+        var model = (UserIndexWebModel)webModel;
         Assert
             .AreEqual(null, model.User.UserName);
         Assert
@@ -56,7 +56,7 @@ public class AccountServiceTests
             .Returns(Task.FromResult(expectedUser));
         userManagerFake
             .Setup(_ => _.GetRolesAsync(It.IsAny<User>()))
-            .Returns(Task.FromResult((IList<string>) expectedRoleQuery.Select(x => x.Name).ToList()));
+            .Returns(Task.FromResult((IList<string>)expectedRoleQuery.Select(x => x.Name).ToList()));
         roleManagerFake
             .Setup(_ => _.Roles)
             .Returns(expectedRoleQuery);
@@ -72,8 +72,8 @@ public class AccountServiceTests
         var webModel = service.GetIndexWebModel(expectedUser.UserName).Result;
 
         Assert
-            .IsInstanceOfType(webModel, typeof(IndexWebModel));
-        var model = (IndexWebModel)webModel;
+            .IsInstanceOfType(webModel, typeof(UserIndexWebModel));
+        var model = (UserIndexWebModel)webModel;
         Assert
             .AreEqual(expectedUser.Id, model.User.Id);
         Assert
@@ -125,6 +125,10 @@ public class AccountServiceTests
             .IsTrue(result);
         Assert
             .AreEqual(0, errors.Count());
+        Assert
+            .AreEqual(1, journalContext.Profiles.Count());
+        Assert
+            .AreEqual(expectedModel.SurName, journalContext.Profiles.FirstOrDefault().SurName);
         userManagerFake
             .Verify(_ => _.AddToRoleAsync(It.IsAny<User>(), "users"), Times.Once);
         signInManagerFake
@@ -179,11 +183,11 @@ public class AccountServiceTests
     [TestMethod]
     public void LoginPasswordSignInAsync_LoginCorrect_ShouldCorrectResult()
     {
-        var expectedModel = new UserLoginWebModel 
-        { 
-            UserName = "Test", 
-            Password = "123", 
-            ReturnUrl = "Index" 
+        var expectedModel = new UserLoginWebModel
+        {
+            UserName = "Test",
+            Password = "123",
+            ReturnUrl = "Index"
         };
         var userManagerFake = Mock.Of<UserManagerMock>();
         var roleManagerFake = Mock.Of<RoleManagerMock>();
@@ -399,18 +403,280 @@ public class AccountServiceTests
         using var journalContext = new DigitalJournalContext(journalContextOptions);
         IAccountService service = new AccountService(userManagerFake.Object, roleManagerFake, signInManagerFake, journalContext);
 
-        var (result, model) = service.RequestUpdateUserProfile("noneprofile", new UserEditWebModel()).Result;
+        var (result, errors) = service.RequestUpdateUserProfile("noneprofile", new UserEditWebModel()).Result;
 
         Assert
             .IsFalse(result);
         Assert
-            .IsNull(model);
+            .AreEqual(1, errors.Count());
     }
 
     [TestMethod]
     public void RequestUpdateUserProfile_CorrectRequest_ShouldCorrect()
     {
+        var expectedUser = new User
+        {
+            UserName = "testName",
+        };
+        var expectedModel = new UserEditWebModel
+        {
+            SurName = "testNewSurName",
+            FirstName = "test",
+            Patronymic = "test",
+            Email = "test@example.com",
+            Birthday = new DateTime(2021, 1, 1),
+        };
+        var userManagerFake = new Mock<UserManagerMock>();
+        userManagerFake
+            .Setup(_ => _.FindByNameAsync(It.IsAny<string>()))
+            .Returns(Task.FromResult(expectedUser));
+        User callbackUser = null;
+        userManagerFake
+            .Setup(_ => _.UpdateAsync(It.IsAny<User>()))
+            .Returns(Task.FromResult(IdentityResult.Success))
+            .Callback((User u) => { callbackUser = u; });
+        var roleManagerFake = Mock.Of<RoleManagerMock>();
+        var signInManagerFake = Mock.Of<SignInManagerMock>();
+        var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
+            .UseInMemoryDatabase(random.Next(int.MaxValue).ToString()).Options;
+        using var journalContext = new DigitalJournalContext(journalContextOptions);
+        var expectedProfile = new Profile
+        {
+            SurName = "surname",
+            FirstName = "test",
+            Patronymic = "test",
+            UserId = expectedUser.Id,
+        };
+        journalContext.Profiles.Add(expectedProfile);
+        journalContext.SaveChanges();
+        expectedUser.ProfileId = expectedProfile.Id;
+        IAccountService service = new AccountService(userManagerFake.Object, roleManagerFake, signInManagerFake, journalContext);
 
+        var (result, errors) = service.RequestUpdateUserProfile(expectedUser.UserName, expectedModel).Result;
+
+        Assert
+            .IsTrue(result);
+        Assert
+            .AreEqual(0, errors.Count());
+        Assert
+            .AreEqual(1, journalContext.Profiles.Count());
+        Assert
+            .AreEqual(expectedModel.SurName, journalContext.Profiles.FirstOrDefault().SurName);
+        userManagerFake
+            .Verify(_ => _.UpdateAsync(It.IsAny<User>()));
+    }
+
+    #endregion
+
+    #region Смена пароля
+
+    [TestMethod]
+    public void CheckAndChangePassword_NullName_ShouldFalse()
+    {
+        var userManagerFake = Mock.Of<UserManagerMock>();
+        var roleManagerFake = Mock.Of<RoleManagerMock>();
+        var signInManagerFake = Mock.Of<SignInManagerMock>();
+        var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
+            .UseInMemoryDatabase(random.Next(int.MaxValue).ToString()).Options;
+        using var journalContext = new DigitalJournalContext(journalContextOptions);
+        IAccountService service = new AccountService(userManagerFake, roleManagerFake, signInManagerFake, journalContext);
+
+        var (result, errors) = service.CheckAndChangePassword(null, new UserPasswordWebModel()).Result;
+
+        Assert
+            .IsFalse(result);
+        Assert
+            .AreEqual(1, errors.Count());
+    }
+
+    [TestMethod]
+    public void CheckAndChangePassword_NoneUser_ShouldFalse()
+    {
+        var userManagerFake = new Mock<UserManagerMock>();
+        var roleManagerFake = Mock.Of<RoleManagerMock>();
+        var signInManagerFake = Mock.Of<SignInManagerMock>();
+        userManagerFake
+            .Setup(_ => _.FindByNameAsync(It.IsAny<string>()));
+        var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
+            .UseInMemoryDatabase(random.Next(int.MaxValue).ToString()).Options;
+        using var journalContext = new DigitalJournalContext(journalContextOptions);
+        IAccountService service = new AccountService(userManagerFake.Object, roleManagerFake, signInManagerFake, journalContext);
+
+        var (result, errors) = service.CheckAndChangePassword("noneuser", new UserPasswordWebModel()).Result;
+
+        Assert
+            .IsFalse(result);
+        Assert
+            .AreEqual(1, errors.Count());
+        Assert
+            .AreEqual("Не удалось найти сущность в базе данных", errors.First());
+    }
+
+    [TestMethod]
+    public void CheckAndChangePassword_ErrorPassword_ShouldFalse()
+    {
+        var expectedUser = new User
+        {
+            UserName = "testName",
+        };
+        var userManagerFake = new Mock<UserManagerMock>();
+        var roleManagerFake = Mock.Of<RoleManagerMock>();
+        var signInManagerFake = new Mock<SignInManagerMock>();
+        userManagerFake
+            .Setup(_ => _.FindByNameAsync(It.IsAny<string>()))
+            .Returns(Task.FromResult(expectedUser));
+        signInManagerFake
+            .Setup(_ => _.CheckPasswordSignInAsync(It.IsAny<User>(), It.IsAny<string>(), It.IsAny<bool>()))
+            .Returns(Task.FromResult(Microsoft.AspNetCore.Identity.SignInResult.Failed));
+        var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
+            .UseInMemoryDatabase(random.Next(int.MaxValue).ToString()).Options;
+        using var journalContext = new DigitalJournalContext(journalContextOptions);
+        IAccountService service = new AccountService(userManagerFake.Object, roleManagerFake, signInManagerFake.Object, journalContext);
+
+        var (result, errors) = service.CheckAndChangePassword("nonepassword", new UserPasswordWebModel()).Result;
+
+        Assert
+            .IsFalse(result);
+        Assert
+            .AreEqual(1, errors.Count());
+        Assert
+            .AreEqual("Неправильный старый пароль", errors.First());
+    }
+
+    [TestMethod]
+    public void CheckAndChangePassword_ErrorRemovePassword_ShouldFalse()
+    {
+        var expectedUser = new User
+        {
+            UserName = "testName",
+        };
+        var expectedErrorCode = "DefaultError";
+        var expectedErrorDescription = "TestDescription";
+        var expErrors = new[]
+        {
+            new IdentityError {Code = expectedErrorCode, Description = expectedErrorDescription}
+        };
+        var userManagerFake = new Mock<UserManagerMock>();
+        var roleManagerFake = Mock.Of<RoleManagerMock>();
+        var signInManagerFake = new Mock<SignInManagerMock>();
+        userManagerFake
+            .Setup(_ => _.FindByNameAsync(It.IsAny<string>()))
+            .Returns(Task.FromResult(expectedUser));
+        signInManagerFake
+            .Setup(_ => _.CheckPasswordSignInAsync(It.IsAny<User>(), It.IsAny<string>(), It.IsAny<bool>()))
+            .Returns(Task.FromResult(Microsoft.AspNetCore.Identity.SignInResult.Success));
+        userManagerFake
+            .Setup(_ => _.RemovePasswordAsync(It.IsAny<User>()))
+            .Returns(Task.FromResult(IdentityResult.Failed(expErrors)));
+        var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
+            .UseInMemoryDatabase(random.Next(int.MaxValue).ToString()).Options;
+        using var journalContext = new DigitalJournalContext(journalContextOptions);
+        IAccountService service = new AccountService(userManagerFake.Object, roleManagerFake, signInManagerFake.Object, journalContext);
+
+        var (result, errors) = service.CheckAndChangePassword("errorpassword", new UserPasswordWebModel()).Result;
+
+        Assert
+            .IsFalse(result);
+        Assert
+            .AreEqual(1, errors.Count());
+        Assert
+            .AreEqual("Произошла неизвестная ошибка", errors.First());
+    }
+
+    [TestMethod]
+    public void CheckAndChangePassword_ErrorAddPassword_ShouldFalse()
+    {
+        var expectedUser = new User
+        {
+            UserName = "testName",
+        };
+        var expectedErrorCode = "DefaultError";
+        var expectedErrorDescription = "TestDescription";
+        var expErrors = new[]
+        {
+            new IdentityError {Code = expectedErrorCode, Description = expectedErrorDescription}
+        };
+        var userManagerFake = new Mock<UserManagerMock>();
+        var roleManagerFake = Mock.Of<RoleManagerMock>();
+        var signInManagerFake = new Mock<SignInManagerMock>();
+        userManagerFake
+            .Setup(_ => _.FindByNameAsync(It.IsAny<string>()))
+            .Returns(Task.FromResult(expectedUser));
+        signInManagerFake
+            .Setup(_ => _.CheckPasswordSignInAsync(It.IsAny<User>(), It.IsAny<string>(), It.IsAny<bool>()))
+            .Returns(Task.FromResult(Microsoft.AspNetCore.Identity.SignInResult.Success));
+        userManagerFake
+            .Setup(_ => _.RemovePasswordAsync(It.IsAny<User>()))
+            .Returns(Task.FromResult(IdentityResult.Success));
+        userManagerFake
+            .Setup(_ => _.AddPasswordAsync(It.IsAny<User>(), It.IsAny<string>()))
+            .Returns(Task.FromResult(IdentityResult.Failed(expErrors)));
+        var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
+            .UseInMemoryDatabase(random.Next(int.MaxValue).ToString()).Options;
+        using var journalContext = new DigitalJournalContext(journalContextOptions);
+        IAccountService service = new AccountService(userManagerFake.Object, roleManagerFake, signInManagerFake.Object, journalContext);
+
+        var (result, errors) = service.CheckAndChangePassword("errorpassword", new UserPasswordWebModel()).Result;
+
+        Assert
+            .IsFalse(result);
+        Assert
+            .AreEqual(1, errors.Count());
+        Assert
+            .AreEqual("Произошла неизвестная ошибка", errors.First());
+    }
+
+    [TestMethod]
+    public void CheckAndChangePassword_CorrectRequest_ShouldCorrect()
+    {
+        var expectedUser = new User
+        {
+            UserName = "testName",
+        };
+        var expectedErrorCode = "DefaultError";
+        var expectedErrorDescription = "TestDescription";
+        var expErrors = new[]
+        {
+            new IdentityError {Code = expectedErrorCode, Description = expectedErrorDescription}
+        };
+        var expectedModel = new UserPasswordWebModel
+        {
+            OldPassword = "old",
+            Password = "new",
+            PasswordConfirm = "new",
+        };
+        var userManagerFake = new Mock<UserManagerMock>();
+        var roleManagerFake = Mock.Of<RoleManagerMock>();
+        var signInManagerFake = new Mock<SignInManagerMock>();
+        userManagerFake
+            .Setup(_ => _.FindByNameAsync(It.IsAny<string>()))
+            .Returns(Task.FromResult(expectedUser));
+        signInManagerFake
+            .Setup(_ => _.CheckPasswordSignInAsync(It.IsAny<User>(), It.IsAny<string>(), It.IsAny<bool>()))
+            .Returns(Task.FromResult(Microsoft.AspNetCore.Identity.SignInResult.Success));
+        userManagerFake
+            .Setup(_ => _.RemovePasswordAsync(It.IsAny<User>()))
+            .Returns(Task.FromResult(IdentityResult.Success));
+        User callbackUser = null;
+        userManagerFake
+            .Setup(_ => _.AddPasswordAsync(It.IsAny<User>(), It.IsAny<string>()))
+            .Returns(Task.FromResult(IdentityResult.Success))
+            .Callback((User u, string p) => { callbackUser = u; });
+        var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
+            .UseInMemoryDatabase(random.Next(int.MaxValue).ToString()).Options;
+        using var journalContext = new DigitalJournalContext(journalContextOptions);
+        IAccountService service = new AccountService(userManagerFake.Object, roleManagerFake, signInManagerFake.Object, journalContext);
+
+        var (result, errors) = service.CheckAndChangePassword(expectedUser.UserName, expectedModel).Result;
+
+        Assert
+            .IsTrue(result);
+        Assert
+            .AreEqual(0, errors.Count());
+        Assert
+            .AreEqual(expectedUser.UserName, callbackUser.UserName);
+        userManagerFake
+            .Verify(_ => _.AddPasswordAsync(It.IsAny<User>(), expectedModel.Password));
     }
 
     #endregion
