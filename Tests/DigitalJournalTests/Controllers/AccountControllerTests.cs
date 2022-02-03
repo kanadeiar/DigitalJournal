@@ -3,8 +3,6 @@
 [TestClass]
 public class AccountControllerTests
 {
-    readonly Random random = new Random();
-
     #region Данные аккаунта
 
     [TestMethod]

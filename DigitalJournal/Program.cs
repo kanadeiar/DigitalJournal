@@ -20,6 +20,8 @@ builder.Host.ConfigureServices(services =>
 
     services.AddScoped<IAccountService, AccountService>();
 
+    services.AddTransient<IIdentitySeedTestData, IdentitySeedTestData>();
+    services.AddTransient<IDigitalJournalSeedTestData, DigitalJournalSeedTestData>();
 });
 builder.Services.AddServerSideBlazor();
 
@@ -36,8 +38,15 @@ builder.Services.Configure<IdentityOptions>(options =>
 
 var app = builder.Build();
 
-await IdentitySeedTestData.SeedTestData(app.Services, builder.Configuration);
-await DigitalJournalSeedTestData.SeedTestData(app.Services, builder.Configuration);
+using (var scope = app.Services.CreateScope())
+{
+    var seeder = scope.ServiceProvider
+        .GetRequiredService<IIdentitySeedTestData>()
+        .SeedTestData(app.Services, builder.Configuration);
+    var seederJournal = scope.ServiceProvider
+        .GetRequiredService<IDigitalJournalSeedTestData>()
+        .SeedTestData(app.Services, builder.Configuration);
+}
 
 if (app.Environment.IsDevelopment())
 {
@@ -66,3 +75,5 @@ app.MapBlazorHub();
 app.MapFallbackToPage("online/{param?}", "/Shared/_Host");
 
 app.Run();
+
+public partial class Program { }
