@@ -26,6 +26,12 @@ public interface IAccountService
     /// <param name="model">Модель смены пароля</param>
     /// <returns>Успешность, ошибки</returns>
     public Task<(bool success, string[] errors)> CheckAndChangePassword(string? username, UserPasswordWebModel model);
+    /// <summary> Выход из системы, разлогирование </summary>
+    public Task SignOut();
+    /// <summary> Проверка свободности имени пользователя </summary>
+    /// <param name="username">имя пользователя</param>
+    /// <returns>Имя не занято</returns>
+    public Task<bool> UserNameIsFree(string username);
 }
 
 #region Вебмодели

@@ -905,6 +905,7 @@ public class AccountControllerTests
     public void Logout_SendRequestWithReturnUrl_ShouldCorrectRedirect()
     {
         var expectedReturnUrl = "testUrl";
+        #region del
         var userManagerStub = Mock.Of<UserManagerMock>();
         var roleManagerStub = Mock.Of<RoleManagerMock>();
         var signInManagerMock = new Mock<SignInManagerMock>();
@@ -913,8 +914,12 @@ public class AccountControllerTests
         var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
             .UseInMemoryDatabase(nameof(Logout_SendRequestWithReturnUrl_ShouldCorrectRedirect)).Options;
         using var journalContext = new DigitalJournalContext(journalContextOptions);
-        var serviceFake = Mock.Of<IAccountService>();
-        var controller = new AccountController(userManagerStub, roleManagerStub, signInManagerMock.Object, journalContext, serviceFake);
+        #endregion
+
+        var serviceFake = new Mock<IAccountService>();
+        serviceFake
+            .Setup(_ => _.SignOut());
+        var controller = new AccountController(userManagerStub, roleManagerStub, signInManagerMock.Object, journalContext, serviceFake.Object);
 
         var result = controller.Logout(expectedReturnUrl).Result;
 
@@ -923,10 +928,8 @@ public class AccountControllerTests
         var redirectResult = (LocalRedirectResult)result;
         Assert
             .AreEqual(expectedReturnUrl, redirectResult.Url);
-        signInManagerMock
-            .Verify(_ => _.SignOutAsync());
-        signInManagerMock
-            .Verify();
+        serviceFake
+            .Verify(_ => _.SignOut());
     }
 
     #endregion
@@ -936,13 +939,15 @@ public class AccountControllerTests
     [TestMethod]
     public void AccessDenied_SendCorrectRequest_ShouldCorrectView()
     {
-        var returnUrl = "return";
+        #region del
         var userManagerStub = Mock.Of<UserManagerMock>();
         var roleManagerStub = Mock.Of<RoleManagerMock>();
         var signInManagerStub = Mock.Of<SignInManagerMock>();
         var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
             .UseInMemoryDatabase(nameof(Register_SendCorrectRequest_ShouldCorrectView)).Options;
         using var journalContext = new DigitalJournalContext(journalContextOptions);
+        #endregion
+
         var serviceFake = Mock.Of<IAccountService>();
         var controller = new AccountController(userManagerStub, roleManagerStub, signInManagerStub, journalContext, serviceFake);
 
@@ -957,9 +962,10 @@ public class AccountControllerTests
     #region WebAPI
 
     [TestMethod]
-    public void IsNameFree_SendRequest_ShouldCorrectJson()
+    public void IsNameFree_SendCorrectRequest_ShouldCorrectJson()
     {
         var expectedName = "TestName";
+        #region del
         var userManagerMock = new Mock<UserManagerMock>();
         userManagerMock
             .Setup(_ => _.FindByNameAsync(It.IsAny<string>()));
@@ -968,8 +974,13 @@ public class AccountControllerTests
         var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
             .UseInMemoryDatabase(nameof(Register_SendCorrectRequest_ShouldCorrectView)).Options;
         using var journalContext = new DigitalJournalContext(journalContextOptions);
-        var serviceFake = Mock.Of<IAccountService>();
-        var controller = new AccountController(userManagerMock.Object, roleManagerStub, signInManagerStub, journalContext, serviceFake);
+        #endregion
+
+        var serviceFake = new Mock<IAccountService>();
+        serviceFake
+            .Setup(_ => _.UserNameIsFree(It.IsAny<string>()))
+            .Returns(Task.FromResult(true));
+        var controller = new AccountController(userManagerMock.Object, roleManagerStub, signInManagerStub, journalContext, serviceFake.Object);
 
         var result = controller.IsNameFree(expectedName).Result;
 
@@ -978,10 +989,40 @@ public class AccountControllerTests
         var json = (JsonResult)result;
         Assert
             .AreEqual("true", json.Value);
+        serviceFake
+            .Verify(_ => _.UserNameIsFree(expectedName));
+    }
+
+    [TestMethod]
+    public void IsNameFree_SendFountRequest_ShouldFalseJson()
+    {
+        var expectedName = "TestName";
+        #region del
+        var userManagerMock = new Mock<UserManagerMock>();
         userManagerMock
-            .Verify(_ => _.FindByNameAsync(expectedName), Times.Once);
-        userManagerMock
-            .Verify();
+            .Setup(_ => _.FindByNameAsync(It.IsAny<string>()));
+        var roleManagerStub = Mock.Of<RoleManagerMock>();
+        var signInManagerStub = Mock.Of<SignInManagerMock>();
+        var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
+            .UseInMemoryDatabase(nameof(Register_SendCorrectRequest_ShouldCorrectView)).Options;
+        using var journalContext = new DigitalJournalContext(journalContextOptions);
+        #endregion
+
+        var serviceFake = new Mock<IAccountService>();
+        serviceFake
+            .Setup(_ => _.UserNameIsFree(It.IsAny<string>()))
+            .Returns(Task.FromResult(false));
+        var controller = new AccountController(userManagerMock.Object, roleManagerStub, signInManagerStub, journalContext, serviceFake.Object);
+
+        var result = controller.IsNameFree(expectedName).Result;
+
+        Assert
+            .IsInstanceOfType(result, typeof(JsonResult));
+        var json = (JsonResult)result;
+        Assert
+            .AreEqual("Такой логин уже занят другим пользователем", json.Value);
+        serviceFake
+            .Verify(_ => _.UserNameIsFree(expectedName));
     }
 
     #endregion

@@ -150,5 +150,16 @@ public class AccountService : IAccountService
             errors.Add("Не удалось найти сущность в базе данных");
         return (false, errors.ToArray());
     }
+
+    public async Task SignOut()
+    {
+        await _signInManager.SignOutAsync();
+    }
+
+    public async Task<bool> UserNameIsFree(string username)
+    {
+        var user = await _userManager.FindByNameAsync(username);
+        return user is null;
+    }
 }
 

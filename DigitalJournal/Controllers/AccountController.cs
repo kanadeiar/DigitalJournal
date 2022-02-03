@@ -119,7 +119,7 @@ public class AccountController : Controller
 
     public async Task<IActionResult> Logout(string returnUrl)
     {
-        await _signInManager.SignOutAsync();
+        await _accountService.SignOut();
         return LocalRedirect(returnUrl ?? "/");
     }
 
@@ -134,8 +134,8 @@ public class AccountController : Controller
     [AllowAnonymous]
     public async Task<IActionResult> IsNameFree(string UserName)
     {
-        var user = await _userManager.FindByNameAsync(UserName);
-        return Json(user is null ? "true" : "Такой логин уже занят другим пользователем");
+        var result = await _accountService.UserNameIsFree(UserName);
+        return Json(result ? "true" : "Такой логин уже занят другим пользователем");
     }
 
     #endregion

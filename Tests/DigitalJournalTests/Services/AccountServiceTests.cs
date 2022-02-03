@@ -680,5 +680,78 @@ public class AccountServiceTests
     }
 
     #endregion
+
+    #region Разлогирование
+
+    [TestMethod]
+    public void SignOut_CorrectRequest_ShouldCorrect()
+    {
+        var userManagerFake = Mock.Of<UserManagerMock>();
+        var roleManagerFake = Mock.Of<RoleManagerMock>();
+        var signInManagerFake = Mock.Of<SignInManagerMock>();
+        var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
+            .UseInMemoryDatabase(random.Next(int.MaxValue).ToString()).Options;
+        using var journalContext = new DigitalJournalContext(journalContextOptions);
+        IAccountService service = new AccountService(userManagerFake, roleManagerFake, signInManagerFake, journalContext);
+
+        var task = service.SignOut();
+        task.Wait();
+
+        Assert
+            .IsTrue(task.IsCompleted);
+    }
+
+    #endregion
+
+    #region Свободность имени пользователя
+
+    [TestMethod]
+    public void UserNameIsFree_RequestFoundUser_ShouldFalse()
+    {
+        var expectedUser = new User 
+        {
+            UserName = "TestName",
+        };
+        var userManagerFake = new Mock<UserManagerMock>();
+        var roleManagerFake = Mock.Of<RoleManagerMock>();
+        var signInManagerFake = Mock.Of<SignInManagerMock>();
+
+        userManagerFake
+            .Setup(_ => _.FindByNameAsync(It.IsAny<string>()))
+            .Returns(Task.FromResult(expectedUser));
+        var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
+            .UseInMemoryDatabase(random.Next(int.MaxValue).ToString()).Options;
+        using var journalContext = new DigitalJournalContext(journalContextOptions);
+        IAccountService service = new AccountService(userManagerFake.Object, roleManagerFake, signInManagerFake, journalContext);
+
+        var result = service.UserNameIsFree(expectedUser.UserName).Result;
+
+        Assert
+            .IsFalse(result);
+    }
+
+    [TestMethod]
+    public void UserNameIsFree_RequestNotFoundUser_ShouldTrue()
+    {
+        User expectedUser = null;
+        var userManagerFake = new Mock<UserManagerMock>();
+        var roleManagerFake = Mock.Of<RoleManagerMock>();
+        var signInManagerFake = Mock.Of<SignInManagerMock>();
+
+        userManagerFake
+            .Setup(_ => _.FindByNameAsync(It.IsAny<string>()))
+            .Returns(Task.FromResult(expectedUser));
+        var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
+            .UseInMemoryDatabase(random.Next(int.MaxValue).ToString()).Options;
+        using var journalContext = new DigitalJournalContext(journalContextOptions);
+        IAccountService service = new AccountService(userManagerFake.Object, roleManagerFake, signInManagerFake, journalContext);
+
+        var result = service.UserNameIsFree("noneuser").Result;
+
+        Assert
+            .IsTrue(result);
+    }
+
+    #endregion
 }
 
