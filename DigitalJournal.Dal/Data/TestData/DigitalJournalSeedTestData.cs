@@ -1,10 +1,10 @@
 ﻿namespace DigitalJournal.Dal.Data;
 
-public static class DigitalJournalSeedTestData
+public class DigitalJournalSeedTestData : IDigitalJournalSeedTestData
 {
     private static readonly Random _rnd = new Random();
 
-    public static async Task SeedTestData(IServiceProvider provider, IConfiguration configuration)
+    public async Task<IDigitalJournalSeedTestData> SeedTestData(IServiceProvider provider, IConfiguration configuration)
     {
         provider = provider.CreateScope().ServiceProvider;
         var logger = provider.GetRequiredService<ILogger<DigitalJournalContext>>();
@@ -24,7 +24,7 @@ public static class DigitalJournalSeedTestData
         if (context.Factory1ProductTypes.Any())
         {
             logger.LogInformation("Factory1 database contains data - database init with test data is not required");
-            return;
+            return this;
         }
         logger.LogInformation("Begin writing test data to database Factory1 ...");
 
@@ -159,6 +159,8 @@ public static class DigitalJournalSeedTestData
         await context.SaveChangesAsync();
 
         logger.LogInformation("Complete writing test data to database Factory1 ...");
+
+        return this;
     }
 }
 

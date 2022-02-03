@@ -1,13 +1,8 @@
 ﻿namespace DigitalJournal.Dal.Data;
 
-public static class IdentitySeedTestData
+public class IdentitySeedTestData : IIdentitySeedTestData
 {
-    /// <summary> Заполнение идентификационной базы данных тестовыми данными </summary>
-    /// <param name="provider">Провайдер</param>
-    /// <param name="configuration">Корфигурация</param>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="InvalidOperationException"></exception>
-    public static async Task SeedTestData(IServiceProvider provider, IConfiguration configuration)
+    public async Task<IIdentitySeedTestData> SeedTestData(IServiceProvider provider, IConfiguration configuration)
     {
         provider = provider.CreateScope().ServiceProvider;
         var logger = provider.GetRequiredService<ILogger<IdentityContext>>();
@@ -27,7 +22,7 @@ public static class IdentitySeedTestData
         if (context.Users.Any())
         {
             logger.LogInformation("Identity database contains data - database init with test data is not required");
-            return;
+            return this;
         }
         logger.LogInformation("Begin writing test data to database IdentityContext ...");
 
@@ -136,6 +131,8 @@ public static class IdentitySeedTestData
         #endregion
 
         logger.LogInformation("Complete writing test data to database IdentityContext ...");
+
+        return this;
     }
 }
 

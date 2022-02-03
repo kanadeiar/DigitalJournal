@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitalJournal.Dal", "Digit
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{E9A50B52-1FAE-4DDE-AC73-F56EB90D0FEA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalJournalTests", "Tests\DigitalJournalTests\DigitalJournalTests.csproj", "{42A24A74-9FA9-42A0-B086-956B6793DBB9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitalJournalTests", "Tests\DigitalJournalTests\DigitalJournalTests.csproj", "{42A24A74-9FA9-42A0-B086-956B6793DBB9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalJournalIntegrationTests", "Tests\DigitalJournalIntegrationTests\DigitalJournalIntegrationTests.csproj", "{1EF6BF5D-9028-4E90-9990-FFAAECE99EB8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,12 +37,17 @@ Global
 		{42A24A74-9FA9-42A0-B086-956B6793DBB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{42A24A74-9FA9-42A0-B086-956B6793DBB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{42A24A74-9FA9-42A0-B086-956B6793DBB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EF6BF5D-9028-4E90-9990-FFAAECE99EB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EF6BF5D-9028-4E90-9990-FFAAECE99EB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EF6BF5D-9028-4E90-9990-FFAAECE99EB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EF6BF5D-9028-4E90-9990-FFAAECE99EB8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{42A24A74-9FA9-42A0-B086-956B6793DBB9} = {E9A50B52-1FAE-4DDE-AC73-F56EB90D0FEA}
+		{1EF6BF5D-9028-4E90-9990-FFAAECE99EB8} = {E9A50B52-1FAE-4DDE-AC73-F56EB90D0FEA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5CBFADD-9A97-4B5A-AAD8-7023EE2549F8}
