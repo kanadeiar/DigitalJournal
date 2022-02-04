@@ -1,0 +1,28 @@
+﻿@page "/factory1"
+@inherits OwningComponentBase<DigitalJournalContext>
+
+<PageTitle>Завод 1 - Журнал</PageTitle>
+
+<div class="row">
+    <div class="col-md-4 col-lg-3 mb-1">
+        <_Factory1LeftSidebarPartial />
+    </div>
+    <div class="col-md-8 col-lg-9 mb-1">
+        <div class="border-1 bg-light shadow rounded-1 p-2">
+            <h1 class="my-2 p-2"><span class="fa fa-home" aria-hidden="true"></span> Обзор данных по заводу 1</h1>
+
+            <Factory1ShowW1Component Query=_context.Factory1Warehouse1ShiftData/>
+
+            <Factory1ShowPAPComponent QueryPress=_context.Factory1Press1ShiftData 
+                QueryAutoclave=_context.Factory1Autoclave1ShiftDatas 
+                QueryPack=_context.Factory1Pack1ShiftDatas/>
+            
+            <Factory1ShowW2Component Query=_context.Factory1Warehouse2ShiftData/>
+
+        </div>
+    </div>
+</div>
+
+@code {
+    private DigitalJournalContext _context => Service;
+}

@@ -1,0 +1,51 @@
+﻿<h6 class="mt-4">Последние данные по производству:</h6>
+<p class="m-0">
+    @if (Factory1Press1ShiftData is null)
+    {
+        <apsn>Данные по прессованию отсутствуют</apsn>
+    }
+    else
+    {
+        <div>
+            Напрессовано за смену:
+        </div>
+        <span>Вид кирпича: <strong>[@Factory1Press1ShiftData.Factory1ProductType.Number] @Factory1Press1ShiftData.Factory1ProductType.Name</strong></span>
+        <span id="pressValues">Напрессовано: <strong>@Factory1Press1ShiftData.ProductCount</strong> шт.</span>
+        <div>
+            Использовано сырья:
+        </div>
+        <span>Песка: <strong>@Factory1Press1ShiftData.Loose1RawValue.ToString("2") м3</strong></span>
+        <span>Цемента: <strong>@Factory1Press1ShiftData.Loose2RawValue.ToString("2") м3</strong></span>
+        <span>Извести: <strong>@Factory1Press1ShiftData.Loose3RawValue.ToString("2") м3</strong></span>
+    }
+</p>
+<p class="m-0">
+    @if (Factory1Autoclave1ShiftData is null)
+    {
+        <apsn>Данные по автоклавированию отсутствуют</apsn>
+    }
+    else
+    {
+        <div>
+            Автоклаировано за смену:
+        </div>
+        <span>Вид кирпича: <strong>[@Factory1Autoclave1ShiftData.Factory1ProductType.Number] @Factory1Autoclave1ShiftData.Factory1ProductType.Name</strong></span>
+        <span id="autoclaveValues">Номер автоклава: <strong>@Factory1Autoclave1ShiftData.AutoclaveNumber</strong></span>
+        <span>Дата начала: <strong>@Factory1Autoclave1ShiftData.TimeStart.ToString("dd.MM.yyyy HH:mm")</strong></span>
+        <span>Продолжительность автоклавирования: <strong>@Factory1Autoclave1ShiftData.AutoclavedTime.Hours час. @Factory1Autoclave1ShiftData.AutoclavedTime.Minutes мин.</strong></span>
+    }
+</p>
+<p class="m-0">
+    @if (Factory1Pack1ShiftData is null)
+    {
+        <apsn>Данные по упаковке отсутствуют</apsn>
+    }
+    else
+    {
+        <div>
+            Наупаковано за смену:
+        </div>
+        <span>Вид кирпича: <strong>[@Factory1Pack1ShiftData.Factory1ProductType.Number] @Factory1Pack1ShiftData.Factory1ProductType.Name</strong></span>
+        <span id="packValues">Упаковано: <strong>@Factory1Pack1ShiftData.ProductCount шт.</strong></span>
+    }
+</p>
