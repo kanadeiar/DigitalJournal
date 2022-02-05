@@ -8,7 +8,7 @@ public partial class Factory1Warehouse1ShiftDataComponent
 
     public EDataOrder DataOrder { get; set; } = EDataOrder.TimeDesc;
     public int Page { get; set; } = 1;
-    public int PagesCount { get; set; }
+    public int PagesCount { get; set; } = 1;
 
     public async Task SetOrder(EDataOrder order)
     {
@@ -29,8 +29,6 @@ public partial class Factory1Warehouse1ShiftDataComponent
         Page = page;
         await UpdateDataAsync();
     }
-
-
 
     protected override async Task OnParametersSetAsync()
     {

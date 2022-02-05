@@ -14,12 +14,14 @@
 @code {
     [Parameter]
     public RenderFragment ChildContent { get; set; }
+
     [Parameter]
     public OrderType Asc { get; set; }
     [Parameter]
     public OrderType Desc { get; set; }
     [Parameter]
     public OrderType Current { get; set; }
+
     [Parameter]
     public EventCallback<OrderType> CustomEvent { get; set; }
     public async Task HandleClick(EventArgs e)
