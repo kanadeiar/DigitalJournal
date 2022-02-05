@@ -1,0 +1,196 @@
+﻿<h1 class="my-2 p-2"><span class="fa fa-store" aria-hidden="true"></span> Журнал по складу сырья №1</h1>
+
+<div class="table-responsive-lg">
+    <table class="table table-sm table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>
+                    <button class="btn btn-success btn-sm" @onclick=@( async () => { await SetOrder(EDataOrder.TimeAsc); })>
+                        Дата время начала смены
+                        @if (DataOrder == EDataOrder.TimeAsc)
+                        {
+                            <i class="fa fa-angle-up"></i>
+                        }
+                        else if (DataOrder == EDataOrder.TimeDesc)
+                        {
+                            <i class="fa fa-angle-down"></i>
+                        }
+                    </button>
+                </th>
+                <th>
+                    <button class="btn btn-success btn-sm" @onclick=@( async () => { await SetOrder(EDataOrder.Tank1Asc); })>
+                        Объем песка
+                        @if (DataOrder == EDataOrder.Tank1Asc)
+                        {
+                            <i class="fa fa-angle-up"></i>
+                        }
+                        else if (DataOrder == EDataOrder.Tank1Desc)
+                        {
+                            <i class="fa fa-angle-down"></i>
+                        }
+                    </button>
+                </th>
+                <th>
+                    <button class="btn btn-success btn-sm" @onclick=@( async () => { await SetOrder(EDataOrder.Tank2Asc); })>
+                        Объем цемента
+                        @if (DataOrder == EDataOrder.Tank2Asc)
+                        {
+                            <i class="fa fa-angle-up"></i>
+                        }
+                        else if (DataOrder == EDataOrder.Tank2Desc)
+                        {
+                            <i class="fa fa-angle-down"></i>
+                        }
+                    </button>
+                </th>
+                <th>
+                    <button class="btn btn-success btn-sm" @onclick=@( async () => { await SetOrder(EDataOrder.Tank3Asc); })>
+                        Объем извести
+                        @if (DataOrder == EDataOrder.Tank3Asc)
+                        {
+                            <i class="fa fa-angle-up"></i>
+                        }
+                        else if (DataOrder == EDataOrder.Tank3Desc)
+                        {
+                            <i class="fa fa-angle-down"></i>
+                        }
+                    </button>
+                </th>
+                <th>
+                    <button class="btn btn-success btn-sm" @onclick=@( async () => { await SetOrder(EDataOrder.ShiftAsc); })>
+                        Смена
+                        @if (DataOrder == EDataOrder.ShiftAsc)
+                        {
+                            <i class="fa fa-angle-up"></i>
+                        }
+                        else if (DataOrder == EDataOrder.ShiftDesc)
+                        {
+                            <i class="fa fa-angle-down"></i>
+                        }
+                    </button>
+                </th>
+                <th>
+                    <button class="btn btn-success btn-sm" @onclick=@( async () => { await SetOrder(EDataOrder.UserAsc); })>
+                        Кладовщик
+                        @if (DataOrder == EDataOrder.UserAsc)
+                        {
+                            <i class="fa fa-angle-up"></i>
+                        }
+                        else if (DataOrder == EDataOrder.UserDesc)
+                        {
+                            <i class="fa fa-angle-down"></i>
+                        }
+                    </button>
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Datas is null)
+            {
+                <tr><th colspan="9" class="p-4 text-center">Загрузка ...</th></tr>
+            }
+            else if (!Datas.Any())
+            {
+                <tr><th colspan="9" class="p-4 text-center">Данные отсутствуют</th></tr>
+            }
+            else
+            {
+                foreach (var e in Datas)
+                {
+                    <tr>
+                        <td>@e.Time.ToString("dd.MM.yyyy") @e.Time.ToString("HH:mm")</td>
+                        <td>@e.Tank1LooseRawValue.ToString("F2") м3</td>
+                        <td>@e.Tank2LooseRawValue.ToString("F2") м3</td>
+                        <td>@e.Tank3LooseRawValue.ToString("F2") м3</td>
+                        <td>@e.Factory1Shift?.Name</td>
+                        <td>@e.Profile?.SurName @e.Profile?.FirstName[0]. @e.Profile?.Patronymic[0].</td>
+                        <td class="text-center">
+                            <Tooltip Text="Редактировать эту запись журнала">
+                                <NavLink class="btn btn-sm btn-info mb-1" href="@($"factory1/warehouse1/edit/{e.Id}")">
+                                    <i class="fas fa-edit"></i> Редактировать
+                                </NavLink>
+                            </Tooltip>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <ul class="pagination">
+        @if (Page > 1)
+        {
+            <li class="page-item">
+                <button class="page-link text-dark" @onclick=@(async () => { await SetPage(Page - 1); })>
+                    <i class="fas fa-arrow-left"></i> Назад
+                </button>
+            </li>
+        }
+        @if (Page > 1)
+        {
+            <li class="page-item">
+                <button class="page-link text-dark" @onclick=@(async () => { await SetPage(1); })>
+                    1
+                </button>
+            </li>
+        }
+        @if (Page > 3)
+        {
+            <li class="page-item p-1 bg-secondary bg-opacity-50">
+            </li>
+        }
+        @if (Page > 2)
+        {
+            <li class="page-item">
+                <button class="page-link text-dark" @onclick=@(async () => { await SetPage(Page - 1); })>
+                    @(Page - 1)
+                </button>
+            </li>
+        }
+        <li class="page-item active">
+            <a class="page-link text-white">
+                @Page
+            </a>
+        </li>
+        @if (Page < PagesCount - 1)
+        {
+            <li class="page-item">
+                <button class="page-link text-dark" @onclick=@(async () => { await SetPage(Page + 1); })>
+                    @(Page + 1)
+                </button>
+            </li>
+        }
+        @if (Page < PagesCount - 2)
+        {
+            <li class="page-item p-1 bg-secondary bg-opacity-50">
+            </li>
+        }
+        @if (Page < PagesCount)
+        {
+            <li class="page-item">
+                <button class="page-link text-dark" @onclick=@(async () => { await SetPage(PagesCount); })>
+                    @PagesCount
+                </button>
+            </li>
+        }
+        @if (Page < PagesCount)
+        {
+            <li class="page-item">
+                <button class="page-link text-dark" @onclick=@(async () => { await SetPage(Page + 1); })>
+                    Вперед <i class="fas fa-arrow-right"></i>
+                </button>
+            </li>
+        }
+    </ul>
+</div>
+
+<div class="my-1">
+    <NavLink class="btn btn-success mb-1" href="factory1/warehouse1/create">
+        <i class="fas fa-plus"></i>
+        Добавить данные за смену
+    </NavLink>
+    <button class="btn btn-info mb-1" @onclick="UpdateDataAsync">Обновить</button>
+</div>
