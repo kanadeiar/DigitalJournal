@@ -30,6 +30,8 @@ public partial class Factory1Warehouse1ShiftDataComponent
         await UpdateDataAsync();
     }
 
+
+
     protected override async Task OnParametersSetAsync()
     {
         await UpdateDataAsync();

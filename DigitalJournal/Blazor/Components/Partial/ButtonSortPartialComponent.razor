@@ -1,0 +1,29 @@
+﻿@typeparam OrderType
+<button class="btn btn-success btn-sm" @onclick="HandleClick" >
+    @ChildContent
+    @if (Current.Equals(Asc))
+    {
+        <i class="fa fa-angle-up"></i>
+    }
+    else if (Current.Equals(Desc))
+    {
+        <i class="fa fa-angle-down"></i>
+    }
+</button>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    public OrderType Asc { get; set; }
+    [Parameter]
+    public OrderType Desc { get; set; }
+    [Parameter]
+    public OrderType Current { get; set; }
+    [Parameter]
+    public EventCallback<OrderType> CustomEvent { get; set; }
+    public async Task HandleClick(EventArgs e)
+    {
+        await CustomEvent.InvokeAsync(Asc);
+    }
+}

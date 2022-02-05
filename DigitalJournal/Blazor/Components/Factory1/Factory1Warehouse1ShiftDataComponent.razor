@@ -5,82 +5,34 @@
         <thead>
             <tr>
                 <th>
-                    <button class="btn btn-success btn-sm" @onclick=@( async () => { await SetOrder(EDataOrder.TimeAsc); })>
+                    <ButtonSortPartialComponent OrderType="EDataOrder" CustomEvent="@SetOrder" Asc="EDataOrder.TimeAsc" Desc="EDataOrder.TimeDesc" Current="DataOrder">
                         Дата время начала смены
-                        @if (DataOrder == EDataOrder.TimeAsc)
-                        {
-                            <i class="fa fa-angle-up"></i>
-                        }
-                        else if (DataOrder == EDataOrder.TimeDesc)
-                        {
-                            <i class="fa fa-angle-down"></i>
-                        }
-                    </button>
+                    </ButtonSortPartialComponent>
                 </th>
                 <th>
-                    <button class="btn btn-success btn-sm" @onclick=@( async () => { await SetOrder(EDataOrder.Tank1Asc); })>
+                    <ButtonSortPartialComponent OrderType="EDataOrder" CustomEvent="@SetOrder" Asc="EDataOrder.Tank1Asc" Desc="EDataOrder.Tank1Desc" Current="DataOrder">
                         Объем песка
-                        @if (DataOrder == EDataOrder.Tank1Asc)
-                        {
-                            <i class="fa fa-angle-up"></i>
-                        }
-                        else if (DataOrder == EDataOrder.Tank1Desc)
-                        {
-                            <i class="fa fa-angle-down"></i>
-                        }
-                    </button>
+                    </ButtonSortPartialComponent>
                 </th>
                 <th>
-                    <button class="btn btn-success btn-sm" @onclick=@( async () => { await SetOrder(EDataOrder.Tank2Asc); })>
+                    <ButtonSortPartialComponent OrderType="EDataOrder" CustomEvent="@SetOrder" Asc="EDataOrder.Tank2Asc" Desc="EDataOrder.Tank2Desc" Current="DataOrder">
                         Объем цемента
-                        @if (DataOrder == EDataOrder.Tank2Asc)
-                        {
-                            <i class="fa fa-angle-up"></i>
-                        }
-                        else if (DataOrder == EDataOrder.Tank2Desc)
-                        {
-                            <i class="fa fa-angle-down"></i>
-                        }
-                    </button>
+                    </ButtonSortPartialComponent>
                 </th>
                 <th>
-                    <button class="btn btn-success btn-sm" @onclick=@( async () => { await SetOrder(EDataOrder.Tank3Asc); })>
+                    <ButtonSortPartialComponent OrderType="EDataOrder" CustomEvent="@SetOrder" Asc="EDataOrder.Tank3Asc" Desc="EDataOrder.Tank3Desc" Current="DataOrder">
                         Объем извести
-                        @if (DataOrder == EDataOrder.Tank3Asc)
-                        {
-                            <i class="fa fa-angle-up"></i>
-                        }
-                        else if (DataOrder == EDataOrder.Tank3Desc)
-                        {
-                            <i class="fa fa-angle-down"></i>
-                        }
-                    </button>
+                    </ButtonSortPartialComponent>
                 </th>
                 <th>
-                    <button class="btn btn-success btn-sm" @onclick=@( async () => { await SetOrder(EDataOrder.ShiftAsc); })>
+                    <ButtonSortPartialComponent OrderType="EDataOrder" CustomEvent="@SetOrder" Asc="EDataOrder.ShiftAsc" Desc="EDataOrder.ShiftDesc" Current="DataOrder">
                         Смена
-                        @if (DataOrder == EDataOrder.ShiftAsc)
-                        {
-                            <i class="fa fa-angle-up"></i>
-                        }
-                        else if (DataOrder == EDataOrder.ShiftDesc)
-                        {
-                            <i class="fa fa-angle-down"></i>
-                        }
-                    </button>
+                    </ButtonSortPartialComponent>
                 </th>
                 <th>
-                    <button class="btn btn-success btn-sm" @onclick=@( async () => { await SetOrder(EDataOrder.UserAsc); })>
+                    <ButtonSortPartialComponent OrderType="EDataOrder" CustomEvent="@SetOrder" Asc="EDataOrder.UserAsc" Desc="EDataOrder.UserDesc" Current="DataOrder">
                         Кладовщик
-                        @if (DataOrder == EDataOrder.UserAsc)
-                        {
-                            <i class="fa fa-angle-up"></i>
-                        }
-                        else if (DataOrder == EDataOrder.UserDesc)
-                        {
-                            <i class="fa fa-angle-down"></i>
-                        }
-                    </button>
+                    </ButtonSortPartialComponent>
                 </th>
                 <th></th>
             </tr>
@@ -106,11 +58,15 @@
                         <td>@e.Factory1Shift?.Name</td>
                         <td>@e.Profile?.SurName @e.Profile?.FirstName[0]. @e.Profile?.Patronymic[0].</td>
                         <td class="text-center">
-                            <Tooltip Text="Редактировать эту запись журнала">
-                                <NavLink class="btn btn-sm btn-info mb-1" href="@($"factory1/warehouse1/edit/{e.Id}")">
-                                    <i class="fas fa-edit"></i> Редактировать
-                                </NavLink>
-                            </Tooltip>
+                            <AuthorizeView Roles="admins, masters">
+                                <Authorizing>
+                                    <Tooltip Text="Редактировать эту запись журнала">
+                                        <NavLink class="btn btn-sm btn-info mb-1" href="@($"factory1/warehouse1/edit/{e.Id}")">
+                                            <i class="fas fa-edit"></i> Редактировать
+                                        </NavLink>
+                                    </Tooltip>
+                                </Authorizing>
+                            </AuthorizeView>
                         </td>
                     </tr>
                 }
