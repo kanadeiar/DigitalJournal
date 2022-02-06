@@ -1,4 +1,6 @@
-﻿<h1 class="my-2 p-2"><span class="fa fa-store" aria-hidden="true"></span> Журнал по складу сырья №1</h1>
+﻿@attribute [Authorize]
+
+<h1 class="my-2 p-2"><span class="fa fa-store" aria-hidden="true"></span> Журнал по складу сырья №1</h1>
 
 <div class="table-responsive-lg">
     <table class="table table-sm table-bordered table-striped">
@@ -59,13 +61,13 @@
                         <td>@e.Profile?.SurName @e.Profile?.FirstName[0]. @e.Profile?.Patronymic[0].</td>
                         <td class="text-center">
                             <AuthorizeView Roles="admins, masters">
-                                <Authorizing>
+                                <Authorized>
                                     <Tooltip Text="Редактировать эту запись журнала">
                                         <NavLink class="btn btn-sm btn-info mb-1" href="@($"factory1/warehouse1/edit/{e.Id}")">
                                             <i class="fas fa-edit"></i> Редактировать
                                         </NavLink>
                                     </Tooltip>
-                                </Authorizing>
+                                </Authorized>
                             </AuthorizeView>
                         </td>
                     </tr>

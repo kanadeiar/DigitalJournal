@@ -1,6 +1,6 @@
 ﻿namespace DigitalJournal.Blazor.Components.Factory1;
 
-public partial class Factory1Warehouse1ShiftDataComponent
+public partial class Factory1Warehouse1ShiftDataListComponent
 {
     [Parameter]
     public IQueryable<Factory1Warehouse1ShiftData>? Query { get; set; }

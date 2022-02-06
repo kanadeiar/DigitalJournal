@@ -1,6 +1,5 @@
 ﻿@page "/factory1/warehouse1"
 @inherits OwningComponentBase<DigitalJournalContext>
-@attribute [Authorize]
 
 <PageTitle>Склад сырья 1 - Завод 1</PageTitle>
 
@@ -11,7 +10,7 @@
     <div class="col-md-8 col-lg-9 mb-1">
         <div class="border-1 bg-light shadow rounded-1 p-2">
             
-            <Factory1Warehouse1ShiftDataComponent Query=_Context.Factory1Warehouse1ShiftData/>
+            <Factory1Warehouse1ShiftDataListComponent Query=_Context.Factory1Warehouse1ShiftData/>
 
         </div>
     </div>
