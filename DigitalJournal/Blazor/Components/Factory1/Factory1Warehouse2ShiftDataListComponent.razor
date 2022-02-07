@@ -54,9 +54,9 @@
                 {
                     <tr>
                         <td>@e.Time.ToString("dd.MM.yyyy") @e.Time.ToString("HH:mm")</td>
-                        <td>@e.Place1ProductType.Name - @e.Place1ProductsCount.ToString() шт.</td>
-                        <td>@e.Place2ProductType.Name - @e.Place2ProductsCount.ToString() шт.</td>
-                        <td>@e.Place3ProductType.Name - @e.Place3ProductsCount.ToString() шт.</td>
+                        <td>@e.Place1ProductsCount.ToString() шт. (@e.Place1ProductType.Name)</td>
+                        <td>@e.Place2ProductsCount.ToString() шт. (@e.Place2ProductType.Name)</td>
+                        <td>@e.Place3ProductsCount.ToString() шт. (@e.Place3ProductType.Name)</td>
                         <td>@e.Factory1Shift?.Name</td>
                         <td>@e.Profile?.SurName @e.Profile?.FirstName[0]. @e.Profile?.Patronymic[0].</td>
                         <td class="text-center">
