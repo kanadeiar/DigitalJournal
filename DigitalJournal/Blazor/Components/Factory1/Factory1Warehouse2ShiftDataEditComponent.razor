@@ -1,7 +1,10 @@
 ﻿<h1 class="my-2 p-2 bg-@Theme text-@TextColor">@Mode</h1>
 
 <div>
-    <NavLink class="btn btn-secondary" href="factory1/warehouse2">Назад</NavLink>
+    <NavLink class="btn btn-secondary" href="factory1/warehouse2">
+        <i class="fa fa-arrow-left"></i>
+        Назад
+    </NavLink>
 </div>
 
 @if (Data is null)
@@ -96,7 +99,10 @@ else
             </InputSelect>
         </div>
         <div class="mt-4">
-            <button type="submit" class="btn btn-@Theme">Сохранить</button>
+            <button type="submit" class="btn btn-@Theme">
+                <i class="fas fa-save"></i>
+                Сохранить
+            </button>
         </div>
     </EditForm>
 }
