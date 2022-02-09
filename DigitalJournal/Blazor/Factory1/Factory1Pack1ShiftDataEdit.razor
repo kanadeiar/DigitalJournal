@@ -1,0 +1,36 @@
+﻿@page "/factory1/pack1/edit/{id:int}"
+@page "/factory1/pack1/create"
+@inherits OwningComponentBase<DigitalJournalContext>
+@inject NavigationManager NavManager
+
+<PageTitle>@Mode - Завод 1</PageTitle>
+
+<link href="/css/BlazorValidation.css" rel="stylesheet" />
+
+<div class="row">
+    <div class="col-md-4 col-lg-3 mb-1">
+        <_Factory1LeftSidebarPartial />
+    </div>
+    <div class="col-md-8 col-lg-9 mb-1">
+        <div class="border-1 bg-light shadow rounded-1 p-2">
+
+
+
+        </div>
+    </div>
+</div>
+
+
+@code {
+    DigitalJournalContext _Context => Service;
+    [Parameter]
+    public int Id { get; set; }
+
+    public async Task SaveChanges()
+    {
+        await _Context.SaveChangesAsync();
+        NavManager.NavigateTo("factory1/pack1");
+    }
+
+    public string Mode => (Id == 0) ? "Добавление данных за смену" : "Редактирование данных за смену";
+}

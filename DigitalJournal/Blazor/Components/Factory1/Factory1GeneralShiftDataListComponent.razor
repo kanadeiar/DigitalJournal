@@ -1,0 +1,110 @@
+﻿@attribute [Authorize]
+
+<h1 class="my-2 p-2"><span class="fas fa-store" aria-hidden="true"></span> Данные смены</h1>
+
+<div class="table-responsive-lg">
+    <table class="table table-sm table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>
+                    <ButtonSortPartialComponent OrderType="EF1GeneralOrder" CustomEvent="@SetOrder" Asc="EF1GeneralOrder.TimeAsc" Desc="EF1GeneralOrder.TimeDesc" Current="DataOrder">
+                        Дата время
+                    </ButtonSortPartialComponent>
+                </th>
+                <th>
+                    <ButtonSortPartialComponent OrderType="EF1GeneralOrder" CustomEvent="@SetOrder" Asc="EF1GeneralOrder.ProductNameAsc" Desc="EF1GeneralOrder.ProductNameDesc" Current="DataOrder">
+                        Напрессовано - название
+                    </ButtonSortPartialComponent>
+                </th>
+                <th>
+                    <ButtonSortPartialComponent OrderType="EF1GeneralOrder" CustomEvent="@SetOrder" Asc="EF1GeneralOrder.ProductCountAsc" Desc="EF1GeneralOrder.ProductCountDesc" Current="DataOrder">
+                        Напрессовано - количество
+                    </ButtonSortPartialComponent>
+                </th>
+                <th>
+                    <ButtonSortPartialComponent OrderType="EF1GeneralOrder" CustomEvent="@SetOrder" Asc="EF1GeneralOrder.LooseAsc" Desc="EF1GeneralOrder.LooseDesc" Current="DataOrder">
+                        Использовано сырья
+                    </ButtonSortPartialComponent>
+                </th>
+                <th>
+                    <ButtonSortPartialComponent OrderType="EF1GeneralOrder" CustomEvent="@SetOrder" Asc="EF1GeneralOrder.AutoclaveNumberAsc" Desc="EF1GeneralOrder.AutoclaveNumberDesc" Current="DataOrder">
+                        Автоклав
+                    </ButtonSortPartialComponent>
+                </th>
+                <th>
+                    <ButtonSortPartialComponent OrderType="EF1GeneralOrder" CustomEvent="@SetOrder" Asc="EF1GeneralOrder.PackProductNameAsc" Desc="EF1GeneralOrder.PackProductNameDesc" Current="DataOrder">
+                        Упаковано - название
+                    </ButtonSortPartialComponent>
+                </th>
+                <th>
+                    <ButtonSortPartialComponent OrderType="EF1GeneralOrder" CustomEvent="@SetOrder" Asc="EF1GeneralOrder.PackProductCountAsc" Desc="EF1GeneralOrder.PackProductCountDesc" Current="DataOrder">
+                        Упаковано - количество
+                    </ButtonSortPartialComponent>
+                </th>
+                <th>
+                    <ButtonSortPartialComponent OrderType="EF1GeneralOrder" CustomEvent="@SetOrder" Asc="EF1GeneralOrder.ShiftAsc" Desc="EF1GeneralOrder.ShiftDesc" Current="DataOrder">
+                        Смена
+                    </ButtonSortPartialComponent>
+                </th>
+                <th>
+                    <ButtonSortPartialComponent OrderType="EF1GeneralOrder" CustomEvent="@SetOrder" Asc="EF1GeneralOrder.UserAsc" Desc="EF1GeneralOrder.UserDesc" Current="DataOrder">
+                        Кладовщик
+                    </ButtonSortPartialComponent>
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Datas is null)
+            {
+                <tr><th colspan="9" class="p-4 text-center">Загрузка ...</th></tr>
+            }
+            else if (!Datas.Any())
+            {
+                <tr><th colspan="9" class="p-4 text-center">Данные отсутствуют</th></tr>
+            }
+            else
+            {
+                foreach (var e in Datas)
+                {
+                    <tr>
+                        <td>@e.Time.ToString("dd.MM.yyyy") @e.Time.ToString("HH:mm")</td>
+                        <td>@e.Factory1ProductType.Name</td>
+                        <td>@e.ProductCount.ToString()</td>
+                        <td>Песка: @e.Loose1RawValue.ToString("F2") м3, Цемента: @e.Loose2RawValue.ToString("F2") м3, Извести: @e.Loose3RawValue.ToString("F2")</td>
+                        <td>Номер: @e.AutoclaveNumber</td>
+                        <td>@e.Factory1PackProductType.Name</td>
+                        <td>@e.PackProductCount.ToString()</td>
+                        <td>@e.Factory1Shift?.Name</td>
+                        <td>@e.Profile?.SurName @e.Profile?.FirstName[0]. @e.Profile?.Patronymic[0].</td>
+                        <td class="text-center">
+                            <AuthorizeView Roles="admins, masters">
+                                <Authorized>
+                                    <Tooltip Text="Редактировать эту запись журнала">
+                                        <NavLink class="btn btn-sm btn-info mb-1" href="@($"factory1/general/edit/{e.Id}")">
+                                            <i class="fas fa-edit"></i> Редактировать
+                                        </NavLink>
+                                    </Tooltip>
+                                </Authorized>
+                            </AuthorizeView>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<PaginationPartialComponent CustomEvent="@SetPage" Page="Page" PagesCount="PagesCount" />
+
+<div class="my-1">
+    <NavLink class="btn btn-success mb-1" href="factory1/general/create">
+        <i class="fas fa-plus"></i>
+        Добавить данные за смену
+    </NavLink>
+    <button class="btn btn-info mb-1" @onclick="UpdateDataAsync">
+        <i class="fas fa-sync"></i>
+        Обновить
+    </button>
+</div>
+

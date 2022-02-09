@@ -1,48 +1,33 @@
 ﻿@attribute [Authorize]
 
-<h1 class="my-2 p-2"><span class="fas fa-store" aria-hidden="true"></span> Журнал по автоклаву №1</h1>
+<h1 class="my-2 p-2"><span class="fas fa-store" aria-hidden="true"></span> Журнал по упаковке №1</h1>
 
 <div class="table-responsive-lg">
     <table class="table table-sm table-bordered table-striped">
         <thead>
             <tr>
                 <th>
-                    <ButtonSortPartialComponent OrderType="EAutoclave1Order" CustomEvent="@SetOrder" Asc="EAutoclave1Order.TimeAsc" Desc="EAutoclave1Order.TimeDesc" Current="DataOrder">
+                    <ButtonSortPartialComponent OrderType="EPack1Order" CustomEvent="@SetOrder" Asc="EPack1Order.TimeAsc" Desc="EPack1Order.TimeDesc" Current="DataOrder">
                         Дата время
                     </ButtonSortPartialComponent>
                 </th>
                 <th>
-                    <ButtonSortPartialComponent OrderType="EAutoclave1Order" CustomEvent="@SetOrder" Asc="EAutoclave1Order.ProductNameAsc" Desc="EAutoclave1Order.ProductNameDesc" Current="DataOrder">
+                    <ButtonSortPartialComponent OrderType="EPack1Order" CustomEvent="@SetOrder" Asc="EPack1Order.ProductNameAsc" Desc="EPack1Order.ProductNameDesc" Current="DataOrder">
                         Название продукта
                     </ButtonSortPartialComponent>
                 </th>
                 <th>
-                    <ButtonSortPartialComponent OrderType="EAutoclave1Order" CustomEvent="@SetOrder" Asc="EAutoclave1Order.ProductCountAsc" Desc="EAutoclave1Order.ProductCountDesc" Current="DataOrder">
+                    <ButtonSortPartialComponent OrderType="EPack1Order" CustomEvent="@SetOrder" Asc="EPack1Order.ProductCountAsc" Desc="EPack1Order.ProductCountDesc" Current="DataOrder">
                         Количество
                     </ButtonSortPartialComponent>
                 </th>
                 <th>
-                    <ButtonSortPartialComponent OrderType="EAutoclave1Order" CustomEvent="@SetOrder" Asc="EAutoclave1Order.AutoclaveAsc" Desc="EAutoclave1Order.AutoclaveDesc" Current="DataOrder">
-                        Номер автоклава
-                    </ButtonSortPartialComponent>
-                </th>
-                <th>
-                    <ButtonSortPartialComponent OrderType="EAutoclave1Order" CustomEvent="@SetOrder" Asc="EAutoclave1Order.TimeStartAsc" Desc="EAutoclave1Order.TimeStartDesc" Current="DataOrder">
-                        Начало
-                    </ButtonSortPartialComponent>
-                </th>
-                <th>
-                    <ButtonSortPartialComponent OrderType="EAutoclave1Order" CustomEvent="@SetOrder" Asc="EAutoclave1Order.AutoclaveTimeAsc" Desc="EAutoclave1Order.AutoclaveTimeDesc" Current="DataOrder">
-                        Продолжительность
-                    </ButtonSortPartialComponent>
-                </th>
-                <th>
-                    <ButtonSortPartialComponent OrderType="EAutoclave1Order" CustomEvent="@SetOrder" Asc="EAutoclave1Order.ShiftAsc" Desc="EAutoclave1Order.ShiftDesc" Current="DataOrder">
+                    <ButtonSortPartialComponent OrderType="EPack1Order" CustomEvent="@SetOrder" Asc="EPack1Order.ShiftAsc" Desc="EPack1Order.ShiftDesc" Current="DataOrder">
                         Смена
                     </ButtonSortPartialComponent>
                 </th>
                 <th>
-                    <ButtonSortPartialComponent OrderType="EAutoclave1Order" CustomEvent="@SetOrder" Asc="EAutoclave1Order.UserAsc" Desc="EAutoclave1Order.UserDesc" Current="DataOrder">
+                    <ButtonSortPartialComponent OrderType="EPack1Order" CustomEvent="@SetOrder" Asc="EPack1Order.UserAsc" Desc="EPack1Order.UserDesc" Current="DataOrder">
                         Кладовщик
                     </ButtonSortPartialComponent>
                 </th>
@@ -65,17 +50,14 @@
                     <tr>
                         <td>@e.Time.ToString("dd.MM.yyyy") @e.Time.ToString("HH:mm")</td>
                         <td>@e.Factory1ProductType.Name</td>
-                        <td>@e.AutoclavedCount</td>
-                        <td>@e.AutoclaveNumber</td>
-                        <td>@e.TimeStart.ToString("dd.MM.yyyy HH:mm")</td>
-                        <td>@e.AutoclavedTime.Hours.ToString() ч. @e.AutoclavedTime.Minutes.ToString() м.</td>
+                        <td>@e.ProductCount.ToString()</td>
                         <td>@e.Factory1Shift?.Name</td>
                         <td>@e.Profile?.SurName @e.Profile?.FirstName[0]. @e.Profile?.Patronymic[0].</td>
                         <td class="text-center">
                             <AuthorizeView Roles="admins, masters">
                                 <Authorized>
                                     <Tooltip Text="Редактировать эту запись журнала">
-                                        <NavLink class="btn btn-sm btn-info mb-1" href="@($"factory1/autoclave1/edit/{e.Id}")">
+                                        <NavLink class="btn btn-sm btn-info mb-1" href="@($"factory1/pack1/edit/{e.Id}")">
                                             <i class="fas fa-edit"></i> Редактировать
                                         </NavLink>
                                     </Tooltip>
@@ -92,7 +74,7 @@
 <PaginationPartialComponent CustomEvent="@SetPage" Page="Page" PagesCount="PagesCount" />
 
 <div class="my-1">
-    <NavLink class="btn btn-success mb-1" href="factory1/autoclave1/create">
+    <NavLink class="btn btn-success mb-1" href="factory1/pack1/create">
         <i class="fas fa-plus"></i>
         Добавить данные за смену
     </NavLink>
