@@ -8,32 +8,22 @@ public class Factory1ShowW2ComponentTests
     {
         var expectedCount = 200;
         using var context = new Bunit.TestContext();
-        var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
-            .UseInMemoryDatabase(nameof(Init_Initialized_ShouldCorrect)).Options;
-        using var journalContext = new DigitalJournalContext(journalContextOptions);
-        var profile = new Profile { SurName = "Testov", FirstName = "Test", Patronymic = "Testovich", UserId = "test" };
-        journalContext.Profiles.Add(profile);
-        journalContext.SaveChanges();
-        var productType = new Factory1ProductType { Number = 1, Name = "Test" };
-        journalContext.Factory1ProductTypes.Add(productType);
-        journalContext.SaveChanges();
-        journalContext.Factory1Warehouse2ShiftData.AddRange(Enumerable.Range(1, 10).Select(i => new Factory1Warehouse2ShiftData
+        var data = new Factory1Warehouse2ShiftData
         {
             Time = new DateTime(2021, 1, 1),
-            Place1ProductType = productType,
+            Place1ProductType = new Factory1ProductType { Name = "Test" },
             Place1ProductsCount = expectedCount,
-            Place2ProductType = productType,
+            Place2ProductType = new Factory1ProductType { Name = "Test" },
             Place2ProductsCount = 100,
-            Place3ProductType = productType,
+            Place3ProductType = new Factory1ProductType { Name = "Test" },
             Place3ProductsCount = 100,
-            Profile = profile,
-        }));
-        journalContext.SaveChanges();
+            Profile = new Profile(),
+        };
 
         var component = context.RenderComponent<DigitalJournal.Blazor.Components.Factory1.Factory1ShowW2Component>(
             builder =>
             {
-                builder.Add(c => c.Query, journalContext.Factory1Warehouse2ShiftData);
+                builder.Add(c => c.Data, data);
             });
 
         Assert

@@ -7,24 +7,17 @@ public class Factory1ShowW1ComponentTests
     public void Init_Initialized_ShouldCorrect()
     {
         using var context = new Bunit.TestContext();
-        var journalContextOptions = new DbContextOptionsBuilder<DigitalJournalContext>()
-            .UseInMemoryDatabase(nameof(Init_Initialized_ShouldCorrect)).Options;
-        using var journalContext = new DigitalJournalContext(journalContextOptions);
-        var profile = new Profile { SurName = "Testov", FirstName = "Test", Patronymic = "Testovich", UserId = "test" };
-        journalContext.Profiles.Add(profile);
-        journalContext.SaveChanges();
-        journalContext.Factory1Warehouse1ShiftData.AddRange(Enumerable.Range(1, 10).Select(i => new Factory1Warehouse1ShiftData
+        var data = new Factory1Warehouse1ShiftData
         {
             Time = new DateTime(2021, 1, 1),
             Tank1LooseRawValue = 100,
-            Profile = profile,            
-        }));
-        journalContext.SaveChanges();
+            Profile = new Profile(),
+        };
 
         var component = context.RenderComponent<DigitalJournal.Blazor.Components.Factory1.Factory1ShowW1Component>(
             builder =>
             {
-                builder.Add(c => c.Query, journalContext.Factory1Warehouse1ShiftData);
+                builder.Add(c => c.Data, new Factory1Warehouse1ShiftData());
             });
 
         Assert
