@@ -1,4 +1,4 @@
-﻿<p>Обзор последней информации из журнала склада номер1:</p>
+﻿<p class="mt-4 mb-0">Обзор последней информации из журнала склада номер 1</p>
 
 <ul class="list-group">
     @if (Datas is null)
@@ -21,6 +21,29 @@
     }
 </ul>
 
+<p class="mt-4 mb-0">Обзор последней информации из журнала склада номер 2</p>
+
+<ul class="list-group">
+    @if (Datas is null)
+    {
+        <li class="list-group-item">Данные Отсутствуют</li>
+    }
+    else
+    {
+        var i = 1;
+        foreach(var e in Datas2)
+        {
+            <li class="list-group-item">
+                <span>@(i++) Дата и время: <strong>@e.Time.ToString("dd.MM.yyyy HH:mm")</strong></span>
+                <span>Место 1: <strong>@e.Place1ProductType.Name</strong> - <strong>@e.Place1ProductsCount шт.</strong></span>
+                <span>Место 2: <strong>@e.Place2ProductType.Name</strong> - <strong>@e.Place2ProductsCount шт.</strong></span>
+                <span>Место 3: <strong>@e.Place3ProductType.Name</strong> - <strong>@e.Place3ProductsCount шт.</strong></span>
+                <span>Кладовщик: <strong>@e.Profile.SurName @e.Profile.FirstName.FirstOrDefault().@e.Profile.Patronymic.FirstOrDefault().</strong></span>
+            </li>
+        }
+    }
+</ul>
+
 <div class="my-1">
     <Tooltip Text="Обновить эти сведения">
         <button class="btn btn-success mb-1" @onclick="UpdateData">
@@ -29,4 +52,6 @@
         </button>
     </Tooltip>
 </div>
+
+
 

@@ -66,28 +66,28 @@
                             <option selected value="0" disabled="disabled">Выберите смену</option>
                             @foreach (var item in Factory1Shifts.Keys)
                             {
-                            <option value="@item">@Factory1Shifts[item]</option>
+                                <option value="@item">@Factory1Shifts[item]</option>
                             }
-                    </InputSelect>
-                </div>
-                <div>
-                    <label>Кладовщик</label>
-                    <ValidationMessage For="@(() => Data.ProfileId)" />
-                    <InputSelect class="form-select" @bind-Value="Data.ProfileId">
-                        <option selected value="null" disabled="disabled">Выберите кладовщика</option>
-                        @foreach (var item in Profiles.Keys)
-                            {
-                            <option value="@item">@Profiles[item]</option>
-                            }
-                    </InputSelect>
-                </div>
-                <div class="mt-4">
-                    <button type="submit" class="btn btn-@Theme">
-                        <i class="fas fa-save"></i>
-                        Сохранить
-                    </button>
-                </div>
-            </EditForm>
+                        </InputSelect>
+                    </div>
+                    <div>
+                        <label>Кладовщик</label>
+                        <ValidationMessage For="@(() => Data.ProfileId)" />
+                        <InputSelect class="form-select" @bind-Value="Data.ProfileId">
+                            <option selected value="null" disabled="disabled">Выберите кладовщика</option>
+                            @foreach (var item in Profiles.Keys)
+                                {
+                                <option value="@item">@Profiles[item]</option>
+                                }
+                        </InputSelect>
+                    </div>
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-@Theme">
+                            <i class="fas fa-save"></i>
+                            Сохранить
+                        </button>
+                    </div>
+                </EditForm>
             }
 
         </div>

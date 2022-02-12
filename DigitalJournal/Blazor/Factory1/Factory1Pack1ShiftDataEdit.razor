@@ -14,23 +14,84 @@
     <div class="col-md-8 col-lg-9 mb-1">
         <div class="border-1 bg-light shadow rounded-1 p-2">
 
+            <h1 class="my-2 p-2 bg-@Theme text-@TextColor">@Mode</h1>
 
+            <div>
+                <NavLink class="btn btn-secondary" href="factory1/pack1">
+                    <i class="fa fa-arrow-left"></i>
+                    Назад
+                </NavLink>
+            </div>
+
+            @if (Data is null)
+            {
+                <div class="row">
+                    <div class="p-5 text-center">Загрузка ...</div>
+                </div>
+            }
+            else
+            {
+                <EditForm Model="Data" OnValidSubmit="HandleValidSubmit">
+                    <DataAnnotationsValidator/>
+
+                    <div>
+                        <label>Дата начала смены</label>
+                        <ValidationMessage For="@(() => Data.Time)" />
+                        <InputDate class="form-control" @bind-Value="Data.Time" />
+                    </div>
+                    <div>
+                        <label>Время начала смены</label>
+                        <ValidationMessage For="@(() => Data.Time)" />
+                        <input type="time" class="form-control" @bind="Data.Time" />
+                    </div>
+                    <div>
+                        <label>Вид упакованного товара</label>
+                        <ValidationMessage For="@(() => Data.Factory1ProductTypeId)" />
+                        <InputSelect class="form-select" @bind-Value="Data.Factory1ProductTypeId">
+                            <option selected value="0" disabled="disabled">Выберите вид товара</option>
+                            @foreach (var item in ProductTypes.Keys)
+                            {
+                            <option value="@item">@ProductTypes[item]</option>
+                            }
+                        </InputSelect>
+                    </div>
+                    <div>
+                        <label>Количество упакованного товара</label>
+                        <ValidationMessage For="@(() => Data.ProductCount)" />
+                        <InputNumber class="form-control" @bind-Value="Data.ProductCount" />
+                    </div>
+                    <div>
+                        <label>Смена</label>
+                        <ValidationMessage For="@(() => Data.Factory1ShiftId)" />
+                        <InputSelect class="form-select" @bind-Value="Data.Factory1ShiftId">
+                            <option selected value="0" disabled="disabled">Выберите смену</option>
+                            @foreach (var item in Factory1Shifts.Keys)
+                            {
+                                <option value="@item">@Factory1Shifts[item]</option>
+                            }
+                        </InputSelect>
+                    </div>
+                    <div>
+                        <label>Пресовщик</label>
+                        <ValidationMessage For="@(() => Data.ProfileId)" />
+                        <InputSelect class="form-select" @bind-Value="Data.ProfileId">
+                            <option selected value="null" disabled="disabled">Выберите пресовщика</option>
+                            @foreach (var item in Profiles.Keys)
+                                {
+                                <option value="@item">@Profiles[item]</option>
+                                }
+                        </InputSelect>
+                    </div>
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-@Theme">
+                            <i class="fas fa-save"></i>
+                            Сохранить
+                        </button>
+                    </div>
+                </EditForm>
+            }
 
         </div>
     </div>
 </div>
 
-
-@code {
-    DigitalJournalContext _Context => Service;
-    [Parameter]
-    public int Id { get; set; }
-
-    public async Task SaveChanges()
-    {
-        await _Context.SaveChangesAsync();
-        NavManager.NavigateTo("factory1/pack1");
-    }
-
-    public string Mode => (Id == 0) ? "Добавление данных за смену" : "Редактирование данных за смену";
-}

@@ -53,77 +53,75 @@
                             {
                             <option value="@item">@ProductTypes[item]</option>
                             }
-                    </InputSelect>
-                </div>
-                <div>
-                    <label>Количество товара на месте № 1</label>
-                    <ValidationMessage For="@(() => Data.Place1ProductsCount)" />
-                    <InputNumber class="form-control" @bind-Value="Data.Place1ProductsCount" />
-                </div>
-                <div>
-                    <label>Вид товара на месте № 2</label>
-                    <ValidationMessage For="@(() => Data.Place2ProductTypeId)" />
-                    <InputSelect class="form-select" @bind-Value="Data.Place2ProductTypeId">
-                        <option selected value="0" disabled="disabled">Выберите вид товара</option>
-                        @foreach (var item in ProductTypes.Keys)
-                            {
-                            <option value="@item">@ProductTypes[item]</option>
-                            }
-                    </InputSelect>
-                </div>
-                <div>
-                    <label>Количество товара на месте № 2</label>
-                    <ValidationMessage For="@(() => Data.Place2ProductsCount)" />
-                    <InputNumber class="form-control" @bind-Value="Data.Place2ProductsCount" />
-                </div>
-                <div>
-                    <label>Вид товара на месте № 3</label>
-                    <ValidationMessage For="@(() => Data.Place3ProductTypeId)" />
-                    <InputSelect class="form-select" @bind-Value="Data.Place3ProductTypeId">
-                        <option selected value="0" disabled="disabled">Выберите вид товара</option>
-                        @foreach (var item in ProductTypes.Keys)
-                            {
-                            <option value="@item">@ProductTypes[item]</option>
-                            }
-                    </InputSelect>
-                </div>
-                <div>
-                    <label>Количество товара на месте № 3</label>
-                    <ValidationMessage For="@(() => Data.Place3ProductsCount)" />
-                    <InputNumber class="form-control" @bind-Value="Data.Place3ProductsCount" />
-                </div>
-                <div>
-                    <label>Смена</label>
-                    <ValidationMessage For="@(() => Data.Factory1ShiftId)" />
-                    <InputSelect class="form-select" @bind-Value="Data.Factory1ShiftId">
-                        <option selected value="0" disabled="disabled">Выберите смену</option>
-                        @foreach (var item in Factory1Shifts.Keys)
-                            {
-                            <option value="@item">@Factory1Shifts[item]</option>
-                            }
-                    </InputSelect>
-                </div>
-                <div>
-                    <label>Кладовщик</label>
-                    <ValidationMessage For="@(() => Data.ProfileId)" />
-                    <InputSelect class="form-select" @bind-Value="Data.ProfileId">
-                        <option selected value="null" disabled="disabled">Выберите кладовщика</option>
-                        @foreach (var item in Profiles.Keys)
-                            {
-                            <option value="@item">@Profiles[item]</option>
-                            }
-                    </InputSelect>
-                </div>
-                <div class="mt-4">
-                    <button type="submit" class="btn btn-@Theme">
-                        <i class="fas fa-save"></i>
-                        Сохранить
-                    </button>
-                </div>
-            </EditForm>
+                        </InputSelect>
+                    </div>
+                    <div>
+                        <label>Количество товара на месте № 1</label>
+                        <ValidationMessage For="@(() => Data.Place1ProductsCount)" />
+                        <InputNumber class="form-control" @bind-Value="Data.Place1ProductsCount" />
+                    </div>
+                    <div>
+                        <label>Вид товара на месте № 2</label>
+                        <ValidationMessage For="@(() => Data.Place2ProductTypeId)" />
+                        <InputSelect class="form-select" @bind-Value="Data.Place2ProductTypeId">
+                            <option selected value="0" disabled="disabled">Выберите вид товара</option>
+                            @foreach (var item in ProductTypes.Keys)
+                                {
+                                <option value="@item">@ProductTypes[item]</option>
+                                }
+                        </InputSelect>
+                    </div>
+                    <div>
+                        <label>Количество товара на месте № 2</label>
+                        <ValidationMessage For="@(() => Data.Place2ProductsCount)" />
+                        <InputNumber class="form-control" @bind-Value="Data.Place2ProductsCount" />
+                    </div>
+                    <div>
+                        <label>Вид товара на месте № 3</label>
+                        <ValidationMessage For="@(() => Data.Place3ProductTypeId)" />
+                        <InputSelect class="form-select" @bind-Value="Data.Place3ProductTypeId">
+                            <option selected value="0" disabled="disabled">Выберите вид товара</option>
+                            @foreach (var item in ProductTypes.Keys)
+                                {
+                                <option value="@item">@ProductTypes[item]</option>
+                                }
+                        </InputSelect>
+                    </div>
+                    <div>
+                        <label>Количество товара на месте № 3</label>
+                        <ValidationMessage For="@(() => Data.Place3ProductsCount)" />
+                        <InputNumber class="form-control" @bind-Value="Data.Place3ProductsCount" />
+                    </div>
+                    <div>
+                        <label>Смена</label>
+                        <ValidationMessage For="@(() => Data.Factory1ShiftId)" />
+                        <InputSelect class="form-select" @bind-Value="Data.Factory1ShiftId">
+                            <option selected value="0" disabled="disabled">Выберите смену</option>
+                            @foreach (var item in Factory1Shifts.Keys)
+                                {
+                                <option value="@item">@Factory1Shifts[item]</option>
+                                }
+                        </InputSelect>
+                    </div>
+                    <div>
+                        <label>Кладовщик</label>
+                        <ValidationMessage For="@(() => Data.ProfileId)" />
+                        <InputSelect class="form-select" @bind-Value="Data.ProfileId">
+                            <option selected value="null" disabled="disabled">Выберите кладовщика</option>
+                            @foreach (var item in Profiles.Keys)
+                                {
+                                <option value="@item">@Profiles[item]</option>
+                                }
+                        </InputSelect>
+                    </div>
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-@Theme">
+                            <i class="fas fa-save"></i>
+                            Сохранить
+                        </button>
+                    </div>
+                </EditForm>
             }
-
-
         </div>
     </div>
 </div>
