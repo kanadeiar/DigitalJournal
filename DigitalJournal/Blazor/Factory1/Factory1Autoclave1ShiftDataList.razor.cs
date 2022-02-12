@@ -1,9 +1,10 @@
-﻿namespace DigitalJournal.Blazor.Components.Factory1;
+﻿namespace DigitalJournal.Blazor.Factory1;
 
-public partial class Factory1Autoclave1ShiftDataListComponent
+public partial class Factory1Autoclave1ShiftDataList
 {
-    [Parameter]
-    public IQueryable<Factory1Autoclave1ShiftData>? Query { get; set; }
+    DigitalJournalContext _Context => Service;
+
+    public IQueryable<Factory1Autoclave1ShiftData>? Query => _Context.Factory1Autoclave1ShiftDatas;
     public IEnumerable<Factory1Autoclave1ShiftData>? Datas { get; set; }
 
     public EAutoclave1Order DataOrder { get; set; } = EAutoclave1Order.TimeDesc;

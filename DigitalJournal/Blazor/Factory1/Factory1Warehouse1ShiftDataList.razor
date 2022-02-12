@@ -1,5 +1,6 @@
 ﻿@page "/factory1/warehouse1"
 @inherits OwningComponentBase<DigitalJournalContext>
+@attribute [Authorize]
 
 <PageTitle>Склад сырья 1 - Завод 1</PageTitle>
 
@@ -9,13 +10,98 @@
     </div>
     <div class="col-md-8 col-lg-9 mb-1">
         <div class="border-1 bg-light shadow rounded-1 p-2">
-            
-            <Factory1Warehouse1ShiftDataListComponent Query=_Context.Factory1Warehouse1ShiftData/>
+
+            <h1 class="my-2 p-2"><span class="fas fa-store" aria-hidden="true"></span> Журнал по складу сырья №1</h1>
+
+            <div class="table-responsive-lg">
+                <table class="table table-sm table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                <ButtonSortPartialComponent OrderType="EDataOrder" CustomEvent="@SetOrder" Asc="EDataOrder.TimeAsc" Desc="EDataOrder.TimeDesc" Current="DataOrder">
+                                    Дата время
+                                </ButtonSortPartialComponent>
+                            </th>
+                            <th>
+                                <ButtonSortPartialComponent OrderType="EDataOrder" CustomEvent="@SetOrder" Asc="EDataOrder.Tank1Asc" Desc="EDataOrder.Tank1Desc" Current="DataOrder">
+                                    Объем песка
+                                </ButtonSortPartialComponent>
+                            </th>
+                            <th>
+                                <ButtonSortPartialComponent OrderType="EDataOrder" CustomEvent="@SetOrder" Asc="EDataOrder.Tank2Asc" Desc="EDataOrder.Tank2Desc" Current="DataOrder">
+                                    Объем цемента
+                                </ButtonSortPartialComponent>
+                            </th>
+                            <th>
+                                <ButtonSortPartialComponent OrderType="EDataOrder" CustomEvent="@SetOrder" Asc="EDataOrder.Tank3Asc" Desc="EDataOrder.Tank3Desc" Current="DataOrder">
+                                    Объем извести
+                                </ButtonSortPartialComponent>
+                            </th>
+                            <th>
+                                <ButtonSortPartialComponent OrderType="EDataOrder" CustomEvent="@SetOrder" Asc="EDataOrder.ShiftAsc" Desc="EDataOrder.ShiftDesc" Current="DataOrder">
+                                    Смена
+                                </ButtonSortPartialComponent>
+                            </th>
+                            <th>
+                                <ButtonSortPartialComponent OrderType="EDataOrder" CustomEvent="@SetOrder" Asc="EDataOrder.UserAsc" Desc="EDataOrder.UserDesc" Current="DataOrder">
+                                    Кладовщик
+                                </ButtonSortPartialComponent>
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Datas is null)
+                        {
+                            <tr><th colspan="9" class="p-4 text-center">Загрузка ...</th></tr>
+                        }
+                        else if (!Datas.Any())
+                        {
+                            <tr><th colspan="9" class="p-4 text-center">Данные отсутствуют</th></tr>
+                        }
+                        else
+                        {
+                            foreach (var e in Datas)
+                            {
+                                <tr>
+                                    <td>@e.Time.ToString("dd.MM.yyyy") @e.Time.ToString("HH:mm")</td>
+                                    <td>@e.Tank1LooseRawValue.ToString("F2") м3</td>
+                                    <td>@e.Tank2LooseRawValue.ToString("F2") м3</td>
+                                    <td>@e.Tank3LooseRawValue.ToString("F2") м3</td>
+                                    <td>@e.Factory1Shift?.Name</td>
+                                    <td>@e.Profile?.SurName @e.Profile?.FirstName[0]. @e.Profile?.Patronymic[0].</td>
+                                    <td class="text-center">
+                                        <AuthorizeView Roles="admins, masters">
+                                            <Authorized>
+                                                <Tooltip Text="Редактировать эту запись журнала">
+                                                    <NavLink class="btn btn-sm btn-info mb-1" href="@($"factory1/warehouse1/edit/{e.Id}")">
+                                                        <i class="fas fa-edit"></i> Редактировать
+                                                    </NavLink>
+                                                </Tooltip>
+                                            </Authorized>
+                                        </AuthorizeView>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <PaginationPartialComponent CustomEvent="@SetPage" Page="Page" PagesCount="PagesCount" />
+
+            <div class="my-1">
+                <NavLink class="btn btn-success mb-1" href="factory1/warehouse1/create">
+                    <i class="fas fa-plus"></i>
+                    Добавить данные за смену
+                </NavLink>
+                <button class="btn btn-info mb-1" @onclick="UpdateDataAsync">
+                    <i class="fas fa-sync"></i>
+                    Обновить
+                </button>
+            </div>
 
         </div>
     </div>
 </div>
 
-@code {
-    DigitalJournalContext _Context => Service;
-}

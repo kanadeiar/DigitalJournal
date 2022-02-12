@@ -1,9 +1,10 @@
-﻿namespace DigitalJournal.Blazor.Components.Factory1;
+﻿namespace DigitalJournal.Blazor.Factory1;
 
-public partial class Factory1Warehouse2ShiftDataListComponent
+public partial class Factory1Warehouse2ShiftDataList
 {
-    [Parameter]
-    public IQueryable<Factory1Warehouse2ShiftData>? Query { get; set; }
+    DigitalJournalContext _Context => Service;
+
+    public IQueryable<Factory1Warehouse2ShiftData>? Query => _Context.Factory1Warehouse2ShiftData;
     public IEnumerable<Factory1Warehouse2ShiftData>? Datas { get; set; }
 
     public EWarehouse2Order DataOrder { get; set; } = EWarehouse2Order.TimeDesc;

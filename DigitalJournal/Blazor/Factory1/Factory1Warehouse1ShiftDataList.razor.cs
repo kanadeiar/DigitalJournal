@@ -1,9 +1,9 @@
-﻿namespace DigitalJournal.Blazor.Components.Factory1;
+﻿namespace DigitalJournal.Blazor.Factory1;
 
-public partial class Factory1Warehouse1ShiftDataListComponent
+public partial class Factory1Warehouse1ShiftDataList
 {
-    [Parameter]
-    public IQueryable<Factory1Warehouse1ShiftData>? Query { get; set; }
+    DigitalJournalContext _Context => Service;
+    public IQueryable<Factory1Warehouse1ShiftData>? Query => _Context.Factory1Warehouse1ShiftData;
     public IEnumerable<Factory1Warehouse1ShiftData>? Datas { get; set; }
 
     public EDataOrder DataOrder { get; set; } = EDataOrder.TimeDesc;
@@ -78,4 +78,3 @@ public enum EDataOrder
     Tank3Asc,
     Tank3Desc,
 }
-

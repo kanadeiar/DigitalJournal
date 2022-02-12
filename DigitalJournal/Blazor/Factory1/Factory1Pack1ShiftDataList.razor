@@ -1,5 +1,6 @@
 ﻿@page "/factory1/pack1"
 @inherits OwningComponentBase<DigitalJournalContext>
+@attribute [Authorize]
 
 <PageTitle>Упаковка 1 - Завод 1</PageTitle>
 
@@ -9,13 +10,91 @@
     </div>
     <div class="col-md-8 col-lg-9 mb-1">
         <div class="border-1 bg-light shadow rounded-1 p-2">
-            
-            <Factory1Pack1ShiftDataListComponent Query=_Context.Factory1Pack1ShiftDatas />
 
+            <h1 class="my-2 p-2"><span class="fas fa-store" aria-hidden="true"></span> Журнал по упаковке №1</h1>
+
+            <div class="table-responsive-lg">
+                <table class="table table-sm table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                <ButtonSortPartialComponent OrderType="EPack1Order" CustomEvent="@SetOrder" Asc="EPack1Order.TimeAsc" Desc="EPack1Order.TimeDesc" Current="DataOrder">
+                                    Дата время
+                                </ButtonSortPartialComponent>
+                            </th>
+                            <th>
+                                <ButtonSortPartialComponent OrderType="EPack1Order" CustomEvent="@SetOrder" Asc="EPack1Order.ProductNameAsc" Desc="EPack1Order.ProductNameDesc" Current="DataOrder">
+                                    Название продукта
+                                </ButtonSortPartialComponent>
+                            </th>
+                            <th>
+                                <ButtonSortPartialComponent OrderType="EPack1Order" CustomEvent="@SetOrder" Asc="EPack1Order.ProductCountAsc" Desc="EPack1Order.ProductCountDesc" Current="DataOrder">
+                                    Количество
+                                </ButtonSortPartialComponent>
+                            </th>
+                            <th>
+                                <ButtonSortPartialComponent OrderType="EPack1Order" CustomEvent="@SetOrder" Asc="EPack1Order.ShiftAsc" Desc="EPack1Order.ShiftDesc" Current="DataOrder">
+                                    Смена
+                                </ButtonSortPartialComponent>
+                            </th>
+                            <th>
+                                <ButtonSortPartialComponent OrderType="EPack1Order" CustomEvent="@SetOrder" Asc="EPack1Order.UserAsc" Desc="EPack1Order.UserDesc" Current="DataOrder">
+                                    Кладовщик
+                                </ButtonSortPartialComponent>
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Datas is null)
+                        {
+                            <tr><th colspan="9" class="p-4 text-center">Загрузка ...</th></tr>
+                        }
+                        else if (!Datas.Any())
+                        {
+                            <tr><th colspan="9" class="p-4 text-center">Данные отсутствуют</th></tr>
+                        }
+                        else
+                        {
+                            foreach (var e in Datas)
+                            {
+                                <tr>
+                                    <td>@e.Time.ToString("dd.MM.yyyy") @e.Time.ToString("HH:mm")</td>
+                                    <td>@e.Factory1ProductType.Name</td>
+                                    <td>@e.ProductCount.ToString()</td>
+                                    <td>@e.Factory1Shift?.Name</td>
+                                    <td>@e.Profile?.SurName @e.Profile?.FirstName[0]. @e.Profile?.Patronymic[0].</td>
+                                    <td class="text-center">
+                                        <AuthorizeView Roles="admins, masters">
+                                            <Authorized>
+                                                <Tooltip Text="Редактировать эту запись журнала">
+                                                    <NavLink class="btn btn-sm btn-info mb-1" href="@($"factory1/pack1/edit/{e.Id}")">
+                                                        <i class="fas fa-edit"></i> Редактировать
+                                                    </NavLink>
+                                                </Tooltip>
+                                            </Authorized>
+                                        </AuthorizeView>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <PaginationPartialComponent CustomEvent="@SetPage" Page="Page" PagesCount="PagesCount" />
+
+            <div class="my-1">
+                <NavLink class="btn btn-success mb-1" href="factory1/pack1/create">
+                    <i class="fas fa-plus"></i>
+                    Добавить данные за смену
+                </NavLink>
+                <button class="btn btn-info mb-1" @onclick="UpdateDataAsync">
+                    <i class="fas fa-sync"></i>
+                    Обновить
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
-@code {
-    DigitalJournalContext _Context => Service;
-}

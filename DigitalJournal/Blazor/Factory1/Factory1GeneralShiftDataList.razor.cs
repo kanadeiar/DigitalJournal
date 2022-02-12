@@ -1,9 +1,10 @@
-﻿namespace DigitalJournal.Blazor.Components.Factory1;
+﻿namespace DigitalJournal.Blazor.Factory1;
 
-public partial class Factory1GeneralShiftDataListComponent
+public partial class Factory1GeneralShiftDataList
 {
-    [Parameter]
-    public IQueryable<Factory1GeneralShiftData>? Query { get; set; }
+    DigitalJournalContext _Context => Service;
+
+    public IQueryable<Factory1GeneralShiftData>? Query => _Context.Factory1GeneralShiftData;
     public IEnumerable<Factory1GeneralShiftData>? Datas { get; set; }
 
     public EF1GeneralOrder DataOrder { get; set; } = EF1GeneralOrder.TimeDesc;
