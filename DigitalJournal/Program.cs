@@ -2,10 +2,23 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.ConfigureServices(services =>
 {
-    services.AddDbContext<IdentityContext>(options => options
-        .UseSqlite(builder.Configuration.GetConnectionString("IdentityConnection")));
-    services.AddDbContext<DigitalJournalContext>(options => options
-        .UseSqlite(builder.Configuration.GetConnectionString("DigitalJournalConnection")));
+    var databaseName = builder.Configuration["Database"];
+    switch (databaseName)
+    {
+        case "SQLite":
+            services.AddDbContext<IdentityContext>(options => options
+                .UseSqlite(builder.Configuration.GetConnectionString("SQLiteIdentityConnection"), o => o.MigrationsAssembly("DigitalJournal.Dal")));
+            services.AddDbContext<DigitalJournalContext>(options => options
+                .UseSqlite(builder.Configuration.GetConnectionString("SQLiteDigitalJournalConnection"), o => o.MigrationsAssembly("DigitalJournal.Dal")));
+            break;
+        case "MSSQL":
+            services.AddDbContext<IdentityContext>(options => options
+                .UseSqlServer(builder.Configuration.GetConnectionString("MSSQLIdentityConnection"), o => o.MigrationsAssembly("DigitalJournal.Dal.Mssql")));
+            services.AddDbContext<DigitalJournalContext>(options => options
+                .UseSqlServer(builder.Configuration.GetConnectionString("MSSQLDigitalJournalConnection"), o => o.MigrationsAssembly("DigitalJournal.Dal.Mssql")));
+            break;
+    }
+
     services.AddIdentity<User, Role>().AddEntityFrameworkStores<IdentityContext>();
     services.Configure<CookieAuthenticationOptions>(IdentityConstants.ApplicationScheme, options =>
     {

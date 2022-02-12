@@ -1,6 +1,6 @@
 ﻿<p class="mb-0 mt-2">Содержимое склада №2 готовой продукции:</p>
 <p class="m-0">
-    @if (Factory1Warehouse2ShiftData is null)
+    @if (Data is null)
     {
         <apsn>Данные по складу отсутствуют</apsn>
     }
@@ -10,13 +10,13 @@
             <span>Товары на складе:</span> 
         </div>
         <div>
-            <span id="place1value">Место 1: <strong>@Factory1Warehouse2ShiftData.Place1ProductType.Name - @Factory1Warehouse2ShiftData.Place1ProductsCount шт.</strong></span>
+            <span id="place1value">Место 1: <strong>@Data.Place1ProductType.Name - @Data.Place1ProductsCount шт.</strong></span>
         </div>
         <div>
-            <span>Место 2: <strong>@Factory1Warehouse2ShiftData.Place2ProductType.Name - @Factory1Warehouse2ShiftData.Place2ProductsCount шт.</strong></span>
+            <span>Место 2: <strong>@Data.Place2ProductType.Name - @Data.Place2ProductsCount шт.</strong></span>
         </div>
         <div>
-            <span>Место 3: <strong>@Factory1Warehouse2ShiftData.Place3ProductType.Name - @Factory1Warehouse2ShiftData.Place3ProductsCount шт.</strong></span>
+            <span>Место 3: <strong>@Data.Place3ProductType.Name - @Data.Place3ProductsCount шт.</strong></span>
         </div>
     }
 </p>

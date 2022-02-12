@@ -11,20 +11,50 @@
         <div class="border-1 bg-light shadow rounded-1 p-2">
             <h1 class="my-2 p-2"><span class="fa fa-home" aria-hidden="true"></span> Обзор данных по заводу 1</h1>
 
-            <Factory1ShowGComponent Query=_context.Factory1GeneralShiftData />
+            <Factory1ShowGComponent Data="GData" />
 
-            <Factory1ShowW1Component Query=_context.Factory1Warehouse1ShiftData/>
+            <Factory1ShowW1Component Data="W1Data"/>
 
-            <Factory1ShowPAPComponent QueryPress=_context.Factory1Press1ShiftData 
-                QueryAutoclave=_context.Factory1Autoclave1ShiftDatas 
-                QueryPack=_context.Factory1Pack1ShiftDatas/>
+            <Factory1ShowPAPComponent Factory1Press1ShiftData="Pr1Data" 
+                Factory1Autoclave1ShiftData="A1Data"
+                Factory1Pack1ShiftData="Pa1Data"/>
             
-            <Factory1ShowW2Component Query=_context.Factory1Warehouse2ShiftData/>
-
+            <Factory1ShowW2Component Data="W2Data"/>
         </div>
     </div>
 </div>
 
 @code {
     private DigitalJournalContext _context => Service;
+
+    public Factory1GeneralShiftData? GData { get; set; }
+    public Factory1Warehouse1ShiftData? W1Data { get; set; }
+    public Factory1Press1ShiftData? Pr1Data { get; set; }
+    public Factory1Autoclave1ShiftData? A1Data { get; set; }
+    public Factory1Pack1ShiftData? Pa1Data { get; set; }
+    public Factory1Warehouse2ShiftData? W2Data { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        GData = await _context.Factory1GeneralShiftData
+            .Include(x => x.Factory1ProductType)
+            .Include(x => x.Factory1PackProductType)
+            .OrderByDescending(x => x.Time).FirstOrDefaultAsync();
+        W1Data = await _context.Factory1Warehouse1ShiftData
+            .OrderByDescending(x => x.Time).FirstOrDefaultAsync();
+        Pr1Data = await _context.Factory1Press1ShiftData
+            .Include(x => x.Factory1ProductType)
+            .OrderByDescending(x => x.Time).FirstOrDefaultAsync();
+        A1Data = await _context.Factory1Autoclave1ShiftDatas
+            .Include(x => x.Factory1ProductType)
+            .OrderByDescending(x => x.Time).FirstOrDefaultAsync();
+        Pa1Data = await _context.Factory1Pack1ShiftDatas
+            .Include(x => x.Factory1ProductType)
+            .OrderByDescending(x => x.Time).FirstOrDefaultAsync();
+        W2Data = await _context.Factory1Warehouse2ShiftData
+            .Include(x => x.Place1ProductType)
+            .Include(x => x.Place2ProductType)
+            .Include(x => x.Place3ProductType)
+            .OrderByDescending(x => x.Time).FirstOrDefaultAsync();
+    }
 }

@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DigitalJournal.Dal.Mssql\DigitalJournal.Dal.Mssql.csproj" />
     <ProjectReference Include="..\DigitalJournal.Dal\DigitalJournal.Dal.csproj" />
   </ItemGroup>
 
