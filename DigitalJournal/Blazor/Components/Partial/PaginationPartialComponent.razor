@@ -1,0 +1,93 @@
+﻿<div>
+    <ul class="pagination">
+        @if (Page > 1)
+        {
+            <li class="page-item">
+                <button class="page-link text-dark" @onclick="async () => { await PageDecrement(); }">
+                    <i class="fas fa-arrow-left"></i> Назад
+                </button>
+            </li>
+        }
+        @if (Page > 1)
+        {
+            <li class="page-item">
+                <button class="page-link text-dark" @onclick="async () => { await PageFirst(); }">
+                    1
+                </button>
+            </li>
+        }
+        @if (Page > 3)
+        {
+            <li class="page-item p-1 bg-secondary bg-opacity-50">
+            </li>
+        }
+        @if (Page > 2)
+        {
+            <li class="page-item">
+                <button class="page-link text-dark" @onclick="async () => { await PageDecrement(); }">
+                    @(Page - 1)
+                </button>
+            </li>
+        }
+        <li class="page-item active">
+            <a class="page-link text-white">
+                @Page
+            </a>
+        </li>
+        @if (Page < PagesCount - 1)
+        {
+            <li class="page-item">
+                <button class="page-link text-dark" @onclick="async () => { await PageIncrement(); }">
+                    @(Page + 1)
+                </button>
+            </li>
+        }
+        @if (Page < PagesCount - 2)
+        {
+            <li class="page-item p-1 bg-secondary bg-opacity-50">
+            </li>
+        }
+        @if (Page < PagesCount)
+        {
+            <li class="page-item">
+                <button class="page-link text-dark" @onclick="async () => { await PageLast(); }">
+                    @PagesCount
+                </button>
+            </li>
+        }
+        @if (Page < PagesCount)
+        {
+            <li class="page-item">
+                <button class="page-link text-dark" @onclick="async () => { await PageIncrement(); }">
+                    Вперед <i class="fas fa-arrow-right"></i>
+                </button>
+            </li>
+        }
+    </ul>
+</div>
+
+@code {
+    [Parameter]
+    public int Page { get; set; }
+    [Parameter]
+    public int PagesCount { get; set; }
+
+    [Parameter]
+    public EventCallback<int> CustomEvent { get; set; }
+    public async Task PageDecrement()
+    {
+        await CustomEvent.InvokeAsync(Page - 1);
+    }
+    public async Task PageIncrement()
+    {
+        await CustomEvent.InvokeAsync(Page + 1);
+    }
+    public async Task PageFirst()
+    {
+        await CustomEvent.InvokeAsync(1);
+    }
+    public async Task PageLast()
+    {
+        await CustomEvent.InvokeAsync(PagesCount);
+    }
+}

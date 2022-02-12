@@ -1,0 +1,132 @@
+﻿@page "/factory1/general/edit/{id:int}"
+@page "/factory1/general/create"
+@inherits OwningComponentBase<DigitalJournalContext>
+@inject NavigationManager NavManager
+
+<PageTitle>@Mode - Завод 1</PageTitle>
+
+<link href="/css/BlazorValidation.css" rel="stylesheet" />
+
+<div class="row">
+    <div class="col-md-4 col-lg-3 mb-1">
+        <_Factory1LeftSidebarPartial />
+    </div>
+    <div class="col-md-8 col-lg-9 mb-1">
+        <div class="border-1 bg-light shadow rounded-1 p-2">
+
+            <h1 class="my-2 p-2 bg-@Theme text-@TextColor">@Mode</h1>
+
+            <div>
+                <NavLink class="btn btn-secondary" href="factory1/general">
+                    <i class="fa fa-arrow-left"></i>
+                    Назад
+                </NavLink>
+            </div>
+
+            @if (Data is null)
+            {
+                <div class="row">
+                    <div class="p-5 text-center">Загрузка ...</div>
+                </div>
+            }
+            else
+            {
+                <EditForm Model="Data" OnValidSubmit="HandleValidSubmit">
+                    <DataAnnotationsValidator/>
+
+                    <div>
+                        <label>Дата начала смены</label>
+                        <ValidationMessage For="@(() => Data.Time)" />
+                        <InputDate class="form-control" @bind-Value="Data.Time" />
+                    </div>
+                    <div>
+                        <label>Время начала смены</label>
+                        <ValidationMessage For="@(() => Data.Time)" />
+                        <input type="time" class="form-control" @bind="Data.Time" />
+                    </div>
+                    <div>
+                        <label>Вид изготовленного товара</label>
+                        <ValidationMessage For="@(() => Data.Factory1ProductTypeId)" />
+                        <InputSelect class="form-select" @bind-Value="Data.Factory1ProductTypeId">
+                            <option selected value="0" disabled="disabled">Выберите вид товара</option>
+                            @foreach (var item in ProductTypes.Keys)
+                            {
+                            <option value="@item">@ProductTypes[item]</option>
+                            }
+                        </InputSelect>
+                    </div>
+                    <div>
+                        <label>Количество изготовленного товара</label>
+                        <ValidationMessage For="@(() => Data.ProductCount)" />
+                        <InputNumber class="form-control" @bind-Value="Data.ProductCount" />
+                    </div>
+                    <div>
+                        <label>Использовано сырья - песка</label>
+                        <ValidationMessage For="@(() => Data.Loose1RawValue)" />
+                        <InputNumber class="form-control" @bind-Value="Data.Loose1RawValue" />
+                    </div>
+                    <div>
+                        <label>Использовано сырья - цемента</label>
+                        <ValidationMessage For="@(() => Data.Loose2RawValue)" />
+                        <InputNumber class="form-control" @bind-Value="Data.Loose2RawValue" />
+                    </div>
+                    <div>
+                        <label>Использовано сырья - извести</label>
+                        <ValidationMessage For="@(() => Data.Loose3RawValue)" />
+                        <InputNumber class="form-control" @bind-Value="Data.Loose3RawValue" />
+                    </div>
+                    <div>
+                        <label>Номер автоклава</label>
+                        <ValidationMessage For="@(() => Data.AutoclaveNumber)" />
+                        <InputNumber class="form-control" @bind-Value="Data.AutoclaveNumber" />
+                    </div>
+                    <div>
+                        <label>Вид упакованного товара</label>
+                        <ValidationMessage For="@(() => Data.Factory1PackProductTypeId)" />
+                        <InputSelect class="form-select" @bind-Value="Data.Factory1PackProductTypeId">
+                            <option selected value="0" disabled="disabled">Выберите вид товара</option>
+                            @foreach (var item in ProductTypes.Keys)
+                            {
+                            <option value="@item">@ProductTypes[item]</option>
+                            }
+                        </InputSelect>
+                    </div>
+                    <div>
+                        <label>Количество упакованного товара</label>
+                        <ValidationMessage For="@(() => Data.PackProductCount)" />
+                        <InputNumber class="form-control" @bind-Value="Data.PackProductCount" />
+                    </div>
+                    <div>
+                        <label>Смена</label>
+                        <ValidationMessage For="@(() => Data.Factory1ShiftId)" />
+                        <InputSelect class="form-select" @bind-Value="Data.Factory1ShiftId">
+                            <option selected value="0" disabled="disabled">Выберите смену</option>
+                            @foreach (var item in Factory1Shifts.Keys)
+                            {
+                                <option value="@item">@Factory1Shifts[item]</option>
+                            }
+                        </InputSelect>
+                    </div>
+                    <div>
+                        <label>Мастер смены</label>
+                        <ValidationMessage For="@(() => Data.ProfileId)" />
+                        <InputSelect class="form-select" @bind-Value="Data.ProfileId">
+                            <option selected value="null" disabled="disabled">Выберите мастера смены</option>
+                            @foreach (var item in Profiles.Keys)
+                                {
+                                <option value="@item">@Profiles[item]</option>
+                                }
+                        </InputSelect>
+                    </div>
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-@Theme">
+                            <i class="fas fa-save"></i>
+                            Сохранить
+                        </button>
+                    </div>
+                </EditForm>
+            }
+        </div>
+    </div>
+</div>
+

@@ -13,6 +13,9 @@ public class IndexComponentTests
         var profile = new Profile { SurName = "Testov", FirstName = "Test", Patronymic = "Testovich", UserId = "test" };
         journalContext.Profiles.Add(profile);
         journalContext.SaveChanges();
+        var type = new Factory1ProductType { Name = "Test" };
+        journalContext.Factory1ProductTypes.Add(type);
+        journalContext.SaveChanges();
         journalContext.Factory1Warehouse1ShiftData.AddRange(Enumerable.Range(1, 10).Select(i => new Factory1Warehouse1ShiftData
         {
             Time = new DateTime(2021, 1, 1),
@@ -20,13 +23,27 @@ public class IndexComponentTests
             Profile = profile,
         }));
         journalContext.SaveChanges();
+        journalContext.Factory1Warehouse2ShiftData.AddRange(Enumerable.Range(1, 10).Select(i => new Factory1Warehouse2ShiftData
+        {
+            Time = new DateTime(2021, 1, 1),
+            Place1ProductType = type,
+            Place1ProductsCount = 1,
+            Place2ProductType = type,
+            Place2ProductsCount = 1,
+            Place3ProductType = type,
+            Place3ProductsCount = 1,
+            Profile = profile,
+        }));
 
         var component = context.RenderComponent<DigitalJournal.Blazor.Components.IndexComponent>(
             builder =>
             {
                 builder.Add(c => c.Query, journalContext.Factory1Warehouse1ShiftData);
+                builder.Add(c => c.Query2, journalContext.Factory1Warehouse2ShiftData);
             });
 
+        Assert
+            .IsTrue(component.Markup.Contains("<p class=\"mt-4 mb-0\">Обзор последней информации из журнала склада номер 1</p>"));
         Assert
             .AreEqual(1, component.RenderCount);
         var paraElms = component.FindAll(".list-group-item");

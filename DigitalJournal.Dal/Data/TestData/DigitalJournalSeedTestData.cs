@@ -126,6 +126,7 @@ public class DigitalJournalSeedTestData : IDigitalJournalSeedTestData
             TimeStart = DateTime.Today.AddDays(-60).AddHours(8).AddHours(12 * i - 2),
             AutoclavedTime = new TimeSpan(1, _rnd.Next(59), 0),
             Factory1ProductType = products[i % 4 + 1],
+            AutoclavedCount = _rnd.Next(80, 120),
             Factory1Shift = shifts[i % 4 + 1],
             Profile = userProfile,
         });
@@ -156,6 +157,23 @@ public class DigitalJournalSeedTestData : IDigitalJournalSeedTestData
             Profile = userProfile,
         });
         context.Factory1Warehouse2ShiftData.AddRange(w2sds);
+        await context.SaveChangesAsync();
+
+        var gsd = Enumerable.Range(1, 120).Select(i => new Factory1GeneralShiftData
+        {
+            Time = DateTime.Today.AddDays(-60).AddHours(8).AddHours(12 * i),
+            Factory1ProductType = products[i % 4 + 1],
+            ProductCount = _rnd.Next(80, 120),
+            Loose1RawValue = _rnd.NextDouble() * 10.0,
+            Loose2RawValue = _rnd.NextDouble() * 10.0,
+            Loose3RawValue = _rnd.NextDouble() * 10.0,
+            AutoclaveNumber = _rnd.Next(1, 5),
+            Factory1PackProductType = products[i % 4 + 1],
+            PackProductCount = _rnd.Next(80, 120),
+            Factory1Shift = shifts[i % 4 + 1],
+            Profile = userProfile,
+        });
+        context.Factory1GeneralShiftData.AddRange(gsd);
         await context.SaveChangesAsync();
 
         logger.LogInformation("Complete writing test data to database Factory1 ...");

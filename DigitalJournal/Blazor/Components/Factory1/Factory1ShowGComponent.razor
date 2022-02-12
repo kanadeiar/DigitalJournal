@@ -1,0 +1,21 @@
+﻿<h6 class="mt-4">Последние данные по смене:</h6>
+<p class="m-0">
+    @if (Data is null)
+    {
+        <apsn>Данные по смене отсутствуют</apsn>
+    }
+    else
+    {
+        <div>
+            Напрессовано за смену:
+        </div>
+        <span>Вид кирпича: <strong>[@Data.Factory1ProductType.Number] @Data.Factory1ProductType.Name</strong></span>
+        <span id="pressValues">Напрессовано: <strong>@Data.ProductCount</strong> шт.</span>
+        <div>
+            Использовано сырья:
+        </div>
+        <span>Песка: <strong>@Data.Loose1RawValue.ToString("2") м3</strong></span>
+        <span>Цемента: <strong>@Data.Loose2RawValue.ToString("2") м3</strong></span>
+        <span>Извести: <strong>@Data.Loose3RawValue.ToString("2") м3</strong></span>
+    }
+</p>

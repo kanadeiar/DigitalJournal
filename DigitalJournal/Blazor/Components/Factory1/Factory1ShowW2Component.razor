@@ -1,0 +1,22 @@
+﻿<p class="mb-0 mt-2">Содержимое склада №2 готовой продукции:</p>
+<p class="m-0">
+    @if (Data is null)
+    {
+        <apsn>Данные по складу отсутствуют</apsn>
+    }
+    else
+    {
+        <div>
+            <span>Товары на складе:</span> 
+        </div>
+        <div>
+            <span id="place1value">Место 1: <strong>@Data.Place1ProductType.Name - @Data.Place1ProductsCount шт.</strong></span>
+        </div>
+        <div>
+            <span>Место 2: <strong>@Data.Place2ProductType.Name - @Data.Place2ProductsCount шт.</strong></span>
+        </div>
+        <div>
+            <span>Место 3: <strong>@Data.Place3ProductType.Name - @Data.Place3ProductsCount шт.</strong></span>
+        </div>
+    }
+</p>

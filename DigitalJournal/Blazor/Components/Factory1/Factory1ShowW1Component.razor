@@ -1,0 +1,14 @@
+﻿<p class="mb-0 mt-2">Содержимое склада №1 сырья:</p>
+<p class="m-0">
+    @if (Data is null)
+    {
+        <apsn>Данные по складу отсутствуют</apsn>
+    }
+    else
+    {
+        <span>Объемы:</span> 
+        <span id="tank1value">в баке №1: <strong>@Data.Tank1LooseRawValue.ToString("F2") м3</strong></span>
+        <span>в баке №2: <strong>@Data.Tank2LooseRawValue.ToString("F2") м3</strong></span>
+        <span>в баке №3: <strong>@Data.Tank3LooseRawValue.ToString("F2") м3</strong></span>
+    }
+</p>

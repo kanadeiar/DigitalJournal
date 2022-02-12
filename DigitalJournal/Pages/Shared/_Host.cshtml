@@ -9,7 +9,7 @@
 <component type="typeof(App)" render-mode="ServerPrerendered" />
 
 @functions {
-    [Authorize]
+    [Authorize(Roles = "admins, masters, operators")]
     public class HostModel : PageModel
     { }
 }
