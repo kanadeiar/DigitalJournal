@@ -4,7 +4,7 @@
         <ul class="nav nav-pills flex-column">
             <li class="nav-item">
                 <a asp-controller="Home" asp-action="Index" class="nav-link text-dark">
-                    Общая информация
+                    Главные данные
                 </a>
             </li>
             <div class="accordion-item">
@@ -19,13 +19,18 @@
                     <div class="accordion-body">
                         <ul class="list-unstyled">
                             <li>
-                                <a asp-controller="Home" asp-action="Index" class="nav-link text-dark fw-light px-0">
-                                    Первая категория
+                                <a asp-controller="Home" asp-action="Products" class="nav-link text-dark fw-light px-0">
+                                    Напрессованная продукция заводом № 1
                                 </a>
                             </li>
                             <li>
-                                <a asp-controller="Home" asp-action="Index" class="nav-link text-dark fw-light px-0">
-                                    Вторая категория
+                                <a asp-controller="Home" asp-action="Speed" class="nav-link text-dark fw-light px-0">
+                                    Скорость работы завода № 1
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Home" asp-action="Quality" class="nav-link text-dark fw-light px-0">
+                                    Качество продукции завода № 1
                                 </a>
                             </li>
                         </ul>

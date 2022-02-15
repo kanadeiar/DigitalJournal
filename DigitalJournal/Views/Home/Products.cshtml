@@ -1,6 +1,6 @@
 ﻿@model List<DigitalJournal.Controllers.HomeController.SimpleReportViewModel>
 @{
-    ViewBag.Title = "Главные данные - Главная";
+    ViewBag.Title = "Данные по напрессованной продукции";
     var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.DimensionOne).ToList());
     var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.Quantity).ToList());
 }
@@ -31,13 +31,13 @@
 <script type="text/javascript" src="~/lib/Chart.js/chart.min.js"></script>
 <script type="text/javascript">
 
-            $(function () {
+        $(function () {
         var chartName = "chart";
             var ctx = document.getElementById(chartName).getContext('2d');
             var data = {
                     labels: @Html.Raw(XLabels),
                     datasets: [{
-                        label: "Объемы прыбыли по заводу № 1",
+                        label: "Данные по напрессованной продукции",
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
                             'rgba(54, 162, 235, 0.2)',
@@ -83,7 +83,7 @@
                                 display: true,
                                 color: "rgba(255,99,164,0.2)"
                             }
-                    }],
+    }],
                         xAxes: [{
                             ticks: {
                                 min: 0,
@@ -100,8 +100,7 @@
            var myChart = new  Chart(ctx, {
                     options: options,
                     data: data,
-                    type:'bar'
-
+                    type:'pie'
                 });
             });
 </script>
