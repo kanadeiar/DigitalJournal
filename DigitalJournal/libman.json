@@ -26,6 +26,10 @@
     {
       "library": "jquery-validation-unobtrusive@3.2.12",
       "destination": "wwwroot/lib/jquery-validation-unobtrusive/"
+    },
+    {
+      "library": "Chart.js@3.7.1",
+      "destination": "wwwroot/lib/Chart.js/"
     }
   ]
 }
