@@ -1,4 +1,4 @@
-﻿@model List<DigitalJournal.Controllers.HomeController.SimpleReportViewModel>
+﻿@model List<DigitalJournal.Services.Interfaces.SimpleReportWebModel>
 @{
     ViewBag.Title = "Главные данные - Главная";
     var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.DimensionOne).ToList());
@@ -37,7 +37,7 @@
             var data = {
                     labels: @Html.Raw(XLabels),
                     datasets: [{
-                        label: "Объемы прыбыли по заводу № 1",
+                        label: "Объемы производства по заводу № 1",
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
                             'rgba(54, 162, 235, 0.2)',

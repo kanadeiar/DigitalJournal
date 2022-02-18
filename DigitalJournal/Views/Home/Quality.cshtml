@@ -1,12 +1,10 @@
-﻿@model List<DigitalJournal.Controllers.HomeController.StackedViewModel>
+﻿@model List<DigitalJournal.Services.Interfaces.StackedWebModel>
 @{
     ViewBag.Title = "Данные по качеству продукции";
     var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.FirstOrDefault().LstData.Select(x => x.DimensionOne).ToList());
     var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.LstData.Select(w => w.Quantity)).ToList());
-    var label2 = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.StackedDimensionOne).ToList());
+    var labels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.StackedDimensionOne).ToList());
 }
-
-<partial name="Partial/_HomeSliderPartial" />
 
 <div class="row">
     <div class="col-md-4 col-lg-3 mb-1">
@@ -37,10 +35,10 @@
         var ctx = document.getElementById(chartName).getContext('2d');
         var XLabels = @Html.Raw(XLabels);
         var YValues = @Html.Raw(YValues);
-        var label = @Html.Raw(label2);
+        var label = @Html.Raw(labels);
         var aux = 0;
         var barChartData = {
-            labels: @Html.Raw(label2),
+            labels: @Html.Raw(labels),
             datasets: []
         }
         XLabels.forEach(function(a, i) {

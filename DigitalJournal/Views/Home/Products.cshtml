@@ -1,11 +1,9 @@
-﻿@model List<DigitalJournal.Controllers.HomeController.SimpleReportViewModel>
+﻿@model List<DigitalJournal.Services.Interfaces.SimpleReportWebModel>
 @{
     ViewBag.Title = "Данные по напрессованной продукции";
     var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.DimensionOne).ToList());
     var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.Quantity).ToList());
 }
-
-<partial name="Partial/_HomeSliderPartial" />
 
 <div class="row">
     <div class="col-md-4 col-lg-3 mb-1">

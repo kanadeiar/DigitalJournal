@@ -34,8 +34,6 @@ public interface IAccountService
     public Task<bool> UserNameIsFree(string username);
 }
 
-#region Вебмодели
-
 /// <summary> Вебмодель сведения о пользователе </summary>
 public class UserIndexWebModel
 {
@@ -154,5 +152,3 @@ public class UserPasswordWebModel
     [Compare(nameof(Password), ErrorMessage = "Пароли не совпадают")]
     public string PasswordConfirm { get; set; }
 }
-
-#endregion
