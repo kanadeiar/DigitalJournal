@@ -1,0 +1,102 @@
+@page "/office1/all/edit/{id:int}"
+@page "/office1/all/create"
+@inherits OwningComponentBase<DigitalJournalContext>
+@inject NavigationManager NavManager
+
+<PageTitle>@Mode - Офис 1</PageTitle>
+
+<link href="/css/BlazorValidation.css" rel="stylesheet" />
+
+<div class="row">
+    <div class="col-md-4 col-lg-3 mb-1">
+        <_Office1LeftSidebarPartial />
+    </div>
+    <div class="col-md-8 col-lg-9 mb-1">
+        <div class="border-1 bg-light shadow rounded-1 p-2">
+            <h1 class="my-2 p-2 bg-@Theme text-@TextColor">@Mode</h1>
+
+            <div>
+                <NavLink class="btn btn-secondary" href="office1/all">
+                    <i class="fa fa-arrow-left"></i>
+                    Назад
+                </NavLink>
+            </div>
+
+            @if (Data is null)
+            {
+                <div class="row">
+                    <div class="p-5 text-center">Загрузка ...</div>
+                </div>
+            }
+            else
+            {
+                <EditForm Model="Data" OnValidSubmit="HandleValidSubmit">
+                    <DataAnnotationsValidator />
+
+                    <div>
+                        <label>Фамилия</label>
+                        <ValidationMessage For="@(() => Data.SurName)" />
+                        <InputText class="form-control" @bind-Value="Data.SurName" />
+                    </div>
+                    <div>
+                        <label>Имя</label>
+                        <ValidationMessage For="@(() => Data.FirstName)" />
+                        <InputText class="form-control" @bind-Value="Data.FirstName" />
+                    </div>
+                    <div>
+                        <label>Отчество</label>
+                        <ValidationMessage For="@(() => Data.Patronymic)" />
+                        <InputText class="form-control" @bind-Value="Data.Patronymic" />
+                    </div>
+                    <div>
+                        <label>Должность</label>
+                        <ValidationMessage For="@(() => Data.Office1PositionId)" />
+                        <InputSelect class="form-select" @bind-Value="Data.Office1PositionId">
+                            <option selected value="0" disabled="disabled">Выберите должность</option>
+                            @foreach (var item in Positions.Keys)
+                            {
+                            <option value="@item">@Positions[item]</option>
+                            }
+                    </InputSelect>
+                </div>
+                <div>
+                    <label>Навык Assembler</label>
+                    <ValidationMessage For="@(() => Data.Assembler)" />
+                    <InputNumber class="form-control" @bind-Value="Data.Assembler" />
+                </div>
+                <div>
+                    <label>Навык C/C++</label>
+                    <ValidationMessage For="@(() => Data.CCpp)" />
+                    <InputNumber class="form-control" @bind-Value="Data.CCpp" />
+                </div>
+                <div>
+                    <label>Навык C#</label>
+                    <ValidationMessage For="@(() => Data.CSharp)" />
+                    <InputNumber class="form-control" @bind-Value="Data.CSharp" />
+                </div>
+                <div>
+                    <label>Навык Java</label>
+                    <ValidationMessage For="@(() => Data.Java)" />
+                    <InputNumber class="form-control" @bind-Value="Data.Java" />
+                </div>
+                <div>
+                    <label>Навык PHP</label>
+                    <ValidationMessage For="@(() => Data.PHP)" />
+                    <InputNumber class="form-control" @bind-Value="Data.PHP" />
+                </div>
+                <div>
+                    <label>Навык SQL</label>
+                    <ValidationMessage For="@(() => Data.SQL)" />
+                    <InputNumber class="form-control" @bind-Value="Data.SQL" />
+                </div>
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-@Theme">
+                        <i class="fas fa-save"></i>
+                        Сохранить
+                    </button>
+                </div>
+            </EditForm>
+            }
+        </div>
+    </div>
+</div>

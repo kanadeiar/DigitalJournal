@@ -3,6 +3,7 @@ using System;
 using DigitalJournal.Dal.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DigitalJournal.Dal.Migrations
 {
     [DbContext(typeof(DigitalJournalContext))]
-    partial class DigitalJournalContextModelSnapshot : ModelSnapshot
+    [Migration("20220221175415_office1")]
+    partial class office1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.1");

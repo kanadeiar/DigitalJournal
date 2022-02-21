@@ -1,0 +1,126 @@
+@page "/office1/all"
+@inherits OwningComponentBase<DigitalJournalContext>
+
+<PageTitle>Данные по всем отделам - Офис 1</PageTitle>
+
+<div class="row">
+    <div class="col-md-4 col-lg-3 mb-1">
+        <_Office1LeftSidebarPartial />
+    </div>
+    <div class="col-md-8 col-lg-9 mb-1">
+        <div class="border-1 bg-light shadow rounded-1 p-2">
+            <h1 class="my-2 p-2"><span class="fas fa-store" aria-hidden="true"></span> Данные по всем отделам</h1>
+
+            <div class="table-responsive-lg">
+                <table class="table table-sm table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                <ButtonSortPartialComponent OrderType="AllOffice1Order" CustomEvent="@SetOrder"
+                                    Asc="AllOffice1Order.SurFirstNameAsc" Desc="AllOffice1Order.SurFirstNameDesc"
+                                    Current="DataOrder">
+                                    Фамилия имя отчество
+                                </ButtonSortPartialComponent>
+                            </th>
+                            <th>
+                                <ButtonSortPartialComponent OrderType="AllOffice1Order" CustomEvent="@SetOrder"
+                                    Asc="AllOffice1Order.PositionAsc" Desc="AllOffice1Order.PositionDesc"
+                                    Current="DataOrder">
+                                    Должность
+                                </ButtonSortPartialComponent>
+                            </th>
+                            <th>
+                                <ButtonSortPartialComponent OrderType="AllOffice1Order" CustomEvent="@SetOrder"
+                                    Asc="AllOffice1Order.AssemblerAsc" Desc="AllOffice1Order.AssemblerDesc"
+                                    Current="DataOrder">
+                                    Assembler
+                                </ButtonSortPartialComponent>
+                            </th>
+                            <th>
+                                <ButtonSortPartialComponent OrderType="AllOffice1Order" CustomEvent="@SetOrder"
+                                    Asc="AllOffice1Order.CCppAsc" Desc="AllOffice1Order.CCppDesc" Current="DataOrder">
+                                    C/C++
+                                </ButtonSortPartialComponent>
+                            </th>
+                            <th>
+                                <ButtonSortPartialComponent OrderType="AllOffice1Order" CustomEvent="@SetOrder"
+                                    Asc="AllOffice1Order.CSharpAsc" Desc="AllOffice1Order.CSharpDesc"
+                                    Current="DataOrder">
+                                    C#
+                                </ButtonSortPartialComponent>
+                            </th>
+                            <th>
+                                <ButtonSortPartialComponent OrderType="AllOffice1Order" CustomEvent="@SetOrder"
+                                    Asc="AllOffice1Order.JavaAsc" Desc="AllOffice1Order.JavaDesc" Current="DataOrder">
+                                    Java
+                                </ButtonSortPartialComponent>
+                            </th>
+                            <th>
+                                <ButtonSortPartialComponent OrderType="AllOffice1Order" CustomEvent="@SetOrder"
+                                    Asc="AllOffice1Order.PHPAsc" Desc="AllOffice1Order.PHPDesc" Current="DataOrder">
+                                    PHP
+                                </ButtonSortPartialComponent>
+                            </th>
+                            <th>
+                                <ButtonSortPartialComponent OrderType="AllOffice1Order" CustomEvent="@SetOrder"
+                                    Asc="AllOffice1Order.SQLAsc" Desc="AllOffice1Order.SQLDesc" Current="DataOrder">
+                                    SQL
+                                </ButtonSortPartialComponent>
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Datas is null)
+                        {
+                            <tr>
+                                <th colspan="9" class="p-4 text-center">Загрузка ...</th>
+                            </tr>
+                        }
+                        else if (!Datas.Any())
+                        {
+                            <tr>
+                                <th colspan="9" class="p-4 text-center">Данные отсутствуют</th>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var e in Datas)
+                            {
+                                <tr>
+                                    <td>@e.SurName @e.FirstName @e.Patronymic</td>
+                                    <td>@e.Office1Position?.Name</td>
+                                    <td>@e.Assembler</td>
+                                    <td>@e.CCpp</td>
+                                    <td>@e.CSharp</td>
+                                    <td>@e.Java</td>
+                                    <td>@e.PHP</td>
+                                    <td>@e.SQL</td>
+                                    <td>
+                                        <Tooltip Text="Редактировать данные работника">
+                                            <NavLink class="btn btn-sm btn-info mb-1" href="@($"office1/all/edit/{e.Id}")">
+                                                <i class="fas fa-edit"></i> Редактировать
+                                            </NavLink>
+                                        </Tooltip>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <PaginationPartialComponent CustomEvent="@SetPage" Page="Page" PagesCount="PagesCount" />
+
+            <div class="my-1">
+                <NavLink class="btn btn-success mb-1" href="office1/all/create">
+                    <i class="fas fa-plus"></i>
+                    Добавить данные нового работника
+                </NavLink>
+                <button class="btn btn-info mb-1" @onclick="UpdateDataAsync">
+                    <i class="fas fa-sync"></i>
+                    Обновить
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -176,6 +176,70 @@ public class DigitalJournalSeedTestData : IDigitalJournalSeedTestData
         context.Factory1GeneralShiftData.AddRange(gsd);
         await context.SaveChangesAsync();
 
+        var pos1 = new Office1Position
+        {
+            Name = "Младший программист",
+        };
+        var pos2 = new Office1Position
+        {
+            Name = "Программист",
+        };
+        var pos3 = new Office1Position
+        {
+            Name = "Старший программист",
+        };
+        var pos4 = new Office1Position
+        {
+            Name = "Ведущий программист",
+        };
+        context.Office1Positions.AddRange(pos1, pos2, pos3, pos4);
+        await context.SaveChangesAsync();
+
+        var o1ss = new Office1Skills[]
+        {
+            new Office1Skills
+            {
+                SurName = "Иванов",
+                FirstName = "Иван",
+                Patronymic = "Иванович",
+                Office1Position = pos1,
+                Assembler = 1,
+                CCpp = 1,
+                CSharp = 0,
+                Java = 0,
+                PHP = 1,
+                SQL = 0,
+            },
+            new Office1Skills
+            {
+                SurName = "Петров",
+                FirstName = "Петр",
+                Patronymic = "Петрович",
+                Office1Position = pos2,
+                Assembler = 0,
+                CCpp = 1,
+                CSharp = 2,
+                Java = 0,
+                PHP = 1,
+                SQL = 2,
+            },
+            new Office1Skills
+            {
+                SurName = "Сидоров",
+                FirstName = "Сидор",
+                Patronymic = "Сидорович",
+                Office1Position = pos3,
+                Assembler = 0,
+                CCpp = 1,
+                CSharp = 2,
+                Java = 3,
+                PHP = 1,
+                SQL = 2,
+            },
+        };
+        context.Office1Skills.AddRange(o1ss);
+        await context.SaveChangesAsync();
+
         logger.LogInformation("Complete writing test data to database Factory1 ...");
 
         return this;

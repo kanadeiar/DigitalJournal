@@ -10,18 +10,21 @@ public class DigitalJournalContext : DbContext
     public DbSet<Factory1ProductType> Factory1ProductTypes { get; set; }
 
     public DbSet<Factory1Warehouse1ShiftData> Factory1Warehouse1ShiftData { get; set; }
-    public DbSet<Factory1Press1ShiftData> Factory1Press1ShiftData { get;set; }
+    public DbSet<Factory1Press1ShiftData> Factory1Press1ShiftData { get; set; }
     public DbSet<Factory1Autoclave1ShiftData> Factory1Autoclave1ShiftDatas { get; set; }
     public DbSet<Factory1Pack1ShiftData> Factory1Pack1ShiftDatas { get; set; }
     public DbSet<Factory1Warehouse2ShiftData> Factory1Warehouse2ShiftData { get; set; }
     public DbSet<Factory1GeneralShiftData> Factory1GeneralShiftData { get; set; }
+
+    public DbSet<Office1Position> Office1Positions { get; set; }
+    public DbSet<Office1Skills> Office1Skills { get; set; }
 
     public DigitalJournalContext(DbContextOptions<DigitalJournalContext> options) : base(options)
     { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder);            
+        base.OnModelCreating(modelBuilder);
     }
 }
 
