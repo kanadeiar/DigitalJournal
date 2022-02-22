@@ -32,6 +32,7 @@ builder.Host.ConfigureServices(services =>
     services.AddBlazoredToast();
 
     services.AddScoped<IAccountService, AccountService>();
+    services.AddScoped<IHomeInfoService, HomeInfoService>();
 
     services.AddTransient<IIdentitySeedTestData, IdentitySeedTestData>();
     services.AddTransient<IDigitalJournalSeedTestData, DigitalJournalSeedTestData>();
