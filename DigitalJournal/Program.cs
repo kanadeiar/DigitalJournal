@@ -104,9 +104,13 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.Map("/login/{username}", (string username) =>
+app.Map("/token/{username}/{password}", (string username, string password) =>
 {
-    var claims = new List<Claim> { new Claim(ClaimTypes.Name, username) };
+    var claims = new List<Claim>
+    {
+        new Claim(ClaimsIdentity.DefaultNameClaimType, username),
+        new Claim(ClaimsIdentity.DefaultRoleClaimType, "users"),
+    };
     // создаем JWT-токен
     var jwt = new JwtSecurityToken(
             issuer: AuthOptions.ISSUER,
@@ -114,7 +118,6 @@ app.Map("/login/{username}", (string username) =>
             claims: claims,
             expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(2)),
             signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-
     return new JwtSecurityTokenHandler().WriteToken(jwt);
 });
 
