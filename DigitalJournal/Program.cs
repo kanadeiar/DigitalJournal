@@ -19,11 +19,51 @@ builder.Host.ConfigureServices(services =>
             break;
     }
 
-    services.AddIdentity<User, Role>().AddEntityFrameworkStores<IdentityContext>();
-    services.Configure<CookieAuthenticationOptions>(IdentityConstants.ApplicationScheme, options =>
+    services.AddIdentity<User, Role>()
+        .AddEntityFrameworkStores<IdentityContext>();
+    services.Configure<IdentityOptions>(options =>
     {
-        options.LoginPath = "/Account/Login";
-        options.AccessDeniedPath = "/Account/AccessDenied";
+        options.Password.RequiredLength = 3;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireDigit = false;
+        options.User.RequireUniqueEmail = true;
+        options.User.AllowedUserNameCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    });
+    services.AddAuthentication(options => {
+        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    }).AddCookie(options => {
+        options.Events.DisableRedirectForPath(e => e.OnRedirectToLogin,
+             "/api", StatusCodes.Status401Unauthorized);
+        options.Events.DisableRedirectForPath(e => e.OnRedirectToAccessDenied,
+            "/api", StatusCodes.Status403Forbidden);
+    }).AddJwtBearer(options => {
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.ASCII.GetBytes(builder.Configuration["jwtSecret"])),
+            ValidateAudience = false,
+            ValidateIssuer = false
+        };
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = async ctx => {
+                var usrmgr = ctx.HttpContext.RequestServices
+                    .GetRequiredService<UserManager<User>>();
+                var signinmgr = ctx.HttpContext.RequestServices
+                    .GetRequiredService<SignInManager<User>>();
+                string? username =
+                    ctx.Principal?.FindFirst(ClaimTypes.Name)?.Value;
+                var idUser = await usrmgr.FindByNameAsync(username);
+                ctx.Principal =
+                    await signinmgr.CreateUserPrincipalAsync(idUser);
+            }
+        };
     });
 
     services.AddControllersWithViews().AddRazorRuntimeCompilation();
@@ -60,18 +100,8 @@ builder.Host.ConfigureServices(services =>
             };
         });
 });
-builder.Services.AddServerSideBlazor();
 
-builder.Services.Configure<IdentityOptions>(options =>
-{
-    options.Password.RequiredLength = 3;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireLowercase = false;
-    options.Password.RequireUppercase = false;
-    options.Password.RequireDigit = false;
-    options.User.RequireUniqueEmail = true;
-    options.User.AllowedUserNameCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-});
+builder.Services.AddServerSideBlazor();
 
 var app = builder.Build();
 

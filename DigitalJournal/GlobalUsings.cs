@@ -3,6 +3,7 @@ global using System.Collections.Generic;
 global using System.IO;
 global using System.Linq;
 global using System.Text;
+global using System.Linq.Expressions;
 global using System.Threading.Tasks;
 global using Microsoft.AspNetCore.Mvc;
 global using System.ComponentModel.DataAnnotations;
@@ -24,3 +25,5 @@ global using Microsoft.IdentityModel.Tokens;
 global using System.IdentityModel.Tokens.Jwt;
 global using System.Security.Claims;
 global using DigitalJournal.Models;
+
+
