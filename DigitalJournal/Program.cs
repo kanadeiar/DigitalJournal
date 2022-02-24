@@ -36,6 +36,29 @@ builder.Host.ConfigureServices(services =>
 
     services.AddTransient<IIdentitySeedTestData, IdentitySeedTestData>();
     services.AddTransient<IDigitalJournalSeedTestData, DigitalJournalSeedTestData>();
+
+    services.AddAuthorization();
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                // указывает, будет ли валидироваться издатель при валидации токена
+                ValidateIssuer = true,
+                // строка, представляющая издателя
+                ValidIssuer = AuthOptions.ISSUER,
+                // будет ли валидироваться потребитель токена
+                ValidateAudience = true,
+                // установка потребителя токена
+                ValidAudience = AuthOptions.AUDIENCE,
+                // будет ли валидироваться время существования
+                ValidateLifetime = true,
+                // установка ключа безопасности
+                IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+                // валидация ключа безопасности
+                ValidateIssuerSigningKey = true,
+            };
+        });
 });
 builder.Services.AddServerSideBlazor();
 
@@ -80,6 +103,23 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.Map("/token/{username}/{password}", (string username, string password) =>
+{
+    var claims = new List<Claim>
+    {
+        new Claim(ClaimsIdentity.DefaultNameClaimType, username),
+        new Claim(ClaimsIdentity.DefaultRoleClaimType, "users"),
+    };
+    // создаем JWT-токен
+    var jwt = new JwtSecurityToken(
+            issuer: AuthOptions.ISSUER,
+            audience: AuthOptions.AUDIENCE,
+            claims: claims,
+            expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(2)),
+            signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+    return new JwtSecurityTokenHandler().WriteToken(jwt);
+});
 
 app.UseStatusCodePagesWithRedirects("~/home/error/{0}");
 
