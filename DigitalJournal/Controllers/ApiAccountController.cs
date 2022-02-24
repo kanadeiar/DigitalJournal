@@ -47,7 +47,6 @@ public class ApiAccountController : ControllerBase
         }
         return Unauthorized();
     }
-
     private async Task<bool> CheckPassword(Credentials credentials)
     {
         var user = await _userManager.FindByNameAsync(credentials.UserName);
