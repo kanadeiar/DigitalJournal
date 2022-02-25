@@ -5,6 +5,7 @@ let token;
 window.addEventListener("DOMContentLoaded", () => {
     const controlDiv = document.getElementById("controls");
     createButton(controlDiv, "Get Data", getData);
+    createButton(controlDiv, "Get One Data", getOneData);
     createButton(controlDiv, "Log In", login);
     createButton(controlDiv, "Log Out", logout);
 });
@@ -37,6 +38,19 @@ async function getData() {
         displayData(...jsonData.map(item => `${item.surName}, ${item.firstName}`));
     } else {
         displayData(`Error: ${response.status}: ${response.statusText}`);
+    }
+}
+
+async function getOneData() {
+    let response = await fetch("/api/profile/1", {
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` }
+    });
+    if (response.ok) {
+        let jsonData = await response.json();
+        displayData(`${jsonData.surName}, ${jsonData.firstName}`);
+    } else {
+        let text = await response.text();
+        displayData(`Error: ${response.status}: ${response.statusText}, text: ${text}`);
     }
 }
 

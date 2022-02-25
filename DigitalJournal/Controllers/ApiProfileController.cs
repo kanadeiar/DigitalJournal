@@ -10,37 +10,83 @@ public class ApiProfileController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IEnumerable<Profile>> GetAll()
+    public async Task<IActionResult> GetAll()
     {
         var profiles = await _journalContext.Profiles.ToListAsync();
-        return profiles;
+        return Ok(profiles);
     }
 
     [HttpGet("{id}")]
-    public async Task<Profile> Get(int id)
+    public async Task<IActionResult> Get(int id)
     {
-        var profile = await _journalContext.Profiles.FirstAsync(p => p.Id == id);
-        return profile;
+        var profile = await _journalContext.Profiles.FindAsync(id);
+        if (profile is { })
+            return Ok(profile);
+        return NotFound($"not found profile with id = {id}");
     }
 
     [HttpPost]
-    public async Task Add([FromBody] Profile profile)
+    public async Task<IActionResult> Add([FromBody] Profile profile)
     {
-        await _journalContext.Profiles.AddAsync(profile);
-        await _journalContext.SaveChangesAsync();
+        if (profile is null)
+            throw new ArgumentNullException(nameof(profile));
+        profile.Id = default;
+        try
+        {
+            _journalContext.Profiles.Add(profile);
+            var id = await _journalContext.SaveChangesAsync();
+            return Ok(id);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     [HttpPut]
-    public async Task Edit([FromBody] Profile profile)
+    public async Task<IActionResult> Edit([FromBody] Profile profile)
     {
-        _journalContext.Update(profile);
-        await _journalContext.SaveChangesAsync();
+        if (profile is null)
+            throw new ArgumentNullException(nameof(profile));
+        try
+        {
+            if (_journalContext.Profiles.Local.Any(x => x == profile) == false)
+            {
+                var origin = await _journalContext.Profiles.FindAsync(profile.Id);
+                if (origin is null)
+                    return NotFound($"not edit profile with id = {profile.Id}");
+                origin.SurName = profile.SurName;
+                origin.FirstName = profile.FirstName;
+                origin.Patronymic = profile.Patronymic;
+                origin.Birthday = profile.Birthday;
+                origin.UserId = profile.UserId;
+                _journalContext.Update(origin);
+            }
+            else
+                _journalContext.Update(profile);
+            var id = await _journalContext.SaveChangesAsync();
+            return Ok(id);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     [HttpDelete]
-    public async Task Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        _journalContext.Remove( new Profile { Id = id });
-        await _journalContext.SaveChangesAsync();
+        if (await _journalContext.Profiles.FindAsync(id) is not { } profile)
+            return NotFound(false);
+        try
+        {
+            _journalContext.Remove(profile);
+            await _journalContext.SaveChangesAsync();
+            return Ok(true);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 }
