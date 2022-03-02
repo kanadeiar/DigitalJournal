@@ -1,3 +1,7 @@
+using Blazorise;
+using Blazorise.Bootstrap5;
+using Blazorise.Icons.FontAwesome;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.ConfigureServices(services =>
@@ -69,13 +73,17 @@ builder.Host.ConfigureServices(services =>
     services.AddControllersWithViews().AddRazorRuntimeCompilation();
     services.AddRazorPages().AddRazorRuntimeCompilation();
 
-    services.AddBlazoredToast();
-
     services.AddScoped<IAccountService, AccountService>();
     services.AddScoped<IHomeInfoService, HomeInfoService>();
 
     services.AddTransient<IIdentitySeedTestData, IdentitySeedTestData>();
     services.AddTransient<IDigitalJournalSeedTestData, DigitalJournalSeedTestData>();
+
+    services.AddBlazorise(options => 
+    {
+        options.ChangeTextOnKeyPress = true;
+    }).AddBootstrap5Providers()
+    .AddFontAwesomeIcons();
 });
 
 builder.Services.AddServerSideBlazor();

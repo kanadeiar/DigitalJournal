@@ -1,4 +1,6 @@
-﻿namespace DigitalJournal.Dal.Data;
+﻿using DigitalJournal.Domain.Entities.Documents;
+
+namespace DigitalJournal.Dal.Data;
 
 public class DigitalJournalSeedTestData : IDigitalJournalSeedTestData
 {
@@ -176,68 +178,98 @@ public class DigitalJournalSeedTestData : IDigitalJournalSeedTestData
         context.Factory1GeneralShiftData.AddRange(gsd);
         await context.SaveChangesAsync();
 
-        var pos1 = new Office1Position
+        var c1 = new DocDirectory
         {
-            Name = "Младший программист",
+            Name = "Общая папка публичная",            
         };
-        var pos2 = new Office1Position
+        var c2 = new DocDirectory
         {
-            Name = "Программист",
+            Name = "Секретная папка администратора",
         };
-        var pos3 = new Office1Position
+        var c3 = new DocDirectory
         {
-            Name = "Старший программист",
+            Name = "Папка с документами",
         };
-        var pos4 = new Office1Position
-        {
-            Name = "Ведущий программист",
-        };
-        context.Office1Positions.AddRange(pos1, pos2, pos3, pos4);
+        context.DocDirectories.AddRange(c1, c2, c3);
         await context.SaveChangesAsync();
 
-        var o1ss = new Office1Skills[]
+        var c3_1 = new DocDirectory
         {
-            new Office1Skills
-            {
-                SurName = "Иванов",
-                FirstName = "Иван",
-                Patronymic = "Иванович",
-                Office1Position = pos1,
-                Assembler = 1,
-                CCpp = 1,
-                CSharp = 0,
-                Java = 0,
-                PHP = 1,
-                SQL = 0,
-            },
-            new Office1Skills
-            {
-                SurName = "Петров",
-                FirstName = "Петр",
-                Patronymic = "Петрович",
-                Office1Position = pos2,
-                Assembler = 0,
-                CCpp = 1,
-                CSharp = 2,
-                Java = 0,
-                PHP = 1,
-                SQL = 2,
-            },
-            new Office1Skills
-            {
-                SurName = "Сидоров",
-                FirstName = "Сидор",
-                Patronymic = "Сидорович",
-                Office1Position = pos3,
-                Assembler = 0,
-                CCpp = 1,
-                CSharp = 2,
-                Java = 3,
-                PHP = 1,
-                SQL = 2,
-            },
+            Name = "Внутренняя папка",
+            BaseDirectory = c3,
         };
-        context.Office1Skills.AddRange(o1ss);
+        var d1 = new DocDocument
+        {
+            Birthday = DateTime.Now,
+            Name = "Общий документ 1",
+            Description = "Обычный документ",
+            Directory = c1,
+        };
+        var d2 = new DocDocument
+        {
+            Birthday = DateTime.Now,
+            Name = "Секретный документ 1",
+            Description = "Самый секретный документ",
+            Directory = c2,
+        };
+        var d3 = new DocDocument
+        {
+            Birthday = DateTime.Now,
+            Name = "Секретный документ 1",
+            Description = "Самый секретный документ",
+            Directory = c2,
+        };
+        var d4 = new DocDocument
+        {
+            Birthday= DateTime.Now,
+            Name = "Обычный документ",
+            Description = "Типовой текстовый документ",
+            Directory = c3,
+        };
+        context.DocDirectories.Add(c3_1);
+        context.DocDocuments.AddRange(d1, d2, d3, d4);
+        await context.SaveChangesAsync();
+
+        var d5_1 = new DocDocument
+        {
+            Birthday = DateTime.Now,
+            Name = "Обычный платежный документ 1",
+            Description = "Обычный платежный документ 1",
+            Directory = c3_1,
+        };
+        var d5_2 = new DocDocument
+        {
+            Birthday = DateTime.Now,
+            Name = "Обычный платежный документ 2",
+            Description = "Обычный платежный документ 2",
+            Directory = c3_1,
+        };
+        var d5_3 = new DocDocument
+        {
+            Birthday = DateTime.Now,
+            Name = "Обычный платежный документ 3",
+            Description = "Обычный платежный документ 3",
+            Directory = c3_1,
+        };
+        context.DocDocuments.AddRange(d5_1, d5_2, d5_3);
+        await context.SaveChangesAsync();
+
+        var com1 = new DocComment
+        {
+            Description = "Тестовый комментарий 1",
+            Document = d4,
+        };
+        var com2 = new DocComment
+        {
+            Description = "Тестовый комментарий 2",
+            Document = d5_1,
+        };
+        var com3 = new DocComment
+        {
+            Description = "Тестовый комментарий 3",
+            Document = d5_1,
+        };
+        context.DocComment.AddRange(com1, com2, com3);
         await context.SaveChangesAsync();
 
         logger.LogInformation("Complete writing test data to database Factory1 ...");

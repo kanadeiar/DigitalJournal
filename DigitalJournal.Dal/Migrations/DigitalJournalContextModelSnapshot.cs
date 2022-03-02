@@ -15,7 +15,99 @@ namespace DigitalJournal.Dal.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.1");
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.2");
+
+            modelBuilder.Entity("DigitalJournal.Domain.Entities.Documents.DocComment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("DocumentId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte[]>("Timestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocumentId");
+
+                    b.ToTable("DocComment");
+                });
+
+            modelBuilder.Entity("DigitalJournal.Domain.Entities.Documents.DocDirectory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("BaseDirectoryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("Timestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BaseDirectoryId");
+
+                    b.ToTable("DocDirectories");
+                });
+
+            modelBuilder.Entity("DigitalJournal.Domain.Entities.Documents.DocDocument", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("Birthday")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("DirectoryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Marks")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("Timestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DirectoryId");
+
+                    b.ToTable("DocDocuments");
+                });
 
             modelBuilder.Entity("DigitalJournal.Domain.Entities.Factory1.Factory1Autoclave1ShiftData", b =>
                 {
@@ -348,81 +440,6 @@ namespace DigitalJournal.Dal.Migrations
                     b.ToTable("Factory1Warehouse2ShiftData");
                 });
 
-            modelBuilder.Entity("DigitalJournal.Domain.Entities.Office1.Office1Position", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<byte[]>("Timestamp")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("BLOB");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Office1Positions");
-                });
-
-            modelBuilder.Entity("DigitalJournal.Domain.Entities.Office1.Office1Skills", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Assembler")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CCpp")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CSharp")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Java")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Office1PositionId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PHP")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Patronymic")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("SQL")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("SurName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<byte[]>("Timestamp")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("BLOB");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Office1PositionId");
-
-                    b.ToTable("Office1Skills");
-                });
-
             modelBuilder.Entity("DigitalJournal.Domain.Entities.Profile", b =>
                 {
                     b.Property<int>("Id")
@@ -459,6 +476,37 @@ namespace DigitalJournal.Dal.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Profiles");
+                });
+
+            modelBuilder.Entity("DigitalJournal.Domain.Entities.Documents.DocComment", b =>
+                {
+                    b.HasOne("DigitalJournal.Domain.Entities.Documents.DocDocument", "Document")
+                        .WithMany("Comments")
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Document");
+                });
+
+            modelBuilder.Entity("DigitalJournal.Domain.Entities.Documents.DocDirectory", b =>
+                {
+                    b.HasOne("DigitalJournal.Domain.Entities.Documents.DocDirectory", "BaseDirectory")
+                        .WithMany("Directorys")
+                        .HasForeignKey("BaseDirectoryId");
+
+                    b.Navigation("BaseDirectory");
+                });
+
+            modelBuilder.Entity("DigitalJournal.Domain.Entities.Documents.DocDocument", b =>
+                {
+                    b.HasOne("DigitalJournal.Domain.Entities.Documents.DocDirectory", "Directory")
+                        .WithMany("Documents")
+                        .HasForeignKey("DirectoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Directory");
                 });
 
             modelBuilder.Entity("DigitalJournal.Domain.Entities.Factory1.Factory1Autoclave1ShiftData", b =>
@@ -639,20 +687,16 @@ namespace DigitalJournal.Dal.Migrations
                     b.Navigation("Profile");
                 });
 
-            modelBuilder.Entity("DigitalJournal.Domain.Entities.Office1.Office1Skills", b =>
+            modelBuilder.Entity("DigitalJournal.Domain.Entities.Documents.DocDirectory", b =>
                 {
-                    b.HasOne("DigitalJournal.Domain.Entities.Office1.Office1Position", "Office1Position")
-                        .WithMany("OfficeSkills")
-                        .HasForeignKey("Office1PositionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Directorys");
 
-                    b.Navigation("Office1Position");
+                    b.Navigation("Documents");
                 });
 
-            modelBuilder.Entity("DigitalJournal.Domain.Entities.Office1.Office1Position", b =>
+            modelBuilder.Entity("DigitalJournal.Domain.Entities.Documents.DocDocument", b =>
                 {
-                    b.Navigation("OfficeSkills");
+                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }

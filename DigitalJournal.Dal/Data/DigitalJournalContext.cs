@@ -1,5 +1,7 @@
 ﻿// dotnet ef --startup-project ../DigitalJournal/ migrations add init --context DigitalJournalContext
 
+using DigitalJournal.Domain.Entities.Documents;
+
 namespace DigitalJournal.Dal.Data;
 
 public class DigitalJournalContext : DbContext
@@ -16,8 +18,11 @@ public class DigitalJournalContext : DbContext
     public DbSet<Factory1Warehouse2ShiftData> Factory1Warehouse2ShiftData { get; set; }
     public DbSet<Factory1GeneralShiftData> Factory1GeneralShiftData { get; set; }
 
-    public DbSet<Office1Position> Office1Positions { get; set; }
-    public DbSet<Office1Skills> Office1Skills { get; set; }
+
+    public DbSet<DocDirectory> DocDirectories { get; set; }
+    public DbSet<DocDocument> DocDocuments { get; set; }
+    public DbSet<DocComment> DocComment { get; set; }
+
 
     public DigitalJournalContext(DbContextOptions<DigitalJournalContext> options) : base(options)
     { }

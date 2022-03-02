@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitalJournalTests", "Test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitalJournalIntegrationTests", "Tests\DigitalJournalIntegrationTests\DigitalJournalIntegrationTests.csproj", "{1EF6BF5D-9028-4E90-9990-FFAAECE99EB8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalJournal.Dal.Mssql", "DigitalJournal.Dal.Mssql\DigitalJournal.Dal.Mssql.csproj", "{F14EA48F-ECB5-4276-834D-70084C22F143}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitalJournal.Dal.Mssql", "DigitalJournal.Dal.Mssql\DigitalJournal.Dal.Mssql.csproj", "{F14EA48F-ECB5-4276-834D-70084C22F143}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

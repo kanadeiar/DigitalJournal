@@ -14,32 +14,32 @@ public class HomeInfoService : IHomeInfoService
         var warehouse1sum = await _journalContext.Factory1Warehouse1ShiftData.SumAsync(x => x.Tank1LooseRawValue);
         list.Add(new SimpleReportWebModel
         {
-            DimensionOne = "Склад сырья № 1",
+            DimensionOne = "Хранилище № 1",
             Quantity = Convert.ToInt32(warehouse1sum),
         });
         var press1sum = await _journalContext.Factory1Press1ShiftData.SumAsync(x => x.ProductCount);
         list.Add(new SimpleReportWebModel
         {
-            DimensionOne = "Прессование продукта",
+            DimensionOne = "Хранилище № 2",
             Quantity = press1sum,
         });
         var autoclave1sum = await _journalContext.Factory1Autoclave1ShiftDatas.SumAsync(x => x.AutoclavedCount);
         list.Add(new SimpleReportWebModel
         {
-            DimensionOne = "Прессование продукта",
+            DimensionOne = "Хранилище № 3",
             Quantity = autoclave1sum,
         });
         var pack1sum = await _journalContext.Factory1Pack1ShiftDatas.SumAsync(x => x.ProductCount);
         list.Add(new SimpleReportWebModel
         {
-            DimensionOne = "Упаковка",
+            DimensionOne = "Хранилище № 4",
             Quantity = pack1sum,
         });
         var warehouse2sum = await _journalContext.Factory1Warehouse2ShiftData.SumAsync(x => x.Place1ProductsCount);
         list.Add(new SimpleReportWebModel
         {
-            DimensionOne = "Склад готовой продукции № 2",
-            Quantity = Convert.ToInt32(warehouse2sum),
+            DimensionOne = "Хранилище № 5",
+            Quantity = warehouse2sum,
         });
         return list;
     }

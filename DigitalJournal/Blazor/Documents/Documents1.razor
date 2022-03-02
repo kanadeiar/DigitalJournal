@@ -1,0 +1,148 @@
+﻿@page "/documents1"
+@inherits OwningComponentBase<DigitalJournalContext>
+
+<PageTitle>Обзор - Документы</PageTitle>
+
+<div class="row">
+    <div class="col-md-4 col-lg-3 mb-1">
+        <div class="border-1 shadow rounded bg-light p-1">
+            <div class="row m-0">
+                <NavLink class="btn btn-outline-secondary mb-1" href="documents1" Match="NavLinkMatch.All"
+                    ActiveClass="btn-dark text-white">
+                    <span class="fa fa-home" aria-hidden="true"></span> Документы
+                </NavLink>
+                <TreeView Nodes="Items"
+                          GetChildNodes="@(item => item.Children)"
+                          HasChildNodes="@(item => item.Children?.Any() == true)"
+                          @bind-SelectedNode="SelectedNode"
+                          @bind-ExpandedNodes="ExpandedNodes">
+                    <NodeContent>@context.Text</NodeContent>
+                </TreeView>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8 col-lg-9 mb-1">
+        <div class="border-1 bg-light shadow rounded-1 p-2">
+            <h1 class="my-2 p-2"><span class="fa fa-home" aria-hidden="true"></span> Обзор документов и папок</h1>
+            @if (SelectedNode is null)
+            {
+                <h5>Не выбрано</h5>
+            }
+            else if (SelectedNode.IsCatalog)
+            {
+                var catalog = _context.DocDirectories.Find(SelectedNode.Id);
+                <h5>Каталог:</h5>
+                <p>Название каталога: @catalog?.Name</p>
+            }
+            else
+            {
+                var document = _context.DocDocuments.Include(x => x.Comments).First(x => x.Id == SelectedNode.Id);
+                <h6>Документ:</h6>
+                <p>Дата: @document?.Birthday.ToString("dd.MM.yyyy")</p>
+                <p>Название документа: @document?.Name</p>
+                <p>Описание: @document?.Description</p>
+                <p>Отметки: @document?.Marks</p>
+                <p>Примечание: @document?.Note</p>
+                if (document.Comments.Any())
+                {
+                    <h6>Комментарии:</h6>
+                    foreach (var c in document.Comments)
+                    {
+                        <p>@c.Description</p>
+                    }
+                }
+                else
+                {
+                    <h6>Комментариев нет</h6>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private DigitalJournalContext _context => Service;
+
+    IList<Item> Items = new List<Item>();
+    IList<Item> ExpandedNodes = new List<Item>();
+    Item? SelectedNode { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        Items.Clear();
+        var roots = _context.DocDirectories
+            .Where(x => x.BaseDirectory == null)
+            .Select(x => new Item { Id = x.Id, Text = x.Name, Children = new List<Item>(), IsCatalog = true });
+        foreach (var e in roots)
+        {
+            Items.Add(e);
+            var cats = _context.DocDirectories
+                .Where(x => x.BaseDirectoryId == e.Id)
+                .Select(x => new Item { Id = x.Id, Text = x.Name, Children = new List<Item>(), IsCatalog = true });
+            foreach (var c in cats)
+            {
+                e.Children.Add(c);
+                var docs2 = _context.DocDocuments
+                    .Where(x => x.DirectoryId == e.Id)
+                    .Select(x => new Item { Id = x.Id, Text = x.Name });
+                foreach (var d2 in docs2)
+                {
+                    c.Children.Add(d2);
+                }
+            }
+            var docs1 = _context.DocDocuments
+                .Where(x => x.DirectoryId == e.Id)
+                .Select(x => new Item { Id = x.Id, Text = x.Name });
+            foreach (var d1 in docs1)
+            {
+                e.Children.Add(d1);
+            }
+        }
+
+    }
+    //IEnumerable<Item> Items = new[]
+    //{
+    //    new Item { 
+    //        Text = "Папка первая публичная",
+    //        Children = new []
+    //        {
+    //            new Item { Text = "Общий для всех документ" },
+    //        },
+    //    },
+    //    new Item { 
+    //        Text = "Скрытая папка администратора",
+    //        Children = new []
+    //        {
+    //            new Item { Text = "Секретный документ 1" },
+    //            new Item { Text = "Секретный документ 2" },
+    //        },
+    //    },
+    //    new Item 
+    //    {
+    //        Text = "Папка с документами",
+    //        Children = new []
+    //        {
+    //            new Item { Text = "Текстовый документ 1" },
+    //            new Item { Text = "Папка с документами 2", Children = new []
+    //                {
+    //                    new Item { Text = "Тестовый документ 1" },
+    //                    new Item { Text = "Тест 2" },
+    //                    new Item { Text = "Тест 3" },
+    //                    new Item { Text = "Тест 4" }
+    //                }
+    //            },
+    //            new Item { Text = "Документ ворд 1" },
+    //            new Item { Text = "Документ ворд 2" }
+    //        }
+    //    },
+    //    new Item { Text = "Графический документ 1" },
+    //};
+
+    public class Item
+    {
+        public int Id { get; set; }
+        public string Text { get; set; }
+        public IList<Item> Children { get; set; }
+        public bool IsCatalog { get; set; }
+    }
+}

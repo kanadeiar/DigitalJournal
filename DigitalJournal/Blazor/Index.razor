@@ -1,8 +1,7 @@
 ﻿@page "/online"
 @inherits OwningComponentBase<DigitalJournalContext>
-@inject IToastService toastService
 
-<PageTitle>Главная - Журнал</PageTitle>
+<PageTitle>Главная - Документы</PageTitle>
 
 <div class="row">
     <div class="col-md-4 col-lg-3 mb-1">
@@ -10,12 +9,11 @@
     </div>
     <div class="col-md-8 col-lg-9 mb-1">
         <div class="border-1 bg-light shadow rounded-1 p-2">
-            <h1 class="my-2 p-2"><span class="fa fa-home" aria-hidden="true"></span> Онлайн обзор</h1>
-
-            <IndexComponent Query=_context.Factory1Warehouse1ShiftData Query2=_context.Factory1Warehouse2ShiftData />
-
-            <Tooltip Text="Кнопка проверки">
-                <button class="btn btn-info" @onclick="@(() => toastService.ShowSuccess("Все замечательно!", "Великолепно"))">Тестовое сообщение пользователю</button>
+            <h1 class="my-2 p-2"><span class="fa fa-home" aria-hidden="true"></span> Онлайн обзор общих данных</h1>
+@*            <IndexComponent Query=_context.Factory1Warehouse1ShiftData Query2=_context.Factory1Warehouse2ShiftData />*@
+            
+            <Tooltip Text="Тестовая кнопка">
+                <Button Color="Color.Primary" Clicked="@OnButtonClicked">Click me</Button>
             </Tooltip>
         </div>
     </div>
@@ -23,5 +21,12 @@
 
 @code {
     private DigitalJournalContext _context => Service;
+    [Inject] 
+    INotificationService NotificationService { get; set; }
+
+    Task OnButtonClicked()
+    {
+        return NotificationService.Info( "Hello world!" );
+    }
 }
 
