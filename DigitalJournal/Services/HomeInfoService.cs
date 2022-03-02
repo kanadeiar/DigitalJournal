@@ -69,6 +69,78 @@ public class HomeInfoService : IHomeInfoService
             }).ToListAsync();
         return dates;
     }
+
+    public async Task<IList<StackedWebModel>> GetQualityDataOfFactory1()
+    {
+        var operators = new List<StackedWebModel>();
+        operators.Add(new StackedWebModel
+        {
+            StackedDimensionOne = "Первый оператор",
+            LstData = new List<SimpleReportWebModel>()
+            {
+                new SimpleReportWebModel()
+                {
+                    DimensionOne = "Норма",
+                    Quantity = 70,
+                },
+                new SimpleReportWebModel()
+                {
+                    DimensionOne = "Плохо",
+                    Quantity = 20,
+                },
+                new SimpleReportWebModel()
+                {
+                    DimensionOne = "Брак",
+                    Quantity = 10,
+                },
+            }
+        });
+        operators.Add(new StackedWebModel
+        {
+            StackedDimensionOne = "Второй оператор",
+            LstData = new List<SimpleReportWebModel>()
+            {
+                new SimpleReportWebModel()
+                {
+                    DimensionOne = "Норма",
+                    Quantity = 60,
+                },
+                new SimpleReportWebModel()
+                {
+                    DimensionOne = "Плохо",
+                    Quantity = 25,
+                },
+                new SimpleReportWebModel()
+                {
+                    DimensionOne = "Брак",
+                    Quantity = 15,
+                },
+            }
+        });
+        operators.Add(new StackedWebModel
+        {
+            StackedDimensionOne = "Третий оператор",
+            LstData = new List<SimpleReportWebModel>()
+            {
+                new SimpleReportWebModel()
+                {
+                    DimensionOne = "Норма",
+                    Quantity = 80,
+                },
+                new SimpleReportWebModel()
+                {
+                    DimensionOne = "Плохо",
+                    Quantity = 15,
+                },
+                new SimpleReportWebModel()
+                {
+                    DimensionOne = "Брак",
+                    Quantity = 5,
+                },
+            }
+        });
+        return operators;
+    }
 }
 
 

@@ -12,6 +12,9 @@ public interface IHomeInfoService
     /// <summary> Получить данные по скоростям упаковки завода №1 за последние десять смен </summary>
     /// <returns>Данные</returns>
     Task<IList<SimpleReportWebModel>> GetSpeedPackOfFacttory1();
+    /// <summary> Получить данные по качеству продукции </summary>
+    /// <returns>Данные</returns>
+    public Task<IList<StackedWebModel>> GetQualityDataOfFactory1();
 }
 /// <summary> Веб модель данных для графиков </summary>
 public class SimpleReportWebModel

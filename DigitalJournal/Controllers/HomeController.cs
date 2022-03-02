@@ -23,76 +23,10 @@ public class HomeController : Controller
         var models = await _homeInfoService.GetSpeedPackOfFacttory1();
         return View(models);
     }
-    public IActionResult Quality()
+    public async Task<IActionResult> Quality()
     {
-        var lstModel = new List<StackedWebModel>();
-        lstModel.Add(new StackedWebModel
-        {
-            StackedDimensionOne = "Первый оператор",
-            LstData = new List<SimpleReportWebModel>()
-            {
-                new SimpleReportWebModel()
-                {
-                    DimensionOne="Норма",
-                    Quantity = rnd.Next(100)
-                },
-                new SimpleReportWebModel()
-                {
-                    DimensionOne="Плохо",
-                    Quantity = rnd.Next(30)
-                },
-                new SimpleReportWebModel()
-                {
-                    DimensionOne="Брак",
-                    Quantity = rnd.Next(10)
-                }
-            }
-        });
-        lstModel.Add(new StackedWebModel
-        {
-            StackedDimensionOne = "Второй оператор",
-            LstData = new List<SimpleReportWebModel>()
-            {
-                new SimpleReportWebModel()
-                {
-                    DimensionOne="Норма",
-                    Quantity = rnd.Next(100)
-                },
-                new SimpleReportWebModel()
-                {
-                    DimensionOne="Плохо",
-                    Quantity = rnd.Next(30)
-                },
-                new SimpleReportWebModel()
-                {
-                    DimensionOne="Брак",
-                    Quantity = rnd.Next(10)
-                }
-            }
-        });
-        lstModel.Add(new StackedWebModel
-        {
-            StackedDimensionOne = "Третий оператор",
-            LstData = new List<SimpleReportWebModel>()
-            {
-                new SimpleReportWebModel()
-                {
-                    DimensionOne="Норма",
-                    Quantity = rnd.Next(100)
-                },
-                new SimpleReportWebModel()
-                {
-                    DimensionOne="Плохо",
-                    Quantity = rnd.Next(30)
-                },
-                new SimpleReportWebModel()
-                {
-                    DimensionOne="Брак",
-                    Quantity = rnd.Next(10)
-                }
-            }
-        });
-        return View(lstModel);
+        var models = await _homeInfoService.GetQualityDataOfFactory1();
+        return View(models);
     }
     public IActionResult About()
     {
