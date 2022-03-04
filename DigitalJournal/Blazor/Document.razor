@@ -1,0 +1,28 @@
+﻿@page "/document"
+@inherits OwningComponentBase<DigitalJournalContext>
+
+<PageTitle>Редактирование документа - Документы</PageTitle>
+
+<div class="row">
+    <div class="col-md-4 col-lg-3 mb-1">
+        <div class="border-1 shadow rounded bg-light p-1">
+            <div>
+                <NavLink class="btn btn-secondary" href="online">
+                    <i class="fa fa-arrow-left"></i>
+                    Назад
+                </NavLink>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8 col-lg-9 mb-1">
+        <div class="border-1 bg-light shadow rounded-1 p-2">
+            <h1 class="my-2 p-2">Редактирование документа</h1>
+
+        </div>
+    </div>
+</div>
+
+@code {
+    private DigitalJournalContext _context => Service;
+
+}
