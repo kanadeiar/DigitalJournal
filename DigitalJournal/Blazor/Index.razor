@@ -33,7 +33,7 @@
                 var catalog = _context.DocDirectories.Find(SelectedNode.Id);
                 <h5>Каталог:</h5>
                 <p>Название каталога: @catalog?.Name</p>
-
+                <a class="btn btn-primary disabled">Редактировать данные каталога</a>
             }
             else
             {
@@ -44,7 +44,7 @@
                 <p>Описание: @document?.Description</p>
                 <p>Отметки: @document?.Marks</p>
                 <p>Примечание: @document?.Note</p>
-
+                <a class="btn btn-primary disabled">Редактировать данные документа</a>
                 if (document.Comments.Any())
                 {
                     <h6>Комментарии:</h6>
@@ -57,6 +57,9 @@
                 {
                     <h6>Комментариев нет</h6>
                 }
+                <div>
+                    <a class="btn btn-primary disabled">Добавить комментарий</a>
+                </div>
             }
 
         </div>
