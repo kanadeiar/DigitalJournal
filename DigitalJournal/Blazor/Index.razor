@@ -32,21 +32,21 @@
             {
                 var catalog = _context.DocDirectories.Find(SelectedNode.Id);
                 <h5>Каталог:</h5>
-                <p>Название каталога: @catalog?.Name</p>
-                <NavLink class="btn btn-sm btn-info mb-1" href="@($"catalog")">
+                <p>Название каталога: <strong>@catalog?.Name</strong></p>
+                <NavLink class="btn btn-sm btn-info mb-1" href="@($"catalog/{catalog?.Id}")">
                     <i class="fas fa-edit"></i> Редактировать данные каталога
                 </NavLink>
             }
             else
             {
                 var document = _context.DocDocuments.Include(x => x.Comments).First(x => x.Id == SelectedNode.Id);
-                <h6>Документ:</h6>
-                <p>Дата: @document?.Birthday.ToString("dd.MM.yyyy")</p>
-                <p>Название документа: @document?.Name</p>
-                <p>Описание: @document?.Description</p>
-                <p>Отметки: @document?.Marks</p>
-                <p>Примечание: @document?.Note</p>
-                <NavLink class="btn btn-sm btn-info mb-1" href="@($"document")">
+                <h5>Документ:</h5>
+                <p>Дата: <strong>@document?.Birthday.ToString("dd.MM.yyyy")</strong></p>
+                <p>Название документа: <strong>@document?.Name</strong></p>
+                <p>Описание: <strong>@document?.Description</strong></p>
+                <p>Отметки: <strong>@document?.Marks</strong></p>
+                <p>Примечание: <strong>@document?.Note</strong></p>
+                <NavLink class="btn btn-sm btn-info mb-1" href="@($"document/{document?.Id}")">
                     <i class="fas fa-edit"></i> Редактировать данные документа
                 </NavLink>
                 if (document.Comments.Any())

@@ -1,7 +1,12 @@
-﻿@page "/document"
+﻿@page "/document/{id:int}"
+@page "/document/create"
+@using DigitalJournal.Domain.Entities.Documents
 @inherits OwningComponentBase<DigitalJournalContext>
+@inject NavigationManager NavManager
 
 <PageTitle>Редактирование документа - Документы</PageTitle>
+
+<link href="/css/BlazorValidation.css" rel="stylesheet" />
 
 <div class="row">
     <div class="col-md-4 col-lg-3 mb-1">
@@ -16,13 +21,78 @@
     </div>
     <div class="col-md-8 col-lg-9 mb-1">
         <div class="border-1 bg-light shadow rounded-1 p-2">
-            <h1 class="my-2 p-2">Редактирование документа</h1>
+            <h1 class="my-2 p-2 bg-@Theme text-@TextColor">@Mode</h1>
+            @if (Data is null)
+            {
+                <div class="row">
+                    <div class="p-5 text-center">Загрузка ...</div>
+                </div>
+            }
+            else
+            {
+                <EditForm Model="Data" OnValidSubmit="HandleValidSubmit">
+                    <DataAnnotationsValidator/>
 
+                    <div>
+                        <label>Название документа</label>
+                        <ValidationMessage For="@(() => Data.Name)" />
+                        <InputText class="form-control" @bind-Value="Data.Name" />
+                    </div>
+                    <div>
+                        <label>Описание документа</label>
+                        <ValidationMessage For="@(() => Data.Description)" />
+                        <InputText class="form-control" @bind-Value="Data.Description" />
+                    </div>
+                    <div>
+                        <label>Отметки</label>
+                        <ValidationMessage For="@(() => Data.Marks)" />
+                        <InputText class="form-control" @bind-Value="Data.Marks" />
+                    </div>
+                    <div>
+                        <label>Примечание</label>
+                        <ValidationMessage For="@(() => Data.Note)" />
+                        <InputText class="form-control" @bind-Value="Data.Note" />
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-@Theme">
+                            <i class="fas fa-save"></i>
+                            Сохранить
+                        </button>
+                    </div>
+                </EditForm>
+            }
         </div>
     </div>
 </div>
 
 @code {
     private DigitalJournalContext _context => Service;
+    [Parameter]
+    public int Id { get; set; }
+    public bool IsModeCreate => Id == 0;
+    public DocDocument? Data { get; set; }
 
+    protected override async Task OnParametersSetAsync()
+    {
+        if (IsModeCreate)
+        {
+            Data = new DocDocument();
+        }
+        else
+            Data = await _context.DocDocuments.FindAsync(Id);
+    }
+
+    public async Task HandleValidSubmit()
+    {
+        if (IsModeCreate && Data is { })
+        {
+            _context.DocDocuments.Add(Data);
+        }
+        await _context.SaveChangesAsync();
+        NavManager.NavigateTo("online");
+    }
+    public string Mode => IsModeCreate ? "Добавление нового документа" : "Редактирование документа";
+    public string Theme => IsModeCreate ? "success" : "info";
+    public string TextColor => IsModeCreate ? "white" : "dark";
 }
